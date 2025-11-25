@@ -115,36 +115,46 @@ class Visualizer {
     this.dim = dimension;
   }
 
+  computePoints(data = new Float32Array(), i = 1, samplesPerPeriod = 0) {
+    const RADIANS_PER_SAMPLE = (2 * Math.PI) / samplesPerPeriod;
+    let r0 = data[i - 1] * this.drawRadius;
+    let r1 = data[i] * this.drawRadius;
+    let th0 = (i - 1) * RADIANS_PER_SAMPLE;
+    let th1 = i * RADIANS_PER_SAMPLE;
+
+    th0 = r0 > 0 ? th0 : th0 + Math.PI;
+    th1 = r1 > 0 ? th1 : th1 + Math.PI;
+    [r0, r1] = [Math.abs(r0), Math.abs(r1)];
+    return [
+      [r0, r1],
+      [th0, th1],
+    ];
+  }
+
   draw(currentTime) {
     let data = new Float32Array(ENV.fftSize);
     this.analyzer.getFloatTimeDomainData(data);
     data = data.reverse(); // draw waveform from last to first point
-    const SAMPLES_PER_PERIOD = ENV.sampleRate / ENV.baseFrequency;
-    const RADIANS_PER_SAMPLE = (2 * Math.PI) / SAMPLES_PER_PERIOD;
-    // for each canvas we will draw up to samples per period (1 full rotation)
-    this.contexts.forEach((ctx) => ctx.beginPath());
-    for (let i = 1; i < ENV.fftSize - 1; i++) {
-      let r0 = data[i - 1] * this.drawRadius;
-      let r1 = data[i] * this.drawRadius;
-      let th0 = (i - 1) * RADIANS_PER_SAMPLE;
-      let th1 = i * RADIANS_PER_SAMPLE;
-      let period = Math.floor(i / SAMPLES_PER_PERIOD);
-      let ctx = this.contexts[period];
 
-      th0 = r0 > 0 ? th0 : th0 + Math.PI;
-      th1 = r1 > 0 ? th1 : th1 + Math.PI;
-      [r0, r1] = [Math.abs(r0), Math.abs(r1)];
+    this.contexts.forEach((ctx) => ctx.beginPath());
+
+    for (let i = 1; i < ENV.fftSize - 1; i++) {
+      const SAMPLES_PER_PERIOD = ENV.sampleRate / ENV.baseFrequency;
+      let [[r0, r1], [th0, th1]] = this.computePoints(
+        data,
+        i,
+        SAMPLES_PER_PERIOD
+      );
+      let period = Math.floor(i / SAMPLES_PER_PERIOD);
       if (period >= this.canvases.length) {
         break;
       }
-      // the first canvas will draw i=0 samples up to samples per period...
+      let ctx = this.contexts[period];
       if (i % SAMPLES_PER_PERIOD < 1) {
         ctx.strokeStyle = this.strokeColor(1, 0, 0, period);
         ctx.lineWidth = ENV.lineWidth;
       }
-      // move pen to previous point
       ctx.moveTo(r0 * Math.cos(th0), r0 * Math.sin(th0));
-      // console.info({ period, r0, r1, th0, th1 });
       ctx.lineTo(r1 * Math.cos(th1), r1 * Math.sin(th1));
     }
     this.contexts.forEach((ctx) => ctx.stroke() && ctx.closePath());
