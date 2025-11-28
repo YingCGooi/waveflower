@@ -92,6 +92,7 @@ class Visualizer {
     this.lastDrawnValue = 0;
     this.lastDrawnRadian = 0;
     this.lastTimeDomainCache = { 0: 0 };
+    this.lastTimeDomainRadians = new Float32Array(ENV.fftSize);
   }
 
   resetCanvasElements() {
@@ -143,71 +144,74 @@ class Visualizer {
   getTimeDomainArray(shouldCache = true) {
     let data = new Float32Array(ENV.fftSize);
     this.analyzer.getFloatTimeDomainData(data);
-    this.lastTimeDomainCache = {}; // reset cache
-    shouldCache &&
-      data.forEach((v, i) => {
-        this.lastTimeDomainCache[v] = i;
-      });
     return data;
+  }
+
+  cacheTimeDomainValues(data = new Float32Array()) {
+    this.lastTimeDomainCache = {}; // reset cache
+    data.forEach((v, i) => {
+      this.lastTimeDomainCache[v] = i;
+    });
   }
 
   computePoints(
     data = new Float32Array(),
     i = 1,
+    offsetRadian = 0,
     SAMPLES_PER_PERIOD = ENV.sampleRate / ENV.baseFrequency
   ) {
     const RADIANS_PER_SAMPLE = (2 * Math.PI) / SAMPLES_PER_PERIOD;
     let r0 = data[i - 1] * this.drawRadius;
     let r1 = data[i] * this.drawRadius;
-    let th0 =
-      ((i - 1 - this.findOffsetIndex()) * RADIANS_PER_SAMPLE) % (2 * Math.PI);
-    let th1 =
-      ((i - this.findOffsetIndex()) * RADIANS_PER_SAMPLE) % (2 * Math.PI);
+    let th0 = ((i - 1) * RADIANS_PER_SAMPLE) % (2 * Math.PI);
+    let th1 = (i * RADIANS_PER_SAMPLE) % (2 * Math.PI);
 
     th0 = r0 > 0 ? th0 : th0 + Math.PI;
     th1 = r1 > 0 ? th1 : th1 + Math.PI;
     [r0, r1] = [Math.abs(r0), Math.abs(r1)];
     return [
       [r0, r1],
-      [th0 + this.offsetRadian(), th1 + this.offsetRadian()],
+      [th0 + offsetRadian, th1 + offsetRadian],
     ];
   }
 
-  findOffsetIndex() {
-    const i = this.lastTimeDomainCache[this.lastDrawnValue];
+  findLastOffsetIndex(value = 0) {
+    console.info({ value });
+    const i = this.lastTimeDomainCache[value];
+    console.info({ i });
     if (i == undefined) {
       return 0;
     }
     return i;
   }
 
-  offsetRadian() {
-    return this.lastDrawnRadian % (2 * Math.PI);
+  findLastRadian(lastIndex = 1) {
+    return this.lastTimeDomainRadians[lastIndex] % (2 * Math.PI);
   }
 
   draw() {
     const data = this.getTimeDomainArray();
     this.contexts.forEach((ctx) => ctx.beginPath());
-    console.info({
-      offsetI: this.findOffsetIndex(),
-      lastDrawnRaw: this.lastDrawnValue,
-      offsetRad: this.offsetRadian(),
-      lastDrawnRad: this.lastDrawnRadian,
-    });
+    let currTimeDomainRadians = new Float32Array(ENV.fftSize);
 
-    for (let i = this.findOffsetIndex(); i < ENV.fftSize; i++) {
+    const lastOffsetIndex = this.findLastOffsetIndex(data[0]);
+    const offsetRadian = this.findLastRadian(lastOffsetIndex);
+
+    for (let i = 1; i < ENV.fftSize + 1; i++) {
       const SAMPLES_PER_PERIOD = ENV.sampleRate / ENV.baseFrequency;
-      let [[r0, r1], [th0, th1]] = this.computePoints(data, i);
       let period = Math.floor(i / SAMPLES_PER_PERIOD);
       let ctx = this.contexts[period];
       ctx.strokeStyle = this.strokeColor(ENV.lineColorLCH, period);
       ctx.lineWidth = ENV.lineWidth;
+
+      let [[r0, r1], [th0, th1]] = this.computePoints(data, i, offsetRadian);
       ctx.moveTo(r0 * Math.cos(th0), r0 * Math.sin(th0));
       ctx.lineTo(r1 * Math.cos(th1), r1 * Math.sin(th1));
-      this.lastDrawnValue = data[i];
-      this.lastDrawnRadian = th1;
-      console.info({ i, r1, th1, period, SAMPLES_PER_PERIOD });
+      currTimeDomainRadians[i] = th1;
     }
+    console.info({ currTimeDomainRadians });
+    this.lastTimeDomainRadians = currTimeDomainRadians;
+    this.cacheTimeDomainValues(data);
     this.contexts.forEach((ctx) => ctx.stroke() && ctx.closePath());
   }
 
