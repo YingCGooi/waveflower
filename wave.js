@@ -2,11 +2,11 @@ var ENV = {
   fftSize: 2048,
   colorSpace: "display-p3",
   sampleRate: 44100,
-  baseFrequency: 220,
+  baseFrequency: 440,
   alphaExponent: 2,
   dpr: window.devicePixelRatio,
   lineWidth: 3,
-  lineColorLCH: [1, 0, 0],
+  lineColorLCH: [0.77, 0.2, 220],
   syncPeriodPhase: true,
 };
 
@@ -57,7 +57,7 @@ class AudioSourceManager {
     this.isPlaying = true;
   }
   stopBuffer() {
-    this.bufferSource.stop();
+    this.bufferSource.stop(this.ctx.currentTime);
     this.bufferSource = this.generateBufferSource();
     this.isPlaying = false;
   }
@@ -259,7 +259,7 @@ $("#fileinput").onchange = (event) => {
   const r = new FileReader();
   r.readAsArrayBuffer(event.target.files[0]);
   r.onload = (e) => {
-    ctx.decodeAudioData(
+    manager.ctx.decodeAudioData(
       e.target.result,
       (buffer) => manager.updateBuffer(buffer),
       (err) => console.error(err)
@@ -278,11 +278,18 @@ $all("input[name=osc]").forEach((radio) => {
 $("#play").addEventListener("click", (e) => {
   manager.setOSCtype();
   manager.setOSCfreq(freq.value);
-  manager.playOSC();
+  if ($("#fileinput").value !== "") {
+    manager.playBuffer();
+  } else {
+    manager.playOSC();
+  }
   drawFrames(0);
 });
 
 $("#stop").addEventListener("click", (e) => {
+  if ($("#fileinput").value !== "") {
+    manager.stopBuffer();
+  }
   manager.stopOSC();
   cancelAnimationFrame(lastAnimationID);
 });
