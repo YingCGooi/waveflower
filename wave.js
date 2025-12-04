@@ -1,17 +1,15 @@
 var ENV = {
   fftSize: 2048,
   colorSpace: "display-p3",
-  sampleRate: 44100,
-  baseFrequency: 98,
-  alphaExponent: 1.2,
+  sampleRate: 48000,
+  baseFrequency: 248,
+  alphaExponent: 1 / 3,
   blurFactor: 1,
   dpr: window.devicePixelRatio,
   lineWidth: 3,
-  lineColorLCH: [0.55, 0.22, 330],
+  lineColorStartLCH: [0.6, 0.24, 270],
+  lineColorEndLCH: [0.7, 0.24, 200],
   syncPeriodPhase: true,
-  brightnessFactor: 3,
-  hueShiftFactor: +32,
-  chromaShiftFactor: 0.1,
 };
 
 function $(selector = "") {
@@ -201,11 +199,7 @@ class Visualizer {
       const SAMPLES_PER_PERIOD = ENV.sampleRate / ENV.baseFrequency;
       let period = Math.floor(i / SAMPLES_PER_PERIOD);
       let ctx = this.contexts[period];
-      ctx.strokeStyle = this.strokeColor(
-        ENV.lineColorLCH,
-        period,
-        this.contexts.length
-      );
+      ctx.strokeStyle = this.strokeColor(period, this.contexts.length);
       ctx.lineWidth = ENV.lineWidth;
       ctx.filter = `blur(${
         ENV.blurFactor * (this.canvases.length - 1 - period)
@@ -237,11 +231,16 @@ class Visualizer {
     }
   }
 
-  strokeColor([l, c, h], period = 1, periods = this.contexts.length) {
-    const lightness = l + (ENV.brightnessFactor / 100) * period;
-    const chroma = c + (ENV.chromaShiftFactor / 100) * period;
-    const hue = h + ENV.hueShiftFactor * period;
-    const alpha = (period / periods) ** ENV.alphaExponent;
+  strokeColor(period = 0, periods = this.contexts.length) {
+    const [ls, cs, hs] = ENV.lineColorStartLCH;
+    const [le, ce, he] = ENV.lineColorEndLCH;
+    const lStep = (le - ls) / periods;
+    const cStep = (ce - cs) / periods;
+    const hStep = (he - hs) / periods;
+    const lightness = ls + period * lStep;
+    const chroma = cs + period * cStep;
+    const hue = hs + period * hStep;
+    const alpha = ((period + 1) / periods) ** ENV.alphaExponent;
     return `oklch(${lightness} ${chroma} ${hue} / ${alpha})`;
   }
 }
