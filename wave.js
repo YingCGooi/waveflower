@@ -1,14 +1,15 @@
 var ENV = {
   fftSize: 2048,
   colorSpace: "display-p3",
-  sampleRate: 48000,
-  baseFrequency: 248,
-  alphaExponent: 1 / 3,
-  blurFactor: 1,
+  sampleRate: 44100,
+  baseFrequency: 124,
+  alphaExponent: 1 / 4,
+  blurFactor: 1 / 2,
   dpr: window.devicePixelRatio,
-  lineWidth: 3,
-  lineColorStartLCH: [0.6, 0.24, 270],
-  lineColorEndLCH: [0.7, 0.24, 200],
+  lineWidthStart: 2,
+  lineWidthEnd: 0.33,
+  lineColorStartLCH: [0.5, 0.3, 290],
+  lineColorEndLCH: [0.8, 0.24, 220],
   syncPeriodPhase: true,
 };
 
@@ -51,6 +52,7 @@ class AudioSourceManager {
   updateBuffer(buffer = new AudioBuffer()) {
     this.bufferSource.buffer = buffer;
     this.bufferSource.connect(this.analyzer);
+    ENV.sampleRate = buffer.sampleRate;
   }
   playBuffer() {
     this.bufferSource.start();
@@ -200,7 +202,7 @@ class Visualizer {
       let period = Math.floor(i / SAMPLES_PER_PERIOD);
       let ctx = this.contexts[period];
       ctx.strokeStyle = this.strokeColor(period, this.contexts.length);
-      ctx.lineWidth = ENV.lineWidth;
+      ctx.lineWidth = ENV.lineWidthStart;
       ctx.filter = `blur(${
         ENV.blurFactor * (this.canvases.length - 1 - period)
       }px)`;
@@ -242,6 +244,11 @@ class Visualizer {
     const hue = hs + period * hStep;
     const alpha = ((period + 1) / periods) ** ENV.alphaExponent;
     return `oklch(${lightness} ${chroma} ${hue} / ${alpha})`;
+  }
+
+  lineWidth(period = 0, periods = this.contexts.length) {
+    const widthStep = (ENV.lineWidthEnd - ENV.lineWidthStart) / periods;
+    return ENV.lineWidthStart + period * widthStep;
   }
 }
 
