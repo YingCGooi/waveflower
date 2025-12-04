@@ -81,10 +81,11 @@ class AudioSourceManager {
 }
 
 class Visualizer {
-  constructor(canvases = $all("canvas"), analyzer = new AnalyserNode()) {
-    if (canvases.length == 0) {
-      this.resetCanvasElements();
-    }
+  constructor(
+    canvases = $all("#canvases>canvas"),
+    analyzer = new AnalyserNode()
+  ) {
+    this.resetCanvasElements();
     const dim = Math.min(window.innerHeight, window.innerWidth);
     this.dim = dim;
     this.drawRadius = (this.dim * ENV.dpr) / 2;
@@ -101,15 +102,15 @@ class Visualizer {
     const numPeriods = Math.ceil(
       ENV.fftSize / (ENV.sampleRate / ENV.baseFrequency)
     );
-    while ($("canvas") != null) {
-      $("#canvases").removeChild($("canvas"));
+    while ($("#canvases>canvas") != null) {
+      $("#canvases").removeChild($("#canvases>canvas"));
     }
     for (let i = 0; i < numPeriods; i++) {
       let canvas = document.createElement("canvas");
       canvas.id = `${i}`;
       $("#canvases").appendChild(canvas);
     }
-    this.canvases = $all("canvas");
+    this.canvases = $all("#canvases>canvas");
     this.contexts = [];
     this.canvases.forEach((canvas) => {
       const ctx = canvas.getContext("2d", { colorSpace: ENV.colorSpace });
@@ -253,7 +254,8 @@ class Visualizer {
 }
 
 const manager = new AudioSourceManager();
-const visualizer = new Visualizer($all("canvas"), manager.analyzer);
+const visualizer = new Visualizer($all("#canvases>canvas"), manager.analyzer);
+var replVisualizer = undefined;
 
 const freq = $("input[name=freq]");
 freq.value = ENV.baseFrequency; // reset to base frequency at start
@@ -264,8 +266,17 @@ let isPlaying = false;
 const drawFrames = (currentTime) => {
   if (manager.isPlaying) {
     visualizer.clear();
-    visualizer.draw(0);
+    visualizer.draw();
     lastAnimationID = requestAnimationFrame(drawFrames); // recurse
+  }
+  // analysers is a built-in object available through @strudel/core
+  if (Object.keys(analysers).length > 0) {
+    if (!replVisualizer) {
+      replVisualizer = new Visualizer($all("#canvases>canvas"), analysers[1]);
+    }
+    replVisualizer.clear();
+    replVisualizer.draw();
+    lastAnimationID = requestAnimationFrame(drawFrames);
   }
   return lastAnimationID;
 };
@@ -295,16 +306,20 @@ $("#play").addEventListener("click", (e) => {
   manager.setOSCfreq(freq.value);
   if ($("#fileinput").value !== "") {
     manager.playBuffer();
+    drawFrames();
+  } else if ($("#repl").editor.code !== "") {
+    $("#repl").editor.evaluate();
+    setTimeout(() => drawFrames(), 2400);
   } else {
     manager.playOSC();
+    drawFrames();
   }
-  drawFrames(0);
 });
 
 $("#stop").addEventListener("click", (e) => {
-  if ($("#fileinput").value !== "") {
-    manager.stopBuffer();
-  }
-  manager.stopOSC();
+  $("#fileinput").value !== "" && manager.stopBuffer();
+  $("#repl").value !== "" && $("#repl").editor.stop();
+  manager.isPlaying && manager.stopOSC();
+
   cancelAnimationFrame(lastAnimationID);
 });
