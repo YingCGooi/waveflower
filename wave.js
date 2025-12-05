@@ -326,6 +326,9 @@ $("#play").addEventListener("click", (e) => {
       editor.code += ".scope()"; // force scope()
     }
     editor.evaluate();
+    if (replPlaying) {
+      return; // don't overlap with existing drawFrames() recursion
+    }
     replPlaying = true;
     setTimeout(() => drawFrames(), 300); // wait to load analyzer
   } else {
