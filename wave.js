@@ -257,31 +257,40 @@ const manager = new AudioSourceManager();
 const visualizer = new Visualizer($all("#canvases>canvas"), manager.analyzer);
 var replVisualizer = undefined;
 
-$("#test-canvas").style.top = "7.77%";
-
 const base = $("input[name=base]");
 base.value = ENV.baseFrequency;
+base.onchange = (e) => {
+  ENV.baseFrequency = Number(e.target.value);
+  if (replVisualizer) {
+    replVisualizer.resetCanvasElements();
+    replVisualizer.resize();
+  } else {
+    visualizer.resetCanvasElements();
+    visualizer.resize();
+  }
+};
+
 const freq = $("input[name=freq]");
 freq.value = ENV.baseFrequency; // reset to base frequency at start
 freq.onchange = (e) => manager.setOSCfreq(freq.value);
+
 let lastAnimationID = 0;
 let isPlaying = false;
 
 const drawFrames = (currentTime) => {
-  if (manager.isPlaying) {
-    visualizer.clear();
-    visualizer.draw();
-    lastAnimationID = requestAnimationFrame(drawFrames); // recurse
-  }
   // analysers is a built-in object available through @strudel/core
   if (Object.keys(analysers).length > 0) {
     if (!replVisualizer) {
-      analysers[1].fftSize = ENV.fftSize;
       replVisualizer = new Visualizer($all("#canvases>canvas"), analysers[1]);
+      analysers[1].fftSize = ENV.fftSize;
     }
     replVisualizer.clear();
     replVisualizer.draw();
     lastAnimationID = requestAnimationFrame(drawFrames);
+  } else if (manager.isPlaying) {
+    visualizer.clear();
+    visualizer.draw();
+    lastAnimationID = requestAnimationFrame(drawFrames); // recurse
   }
   return lastAnimationID;
 };
@@ -307,15 +316,15 @@ $all("input[name=osc]").forEach((radio) => {
 });
 
 $("#play").addEventListener("click", (e) => {
-  manager.setOSCtype();
-  manager.setOSCfreq(freq.value);
   if ($("#fileinput").value !== "") {
     manager.playBuffer();
     drawFrames();
   } else if ($("#repl").editor.code !== "") {
     $("#repl").editor.evaluate();
-    setTimeout(() => drawFrames(), 400); // wait to load analyzer
+    setTimeout(() => drawFrames(), 300); // wait to load analyzer
   } else {
+    manager.setOSCtype();
+    manager.setOSCfreq(freq.value);
     manager.playOSC();
     drawFrames();
   }

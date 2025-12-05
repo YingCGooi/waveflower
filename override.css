@@ -1,0 +1,49 @@
+:root {
+    --background: #FFF1 !important;
+    --selection: oklch(0.5 0.24 240 / 0.3) !important;
+    /* --lineBackground: #22222299 !important;
+    --foreground: #fff !important;
+    --caret: #ffcc00 !important;
+    --selectionMatch: #036dd626 !important;
+    --lineHighlight: #00FA !important;
+    --gutterBackground: transparent !important;
+    --gutterForeground: #8a919966 !important; */
+}
+
+.ͼr.cm-focused .cm-selectionBackground,
+.ͼr .cm-line::selection,
+.ͼr .cm-selectionLayer .cm-selectionBackground,
+.ͼr .cm-content ::selection {
+    background: oklch(0.5 0.2 230 / 0.4) !important;
+}
+
+.ͼ4 .cm-line::selection,
+.cm-editor ::selection {
+    background-color: transparent !important;
+}
+
+.ͼ14 {
+    color: oklch(0.75 0.23 320);
+}
+
+.ͼt {
+    color: oklch(0.67 0.2 220);
+}
+
+.ͼ11 {
+    color: oklch(0.75 0.2 129);
+}
+
+.ͼ19 {
+    color: oklch(0.75 0.23 320);
+}
+
+#test-canvas {
+    top: 33% !important;
+    filter: opacity(25%);
+    transform: scaleY(0.4);
+}
+
+#test-canvas:hover {
+    filter: opacity(100%) !important;
+}
