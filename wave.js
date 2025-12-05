@@ -2,7 +2,7 @@ var ENV = {
   fftSize: 2048,
   colorSpace: "display-p3",
   sampleRate: 44100,
-  baseFrequency: 124,
+  baseFrequency: 110,
   alphaExponent: 1 / 4,
   blurFactor: 1 / 2,
   dpr: window.devicePixelRatio,
@@ -257,6 +257,10 @@ const manager = new AudioSourceManager();
 const visualizer = new Visualizer($all("#canvases>canvas"), manager.analyzer);
 var replVisualizer = undefined;
 
+$("#test-canvas").style.top = "7.77%";
+
+const base = $("input[name=base]");
+base.value = ENV.baseFrequency;
 const freq = $("input[name=freq]");
 freq.value = ENV.baseFrequency; // reset to base frequency at start
 freq.onchange = (e) => manager.setOSCfreq(freq.value);
@@ -272,6 +276,7 @@ const drawFrames = (currentTime) => {
   // analysers is a built-in object available through @strudel/core
   if (Object.keys(analysers).length > 0) {
     if (!replVisualizer) {
+      analysers[1].fftSize = ENV.fftSize;
       replVisualizer = new Visualizer($all("#canvases>canvas"), analysers[1]);
     }
     replVisualizer.clear();
@@ -309,7 +314,7 @@ $("#play").addEventListener("click", (e) => {
     drawFrames();
   } else if ($("#repl").editor.code !== "") {
     $("#repl").editor.evaluate();
-    setTimeout(() => drawFrames(), 2400);
+    setTimeout(() => drawFrames(), 400); // wait to load analyzer
   } else {
     manager.playOSC();
     drawFrames();
