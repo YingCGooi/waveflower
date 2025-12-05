@@ -275,11 +275,11 @@ freqInput.value = ENV.baseFrequency; // reset to base frequency at start
 freqInput.onchange = (e) => manager.setOSCfreq(freqInput.value);
 
 let lastAnimationID = 0;
-let isPlaying = false;
+let replPlaying = false;
 
 const drawFrames = (currentTime) => {
   // analysers is a built-in object available through @strudel/core
-  if (Object.keys(analysers).length > 0) {
+  if (Object.keys(analysers).length > 0 && replPlaying) {
     if (!replVisualizer) {
       replVisualizer = new Visualizer($all("#canvases>canvas"), analysers[1]);
       analysers[1].fftSize = ENV.fftSize;
@@ -326,6 +326,7 @@ $("#play").addEventListener("click", (e) => {
       editor.code += ".scope()"; // force scope()
     }
     editor.evaluate();
+    replPlaying = true;
     setTimeout(() => drawFrames(), 300); // wait to load analyzer
   } else {
     manager.setOSCtype();
@@ -336,6 +337,7 @@ $("#play").addEventListener("click", (e) => {
 });
 
 $("#stop").addEventListener("click", (e) => {
+  replPlaying = false;
   $("#fileinput").value !== "" && manager.stopBuffer();
   $("#repl").value !== "" && $("#repl").editor.stop();
   manager.isPlaying && manager.stopOSC();
