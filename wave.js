@@ -20,6 +20,27 @@ function $all(selector = "") {
   return document.querySelectorAll(selector);
 }
 
+class LocalStore {
+  constructor(key = "waveflower") {
+    this.key = key
+    this.lastSaved = Date.now()
+  }
+  saveConfig(cfg = ENV) {
+    localStorage.setItem(this.key, JSON.stringify(cfg))
+  }
+  loadConfig() {
+    const cfg = localStorage.getItem(this.key)
+    console.info(cfg)
+    ENV = JSON.parse(cfg) // replace ENV with stored configuration
+    this.lastSaved = Date.now()
+    return cfg
+  }
+  clearCache() {
+    localStorage.clear(key)
+    this.lastSaved = 0
+  }
+}
+
 class AudioSourceManager {
   constructor(
     audioContext = new window.AudioContext({
@@ -256,6 +277,9 @@ const manager = new AudioSourceManager();
 const visualizer = new Visualizer($all("#canvases>canvas"), manager.analyzer);
 let replVisualizer = undefined;
 let analysers = {};
+let lastAnimationID = 0;
+let replPlaying = false;
+let editor = undefined;
 
 const base = $("input[name=base]");
 base.value = ENV.baseFrequency;
@@ -274,16 +298,16 @@ const freqInput = $("input[name=freq]");
 freqInput.value = ENV.baseFrequency; // reset to base frequency at start
 freqInput.onchange = (e) => manager.setOSCfreq(freqInput.value);
 
-const editor = $("#repl").editor;
-editor.forceScope = function () {
+function forceScope(editor) {
   if (!editor.code.includes(".scope()")) {
     editor.code += ".scope()"; // force scope() at the end
   }
 }
 
-// states
-let lastAnimationID = 0;
-let replPlaying = false;
+const store = new LocalStore()
+if (store.lastSaved && store.lastSaved < Date.now()) {
+  store.loadConfig();
+}
 
 const drawFrames = (currentTime) => {
   // analysers is a built-in object available through @strudel/core
@@ -324,6 +348,8 @@ $all("input[name=osc]").forEach((radio) => {
 });
 
 $("#play").addEventListener("click", (e) => {
+  editor = $("#repl").editor;
+  store.saveConfig(ENV)
   if ($("#fileinput").value !== "") {
     manager.playBuffer();
     drawFrames();
