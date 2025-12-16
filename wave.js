@@ -3,14 +3,15 @@ var ENV = {
   colorSpace: "display-p3",
   sampleRate: 44100,
   baseFrequency: 110,
-  alphaExponent: 1 / 4,
-  blurFactor: 1 / 2,
+  alphaExponent: 0,
+  blurFactor: 1,
   dpr: window.devicePixelRatio,
-  lineWidthStart: 2,
-  lineWidthEnd: 0.33,
+  lineWidthStart: 3.3,
+  lineWidthEnd: 1,
   lineColorStartLCH: [0.5, 0.3, 290],
   lineColorEndLCH: [0.8, 0.24, 220],
   syncPeriodPhase: true,
+  smoothingTimeConstant: 1
 };
 
 function $(selector = "") {
@@ -35,7 +36,9 @@ class LocalStore {
       return ENV
     }
     const cfg = localStorage.getItem(this.key)
-    ENV = JSON.parse(cfg) // replace ENV with stored configuration
+    if (cfg) {
+      ENV = JSON.parse(cfg) // replace ENV with stored configuration
+    }
     console.info(ENV)
     console.info("Configuration loaded from time last saved: " + (Date(this.lastSaved).toString()))
     return ENV
@@ -62,6 +65,7 @@ class AudioSourceManager {
   generateAnalyzer() {
     const a = this.ctx.createAnalyser();
     a.fftSize = ENV.fftSize;
+    a.smoothingTimeConstant = ENV.smoothingTimeConstant;
     a.connect(this.ctx.destination);
     return a;
   }
@@ -229,7 +233,7 @@ class Visualizer {
       let period = Math.floor(i / SAMPLES_PER_PERIOD);
       let ctx = this.contexts[period];
       ctx.strokeStyle = this.strokeColor(period, this.contexts.length);
-      ctx.lineWidth = ENV.lineWidthStart;
+      ctx.lineWidth = this.lineWidth(period, this.contexts.length);
       ctx.filter = `blur(${ENV.blurFactor * (this.canvases.length - 1 - period)
         }px)`;
 
@@ -351,7 +355,7 @@ $all("input[name=osc]").forEach((radio) => {
 
 $("#play").addEventListener("click", (e) => {
   editor = $("#repl").editor;
-  store.saveConfig(ENV)
+  // store.saveConfig(ENV) // TODO: fix breaking scope
   if ($("#fileinput").value !== "") {
     manager.playBuffer();
     drawFrames();
