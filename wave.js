@@ -10,8 +10,11 @@ var ENV = {
   lineWidthEnd: 1,
   lineColorStartLCH: [0.5, 0.3, 290],
   lineColorEndLCH: [0.8, 0.24, 220],
+  lineColorStart: "oklch(0.5 0.3 290)",
+  lineColorEnd: "oklch(0.8 0.24 220)",
   syncPeriodPhase: true,
-  smoothingTimeConstant: 1
+  smoothingTimeConstant: 1,
+  interpolationSpace: "oklch"
 };
 
 function $(selector = "") {
@@ -37,10 +40,12 @@ class LocalStore {
     }
     const cfg = localStorage.getItem(this.key)
     if (cfg) {
-      ENV = JSON.parse(cfg) // replace ENV with stored configuration
+      ENV = JSON.parse(cfg)
+      // replace ENV with stored configuration
+      // TODO: check and replace keys one by one as opposed to overriding the variable
+      console.info(ENV)
+      console.info("Configuration loaded from time last saved: " + (Date(this.lastSaved).toString()))
     }
-    console.info(ENV)
-    console.info("Configuration loaded from time last saved: " + (Date(this.lastSaved).toString()))
     return ENV
   }
   clearCache() {
@@ -126,6 +131,11 @@ class Visualizer {
     this.lastDrawnRadian = 0;
     this.lastTimeDomainCache = { 0: 0 };
     this.lastTimeDomainRadians = new Float32Array(ENV.fftSize);
+    this.colorSteps = [ENV.lineColorStart, ENV.lineColorEnd];
+    this.calculateColorSteps(
+      new Color(ENV.lineColorStart),
+      new Color(ENV.lineColorEnd)
+    )
   }
 
   resetCanvasElements() {
@@ -232,7 +242,7 @@ class Visualizer {
       const SAMPLES_PER_PERIOD = ENV.sampleRate / ENV.baseFrequency;
       let period = Math.floor(i / SAMPLES_PER_PERIOD);
       let ctx = this.contexts[period];
-      ctx.strokeStyle = this.strokeColor(period, this.contexts.length);
+      ctx.strokeStyle = this.strokeColorJS(period, this.contexts.length);
       ctx.lineWidth = this.lineWidth(period, this.contexts.length);
       ctx.filter = `blur(${ENV.blurFactor * (this.canvases.length - 1 - period)
         }px)`;
@@ -263,17 +273,21 @@ class Visualizer {
     }
   }
 
-  strokeColor(period = 0, periods = this.contexts.length) {
-    const [ls, cs, hs] = ENV.lineColorStartLCH;
-    const [le, ce, he] = ENV.lineColorEndLCH;
-    const lStep = (le - ls) / periods;
-    const cStep = (ce - cs) / periods;
-    const hStep = (he - hs) / periods;
-    const lightness = ls + period * lStep;
-    const chroma = cs + period * cStep;
-    const hue = hs + period * hStep;
-    const alpha = ((period + 1) / periods) ** ENV.alphaExponent;
-    return `oklch(${lightness} ${chroma} ${hue} / ${alpha})`;
+  calculateColorSteps(start = new Color(), end = new Color(), minSteps = 10) {
+    const s = start.steps(end, {
+      space: ENV.interpolationSpace,
+      outputSpace: ENV.interpolationSpace,
+      maxDeltaE: 120,
+      steps: minSteps // min number of steps
+    })
+    this.colorSteps = s.map(c => c.toString());
+    return this.colorSteps;
+  }
+
+  strokeColorJS(period = 0, periods = this.contexts.length) {
+    const pos = (period / periods) * this.colorSteps.length;
+    const i = Math.floor(pos)
+    return this.colorSteps[i];
   }
 
   lineWidth(period = 0, periods = this.contexts.length) {
