@@ -1,64 +1,43 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WaveFlower: Render Audio Waveforms in Radial Format</title>
-    <link rel="icon" href="icon.png" type="image/png" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <section id="canvases"><!-- all canvases go in here --></section>
-    <script src="https://unpkg.com/@strudel/repl@latest"></script>
-    <strudel-editor id="repl"></strudel-editor>
-    <section class="interface">
-      <form id="waveform">
-        <label
-          ><i aria-label="sine">∿</i
-          ><input checked type="radio" name="osc" value="sine"
-        /></label>
-        <label
-          ><i aria-label="triangle">⋀⋁</i
-          ><input type="radio" name="osc" value="triangle"
-        /></label>
-        <label
-          ><i aria-label="square">⊓⊔</i
-          ><input type="radio" name="osc" value="square"
-        /></label>
-        <label
-          ><i aria-label="sawtooth">⊿⊿</i
-          ><input type="radio" name="osc" value="sawtooth"
-        /></label>
-        <label>
-          <strong>OSC</strong>
-          <input
-            type="number"
-            name="freq"
-            value="220"
-            min="1"
-            max="16000"
-            placeholder="Hz"
-          />
-        </label>
-        <label>
-          <strong>BASE</strong>
-          <input
-            type="number"
-            name="base"
-            value="220"
-            min="1"
-            max="12000"
-            placeholder="Hz"
-          />
-        </label>
-      </form>
-      <fieldset>
-        <button id="play">Play</button>
-        <button id="stop">Stop</button>
-      </fieldset>
-      <input id="fileinput" type="file" accept="*" />
-    </section>
-  </body>
-  <script src="./wave.js"></script>
-  <link rel="stylesheet" href="override.css" />
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WaveFlower: Render Audio Waveforms in Radial Format</title>
+  <link rel="icon" href="icon_4_flower.png" type="image/png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <script src="https://colorjs.io/dist/color.global.js"></script>
+  <!-- use "/color.global.min.js" for production -->
+  <section id="canvases"><!-- all canvases go in here --></section>
+  <!-- <script src="https://unpkg.com/@strudel/repl@latest"></script> -->
+  <strudel-editor id="repl"></strudel-editor>
+  <section class="interface">
+    <form id="waveform">
+      <label><i aria-label="sine">∿</i><input checked type="radio" name="osc" value="sine" /></label>
+      <label><i aria-label="triangle">⋀⋁</i><input type="radio" name="osc" value="triangle" /></label>
+      <label><i aria-label="square">⊓⊔</i><input type="radio" name="osc" value="square" /></label>
+      <label><i aria-label="sawtooth">⊿⊿</i><input type="radio" name="osc" value="sawtooth" /></label>
+      <label>
+        <strong>OSC</strong>
+        <input type="number" name="freq" value="220" min="1" max="16000" placeholder="Hz" />
+      </label>
+      <label>
+        <strong>BASE</strong>
+        <input type="number" name="base" value="220" min="1" max="12000" placeholder="Hz" />
+      </label>
+    </form>
+    <fieldset>
+      <button id="play">Play</button>
+      <button id="stop">Stop</button>
+    </fieldset>
+    <input id="fileinput" type="file" accept="*" />
+  </section>
+</body>
+<script src="./wave.js"></script>
+<link rel="stylesheet" href="override.css" />
+
 </html>
