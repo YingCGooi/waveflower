@@ -16,17 +16,17 @@
   <strudel-editor id="repl"></strudel-editor>
   <section class="interface">
     <form id="waveform">
-      <label><i aria-label="sine">∿</i><input checked type="radio" name="osc" value="sine" /></label>
-      <label><i aria-label="triangle">⋀⋁</i><input type="radio" name="osc" value="triangle" /></label>
-      <label><i aria-label="square">⊓⊔</i><input type="radio" name="osc" value="square" /></label>
-      <label><i aria-label="sawtooth">⊿⊿</i><input type="radio" name="osc" value="sawtooth" /></label>
-      <label>
-        <strong>OSC</strong>
+      <label title="Sine"><i aria-label="sine">∿</i><input checked type="radio" name="osc" value="sine" /></label>
+      <label title="Triangle"><i aria-label="triangle">⋀⋁</i><input type="radio" name="osc" value="triangle" /></label>
+      <label title="Square"><i aria-label="square">⊓⊔</i><input type="radio" name="osc" value="square" /></label>
+      <label title="Sawtooth"><i aria-label="sawtooth">⊿⊿</i><input type="radio" name="osc" value="sawtooth" /></label>
+      <label title="Set oscillator frequency (Hz)">
+        <small>ⓘ</small> <strong>OSC</strong>
         <input type="number" name="freq" value="220" min="1" max="16000" placeholder="Hz" />
       </label>
-      <label>
+      <label title="Set base period interval (1/s)">
         <strong>BASE</strong>
-        <input type="number" name="base" value="220" min="1" max="12000" placeholder="Hz" />
+        <input type="number" name="base" value="220" min="1" max="1210" placeholder="Hz" />
       </label>
     </form>
     <fieldset>

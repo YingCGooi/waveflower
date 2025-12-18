@@ -22,36 +22,6 @@ function $all(selector = "") {
   return document.querySelectorAll(selector);
 }
 
-class LocalStore {
-  constructor(key = "waveflower") {
-    this.key = key
-    this.lastSaved = localStorage.getItem("last_saved") || 0;
-  }
-  saveConfig(cfg = ENV) {
-    localStorage.setItem(this.key, JSON.stringify(cfg))
-    localStorage.setItem("last_saved", Date.now())
-  }
-  loadConfig() {
-    if (!this.lastSaved) {
-      console.info("no configuration saved")
-      return ENV
-    }
-    const cfg = localStorage.getItem(this.key)
-    if (cfg) {
-      ENV = JSON.parse(cfg)
-      // replace ENV with stored configuration
-      // TODO: check and replace keys one by one as opposed to overriding the variable
-      console.info(ENV)
-      console.info("Configuration loaded from time last saved: " + (Date(this.lastSaved).toString()))
-    }
-    return ENV
-  }
-  clearCache() {
-    localStorage.clear(this.key)
-    localStorage.setItem("last_saved", 0)
-  }
-}
-
 class AudioSourceManager {
   constructor(
     audioContext = new window.AudioContext({
@@ -171,7 +141,7 @@ class Visualizer {
     ctx.translate(this.drawRadius, this.drawRadius); // set origin (x=0, y) to center of canvas
   }
 
-  resize(dimension = window.innerHeight) {
+  resize(dimension = Math.min(window.innerHeight, window.innerWidth)) {
     this.canvases.forEach((canvas, i) => {
       const ctx = this.contexts[i];
       canvas.width = dimension; // stretch the canvas to viewport
@@ -294,8 +264,6 @@ class Visualizer {
   }
 }
 
-const store = new LocalStore()
-store.loadConfig();
 const manager = new AudioSourceManager();
 const visualizer = new Visualizer($all("#canvases>canvas"), manager.analyzer);
 let replVisualizer = undefined;
@@ -308,13 +276,10 @@ const base = $("input[name=base]");
 base.value = ENV.baseFrequency;
 base.onchange = (e) => {
   ENV.baseFrequency = Number(e.target.value);
-  if (replVisualizer) {
-    replVisualizer.resetCanvasElements();
-    replVisualizer.resize();
-  } else {
-    visualizer.resetCanvasElements();
-    visualizer.resize();
-  }
+  if (ENV.baseFrequency > 110) { ENV.fftSize / 2 };
+  let v = replVisualizer || visualizer;
+  v.resetCanvasElements();
+  v.resize();
 };
 
 const freqInput = $("input[name=freq]");
@@ -366,24 +331,25 @@ $all("input[name=osc]").forEach((radio) => {
 });
 
 $("#play").addEventListener("click", (e) => {
-  editor = $("#repl").editor;
-  // update color on start
+  if (manager.isPlaying) {
+    console.info("play already initiated")
+    return
+  }
   visualizer.calculateColorSteps(
     new Color(ENV.lineColorStart), 
     new Color(ENV.lineColorEnd)
   );
-  // store.saveConfig(ENV) // TODO: fix breaking scope
+  editor = $("#repl").editor;
+
   if ($("#fileinput").value !== "") {
     manager.playBuffer();
     drawFrames();
   } else if (editor && editor?.code !== "") {
     forceScope(editor);
     editor.evaluate();
-    if (replPlaying) {
-      return; // don't overlap with existing drawFrames() recursion
-    }
+    if (replPlaying) { return }; // avoid any existing conflicts
     replPlaying = true;
-    setTimeout(() => drawFrames(), 300); // wait to load analyzer
+    setTimeout(() => drawFrames(), 300); // wait until analyzer is loaded
   } else {
     manager.setOSCtype();
     manager.setOSCfreq(freqInput.value);
