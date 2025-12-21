@@ -1,41 +1,26 @@
 :root {
     --background: oklch(0.5 0.1 220 / 0.3) !important;
     --selection: oklch(0.5 0.24 240 / 0.3) !important;
-    /* --lineBackground: #22222299 !important;
-    --foreground: #fff !important;
-    --caret: #ffcc00 !important;
-    --selectionMatch: #036dd626 !important;
-    --lineHighlight: #00FA !important;
-    --gutterBackground: transparent !important;
-    --gutterForeground: #8a919966 !important; */
 }
 
-/* .ͼr.cm-focused .cm-selectionBackground,
-.ͼr .cm-line::selection,
-.ͼr .cm-selectionLayer .cm-selectionBackground,
-.ͼr .cm-content ::selection {
-    background: oklch(0.5 0.2 220 / 0.5) !important;
-} */
-
-/* .ͼ4 .cm-line::selection,
-.cm-editor ::selection {
-    background-color: oklch(0.7 0.1 220 / 0.5) !important;
-} */
-
-.ͼ14 {
+span.ͼ14 {
     color: oklch(0.75 0.23 320);
 }
 
-.ͼt {
+span.ͼt {
     color: oklch(0.67 0.2 220);
 }
 
-.ͼ11 {
+span.ͼ11 {
     color: oklch(0.75 0.2 129);
 }
 
-.ͼ19 {
+span.ͼ19 {
     color: oklch(0.75 0.23 320);
+}
+
+span.ͼ16 {
+    color: oklch(0.7 0.01 70) !important;
 }
 
 #test-canvas {

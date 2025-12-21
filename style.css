@@ -188,6 +188,10 @@ i[aria-label="sine"] {
     line-height: 1px;
 }
 
+.cm-editor {
+    --placeholder: "🌀 @strudel/repl loaded - click to edit 🌀";
+}
+
 .cm-editor::before {
     position: absolute;
     top: 50%;
@@ -196,7 +200,7 @@ i[aria-label="sine"] {
     text-align: end;
     font-size: 0.8rem;
     font-style: italic;
-    content: "🌀 @strudel/repl loaded - click to edit 🌀";
+    content: var(--placeholder);
     color: oklch(0.7 0 0 / 0.7);
 }
 

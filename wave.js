@@ -13,7 +13,12 @@ var ENV = {
   interpolationSpace: "oklch",
   syncPeriodPhase: true,
   smoothingTimeConstant: 1,
+  analyzerWaitDelayMs: 300
 };
+
+function infoLog(msg = '') {
+  console.info("[waveflower] " + msg)
+}
 
 function $(selector = "") {
   return document.querySelector(selector);
@@ -33,8 +38,29 @@ class AudioSourceManager {
     this.oscillator = this.generateOSC();
     this.bufferSource = this.generateBufferSource();
     this.isPlaying = false;
+    this.repl = null;
+    this.isREPLplaying = false;
   }
-
+  setREPL(repl = $("#repl").editor) {
+    this.repl = repl;
+  }
+  replHasCode() {
+    return this.repl.code.trim() !== '';
+  }
+  playREPL(forceScopeFn = () => { }) {
+    forceScopeFn(this.repl);
+    this.repl.evaluate();
+    this.isPlaying = true;
+    this.isREPLplaying = true;
+  }
+  stopREPL() {
+    this.repl.stop();
+    this.isPlaying = false;
+    this.isREPLplaying = false;
+  }
+  getAnalyzer() {
+    return this.analyzer;
+  }
   generateAnalyzer() {
     const a = this.ctx.createAnalyser();
     a.fftSize = ENV.fftSize;
@@ -62,6 +88,9 @@ class AudioSourceManager {
     this.isPlaying = true;
   }
   stopBuffer() {
+    if (!this.isPlaying) {
+      return
+    }
     this.bufferSource.stop(this.ctx.currentTime);
     this.bufferSource = this.generateBufferSource();
     this.isPlaying = false;
@@ -71,6 +100,9 @@ class AudioSourceManager {
     this.isPlaying = true;
   }
   stopOSC() {
+    if (!this.isPlaying) {
+      return
+    }
     this.oscillator.stop();
     this.oscillator = this.generateOSC();
     this.isPlaying = false;
@@ -85,9 +117,10 @@ class AudioSourceManager {
 
 class Visualizer {
   constructor(
-    canvases = $all("#canvases>canvas"),
+    sectionID = "#canvases",
     analyzer = new AnalyserNode()
   ) {
+    this.sectionID = sectionID;
     this.resetCanvasElements();
     const dim = Math.min(window.innerHeight, window.innerWidth);
     this.dim = dim;
@@ -110,15 +143,16 @@ class Visualizer {
     const numPeriods = Math.ceil(
       ENV.fftSize / (ENV.sampleRate / ENV.baseFrequency)
     );
-    while ($("#canvases>canvas") != null) {
-      $("#canvases").removeChild($("#canvases>canvas"));
+    const canvasSelector = `${this.sectionID}>canvas`
+    while ($(canvasSelector) != null) {
+      $(this.sectionID).removeChild($(canvasSelector));
     }
     for (let i = 0; i < numPeriods; i++) {
       let canvas = document.createElement("canvas");
       canvas.id = `${i}`;
-      $("#canvases").appendChild(canvas);
+      $(this.sectionID).appendChild(canvas);
     }
-    this.canvases = $all("#canvases>canvas");
+    this.canvases = $all(canvasSelector);
     this.contexts = [];
     this.canvases.forEach((canvas) => {
       const ctx = canvas.getContext("2d", { colorSpace: ENV.colorSpace });
@@ -152,7 +186,7 @@ class Visualizer {
     this.dim = dimension;
   }
 
-  getTimeDomainArray(shouldCache = true) {
+  getTimeDomainArray() {
     let data = new Float32Array(ENV.fftSize);
     this.analyzer.getFloatTimeDomainData(data);
     return data;
@@ -265,44 +299,31 @@ class Visualizer {
 }
 
 const manager = new AudioSourceManager();
-const visualizer = new Visualizer($all("#canvases>canvas"), manager.analyzer);
-let replVisualizer = undefined;
-let analysers = {};
+window.onload = () => {
+  if (params.get('repl')) {
+    manager.setREPL($("#repl").editor);
+  }
+};
+const visualizer = new Visualizer("#canvases", manager.analyzer);
 let lastAnimationID = 0;
-let replPlaying = false;
-let editor = undefined;
 
 const base = $("input[name=base]");
 base.value = ENV.baseFrequency;
 base.onchange = (e) => {
   ENV.baseFrequency = Number(e.target.value);
   if (ENV.baseFrequency > 110) { ENV.fftSize / 2 };
-  let v = replVisualizer || visualizer;
+  let v = visualizer;
   v.resetCanvasElements();
   v.resize();
+  infoLog(`base period set to 1/${e.target.value}s`);
 };
 
 const freqInput = $("input[name=freq]");
 freqInput.value = ENV.baseFrequency; // reset to base frequency at start
 freqInput.onchange = (e) => manager.setOSCfreq(freqInput.value);
 
-function forceScope(editor) {
-  if (!editor.code.trim().endsWith(".scope()")) {
-    editor.code += ".scope()"; // force scope() at the end
-  }
-}
-
 const drawFrames = (currentTime) => {
-  // analysers is a built-in object available through @strudel/core
-  if (Object.keys(analysers).length > 0 && replPlaying) {
-    if (!replVisualizer) {
-      replVisualizer = new Visualizer($all("#canvases>canvas"), analysers[1]);
-      analysers[1].fftSize = ENV.fftSize;
-    }
-    replVisualizer.clear();
-    replVisualizer.draw();
-    lastAnimationID = requestAnimationFrame(drawFrames);
-  } else if (manager.isPlaying) {
+  if (manager.isPlaying) {
     visualizer.clear();
     visualizer.draw();
     lastAnimationID = requestAnimationFrame(drawFrames); // recurse
@@ -331,25 +352,32 @@ $all("input[name=osc]").forEach((radio) => {
 });
 
 $("#play").addEventListener("click", (e) => {
-  if (manager.isPlaying) {
-    console.info("play already initiated")
-    return
-  }
   visualizer.calculateColorSteps(
-    new Color(ENV.lineColorStart), 
+    new Color(ENV.lineColorStart),
     new Color(ENV.lineColorEnd)
   );
-  editor = $("#repl").editor;
-
+  if (manager.replHasCode()) {
+    manager.playREPL(() => { });
+    setTimeout(() => {
+      const visualizers = []
+      for (k in analysers) {
+        if (Object.hasOwn(analysers, k)) {
+          visualizers.push(new Visualizer(null, analysers[k]))
+        }
+      }
+      // TODO: visualize inline _scope() separately
+      drawFrames();
+    }, ENV.analyzerWaitDelayMs) // wait for 'analysers' object to initialize
+    return
+  }
+  if (manager.isPlaying) {
+    infoLog("already playing")
+    return
+  }
+  infoLog("start")
   if ($("#fileinput").value !== "") {
     manager.playBuffer();
     drawFrames();
-  } else if (editor && editor?.code !== "") {
-    forceScope(editor);
-    editor.evaluate();
-    if (replPlaying) { return }; // avoid any existing conflicts
-    replPlaying = true;
-    setTimeout(() => drawFrames(), 300); // wait until analyzer is loaded
   } else {
     manager.setOSCtype();
     manager.setOSCfreq(freqInput.value);
@@ -359,12 +387,14 @@ $("#play").addEventListener("click", (e) => {
 });
 
 $("#stop").addEventListener("click", (e) => {
-  replPlaying = false;
-  $("#fileinput").value !== "" && manager.stopBuffer();
-  $("#fileinput").value = ""
-  $("#repl").value && $("#repl").editor.stop();
-  manager.isPlaying && manager.stopOSC();
-
+  const f = $("#fileinput")
+  if (f.value !== "") {
+    f.value = ""
+  }
+  manager.stopREPL();
+  manager.stopOSC();
+  manager.stopBuffer();
+  infoLog("stop");
   cancelAnimationFrame(lastAnimationID);
 });
 
