@@ -103,7 +103,8 @@ fieldset {
     flex-direction: row;
 }
 
-input[type="number"] {
+input[type="number"],
+select {
     color: #fff;
     font-family: "Google Sans Code", monospace;
     font-size: 16px;
@@ -112,6 +113,15 @@ input[type="number"] {
     border-radius: 2px;
     width: 60px;
     text-align: right;
+}
+
+select {
+    width: fit-content;
+}
+
+option {
+    text-align: right;
+    font-family: inherit;
 }
 
 input[type="radio"] {
@@ -144,8 +154,6 @@ section {
         flex-direction: column;
     }
 }
-
-
 
 label {
     color: #fffc;

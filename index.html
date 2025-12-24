@@ -22,6 +22,7 @@
         document.body.appendChild(strudel);
       }
     </script>
+    <script src="./util.js"></script>
     <section class="interface">
       <form id="waveform">
         <label title="Sine"
@@ -53,14 +54,28 @@
         </label>
         <label title="Set base period interval (1/s)">
           <strong>BASE</strong>
-          <input
+          <!-- <input
             type="number"
             name="base"
             value="220"
             min="1"
             max="1210"
             placeholder="Hz"
-          />
+          /> -->
+          <select id="base-select" name="base"></select>
+          <script>
+            for (let i = 16; i < 70; i++) {
+              const f = midiToFreq(i);
+              const n = midiToNote(i);
+              const o = document.createElement("option");
+              o.value = f;
+              o.innerHTML = `${n} = ${Math.round(f)}/s`;
+              if (f === 110) {
+                o.selected = true;
+              }
+              $("[name=base]").appendChild(o);
+            }
+          </script>
         </label>
       </form>
       <fieldset>
