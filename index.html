@@ -15,7 +15,7 @@
     <script src="https://colorjs.io/dist/color.global.js"></script>
     <!-- use "/color.global.min.js" for production -->
     <script>
-      const params = new URLSearchParams(window.location.search);
+      var params = new URLSearchParams(window.location.search);
       if (params.get("repl")) {
         const strudel = document.createElement("script");
         strudel.src = "https://unpkg.com/@strudel/repl@latest";
@@ -60,11 +60,8 @@
               const f = midiToFreq(i);
               const n = midiToNote(i);
               const o = document.createElement("option");
-              o.value = f;
+              o.value = f.toFixed(2);
               o.innerHTML = `${n} = 1/${Math.round(f)}s`;
-              if (n === "D#3") {
-                o.selected = true;
-              }
               $("[name=base]").appendChild(o);
             }
           </script>

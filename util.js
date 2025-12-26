@@ -75,7 +75,34 @@ const midiToNote = (n) => {
   return pc + oct;
 };
 
-// other functions to help waveflower
+// code hashing helpers
+function unicodeToBase64(text) {
+  const utf8Bytes = new TextEncoder().encode(text);
+  const base64String = btoa(String.fromCharCode(...utf8Bytes));
+  return base64String;
+}
+
+function base64ToUnicode(base64String) {
+  const utf8Bytes = new Uint8Array(
+    atob(base64String)
+      .split("")
+      .map((char) => char.charCodeAt(0))
+  );
+  const decodedText = new TextDecoder().decode(utf8Bytes);
+  return decodedText;
+}
+
+function codeTohash(code) {
+  return encodeURIComponent(unicodeToBase64(code));
+  //return '#' + encodeURIComponent(btoa(code));
+}
+
+function hashTocode(hash) {
+  return base64ToUnicode(decodeURIComponent(hash));
+  //return atob(decodeURIComponent(codeParam || ''));
+}
+
+// other functions for helping waveflower
 function infoLog(msg = "") {
   console.info("[waveflower] " + msg);
 }

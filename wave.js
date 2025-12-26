@@ -2,7 +2,7 @@ var ENV = {
   fftSize: 2048,
   colorSpace: "display-p3",
   sampleRate: 44100,
-  baseFrequency: 110,
+  baseFrequency: 155.56,
   alphaExponent: 0,
   blurFactor: 0.5,
   dpr: window.devicePixelRatio,

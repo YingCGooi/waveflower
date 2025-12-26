@@ -3,12 +3,22 @@ let replVisualizers = [];
 let intervalID = 0;
 let lastAnimationID = 0;
 
-const manager = new AudioSourceManager();
 window.onload = () => {
-  if (params.get("repl")) {
+  let urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("repl")) {
     manager.setREPL($("#repl").editor);
   }
+  let u = window.location.href;
+  const parts = u.split("#");
+  if (parts.length > 1) {
+    const code = hashTocode(parts[parts.length - 1]);
+    $(".cm-content").textContent = code;
+  }
+  const base = $("[name=base]");
+  base.value = ENV.baseFrequency;
 };
+
+const manager = new AudioSourceManager();
 const visualizer = new Visualizer(MAIN_CLASS, manager.analyzer);
 
 window.onresize = () => {
@@ -86,9 +96,7 @@ $("#play").addEventListener("click", (e) => {
           continue;
         }
         const has = !hasAny(replVisualizers, (v) => v.canvasClass === k);
-        console.info(k, has, replVisualizers);
         if (!hasAny(replVisualizers, (v) => v.canvasClass === k)) {
-          console.info(k, has, replVisualizers);
           replVisualizers.push(new Visualizer(k, analysers[k]));
         }
         analysers[k].fftSize = ENV.fftSize;
