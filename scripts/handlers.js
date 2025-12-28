@@ -88,17 +88,21 @@ $("#play").addEventListener("click", (e) => {
     new Color(ENV.lineColorEnd)
   );
   if (manager.replHasCode()) {
-    manager.playREPL(() => {});
+    manager.playREPL(() => { });
     replVisualizers = []; // reset temp array
     intervalID = setInterval(() => {
       for (k in analysers) {
+        let canvasClass = k
         if (!Object.hasOwn(analysers, k)) {
           continue;
         }
-        const has = !hasAny(replVisualizers, (v) => v.canvasClass === k);
+        if (String(k).length <= 1 || k < 10) {
+          canvasClass = MAIN_CLASS;
+          // if k is an integer less than 10, use main class
+        }
         if (!hasAny(replVisualizers, (v) => v.canvasClass === k)) {
           replVisualizers.push(
-            new Visualizer(k, analysers[k], Number(k.at(-1)) * 90)
+            new Visualizer(canvasClass, analysers[k], Number(k.at(-1)) * 90)
           );
         }
         analysers[k].fftSize = ENV.fftSize;
