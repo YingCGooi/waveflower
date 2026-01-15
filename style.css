@@ -95,6 +95,16 @@ form#waveform {
     ::file-selector-button {
         width: 33.3%;
     }
+
+    nav {
+        padding-top: 3px;
+        padding-bottom: 6px;
+    }
+
+    nav a {
+        width: 100%;
+        text-align: center;
+    }
 }
 
 fieldset {
@@ -247,6 +257,8 @@ nav {
     display: flex;
     align-items: center;
     text-align: center;
+    padding-left: 4px;
+    padding-right: 4px;
     border: 1px solid oklch(0.7 0.1 230 / .5);
     border-radius: 3px;
     background: oklch(0.5 0.1 230 / .33);
