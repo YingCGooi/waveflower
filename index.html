@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
       Waveflower: Audio signal visualization in radial form - @strudel/repl
-      available
+      available with respect to AGPL-3.0 license
     </title>
     <link rel="icon" href="r=sin2t_oy.png" type="image/png" />
     <link rel="stylesheet" href="style.css" />
@@ -61,7 +61,7 @@
               const n = midiToNote(i);
               const o = document.createElement("option");
               o.value = f.toFixed(2);
-              o.innerHTML = `${n} = 1/${Math.round(f)}s`;
+              o.innerHTML = `${n} ${Math.round(f)}/s`;
               $("[name=base]").appendChild(o);
             }
           </script>
@@ -72,6 +72,11 @@
         <button id="stop">Stop</button>
       </fieldset>
       <input id="fileinput" type="file" accept="*" />
+      <nav>
+        <a href="https://github.com/YingCGooi/waveflower/blob/main/LICENSE">
+          <span class="flip">⇱</span> view AGPL-3.0 license + source
+        </a>
+      </nav>
     </section>
     <section id="canvases"><!-- all canvases go in here --></section>
     <strudel-editor id="repl"></strudel-editor>
