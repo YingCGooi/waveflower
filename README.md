@@ -1,4 +1,4 @@
-## Working Demo
+## Live Prototype
 https://waveflower.org
 
 ## Licensing
