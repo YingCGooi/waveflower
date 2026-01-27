@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -7,8 +7,8 @@
       Waveflower: Audio signal visualization in radial form - @strudel/repl
       available with respect to AGPL-3.0 license
     </title>
-    <link rel="icon" href="r=sin2t_oy.png" type="image/png" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="./assets/r=sin2t_oy.png" type="image/png" />
+    <link rel="stylesheet" href="./stylesheets/style.css" />
   </head>
 
   <body>
@@ -22,7 +22,7 @@
         document.body.appendChild(strudel);
       }
     </script>
-    <script src="./util.js"></script>
+    <script src="./scripts/util.js"></script>
     <section class="interface">
       <form id="waveform">
         <label title="Sine"
@@ -81,7 +81,7 @@
     <section id="canvases"><!-- all canvases go in here --></section>
     <strudel-editor id="repl"></strudel-editor>
   </body>
-  <script src="./wave.js"></script>
-  <script src="./handlers.js"></script>
-  <link rel="stylesheet" href="override.css" />
+  <script src="./scripts/wave.js"></script>
+  <script src="./scripts/handlers.js"></script>
+  <link rel="stylesheet" href="./stylesheets/override.css" />
 </html>
