@@ -4,7 +4,7 @@ document.querySelectorAll('style').forEach(n => {
   n.append(':root { --background: #001 !important} ')
   n.append('canvas {filter:saturate(4)}')  
   n.append('#code .cm-line>*{background: #0000;}')
-  n.append('.cm-line{filter:hue-rotate(-15deg) saturate(3) drop-shadow(0 0 4px)}')
+  n.append('.cm-line{filter:hue-rotate(-15deg) saturate(3)}')
 })
 
 // global functions
