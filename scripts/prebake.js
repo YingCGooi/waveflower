@@ -71,7 +71,7 @@ window.useSpectrum = function ({lines=7,base=2000,next=1/2,alpha=1,hue=40,hueSte
   n => n.append(
   '#pre, .cm-widget-container>canvas{'+
     'position:relative;'+
-    'transform: scaleY(175%) translateY(20%);'+
+    'transform: scaleY(175%) translateY(7%);'+
     'z-index:-1;'+
     'filter:saturate(1.5);'+
     'background:'+lineargradient(stops,lines,base,next,alpha,hue,hueStep)+
