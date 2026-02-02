@@ -10,7 +10,6 @@ window.useHue = function (amt=3,hue=-15) {
     n.append('.cm-line{filter:hue-rotate(' +hue+ 'deg) saturate(' +amt+ ')}')
   })
 }
-
 // CSS helper function
 function lineargradient(
   stops = [],  
@@ -41,9 +40,10 @@ function lineargradient(
       freq *= next
     }
   }
-  if (next > 1) { stops = stops.reverse() }
+  stops = stops.sort(([fa],[fb]) => fb - fa) // ensure stops are sorted in descending order
   return 'linear-gradient(' + mode + ',' +
     stops.map(([freq, color, w])=>{
+      if (!w) { w = 1/2 }
       let stop = freqStops[freq] || (70.3 - 8.29*Math.log2(freq/62.5))      
       return [
         '#0000 ' + Number(stop - w).toFixed(2) + '%',
@@ -61,9 +61,7 @@ function lineargradient(
 // [
 //   // [freq, color, width] --> setting this will override the config opts argument
 //   [1000,'oklch(.7 .2 40/1)',1],
-//   [500, 'oklch(.7 .2 80/1)',1],
 //   [250, 'oklch(.7 .2 120/1)',1],
-//   [125, 'oklch(.7 .2 160/1)',1]
 // ]);
 // $:freq("<125 250 500 1000 2000 4000>*4").s("sine")
 //   .color("<blue cyan green yellow orange red>*4")
