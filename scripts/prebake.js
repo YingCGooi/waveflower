@@ -1,5 +1,7 @@
 // CSS overrides
-function useSaturate(amt=3,hue=-15) {
+// @name: useHue
+// @example: useHue(3, -15)
+window.useHue = function (amt=3,hue=-15) {
   document.querySelectorAll('style').forEach(n => {
     n.append('[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}')
     n.append(':root { --background: #001 !important} ')
@@ -8,33 +10,8 @@ function useSaturate(amt=3,hue=-15) {
     n.append('.cm-line{filter:hue-rotate(' +hue+ 'deg) saturate(' +amt+ ')}')
   })
 }
-// @example:
-// useSpectrum(
-// {lines:4, base:1000, next:1/2, hue:40, hueStep:40, alpha:1},
-// [
-//   // [freq, color, width] --> setting this will override the config opts argument
-//   [1000,'oklch(.7 .2 40/1)',1],
-//   [500, 'oklch(.7 .2 80/1)',1],
-//   [250, 'oklch(.7 .2 120/1)',1],
-//   [125, 'oklch(.7 .2 160/1)',1]
-// ]);
-// $:freq("<125 250 500 1000 2000 4000>*4").s("sine")
-//   .color("<blue cyan green yellow orange red>*4")
-//   .gain("<6 5 4 3 2 1>*4".div(4))._spectrum({width:800,speed:4})
-function useSpectrum({lines=7,base=2000,next=1/2,alpha=1,hue=40,hueStep=40}=opts,stops=[]) {
-  console.log(lineargradient(stops,lines,base,next,alpha,hue,hueStep))
-  document.querySelectorAll('style').forEach(
-  n => n.append(
-  '#pre, .cm-widget-container>canvas{'+
-    'position:relative;'+
-    'transform: scaleY(175%) translateY(20%);'+
-    'z-index:-1;'+
-    'filter:saturate(1.5);'+
-    'background:'+lineargradient(stops,lines,base,next,alpha,hue,hueStep)+
-  '}'))
-}
 
-// CSS helper functions
+// CSS helper function
 function lineargradient(
   stops = [],  
   steps = 7,
@@ -75,6 +52,32 @@ function lineargradient(
       ].join(',')
     }).join(',')
   +')'
+}
+
+// @name: useSpectrum
+// @example:
+// useSpectrum(
+// {lines:4, base:1000, next:1/2, hue:40, hueStep:40, alpha:1},
+// [
+//   // [freq, color, width] --> setting this will override the config opts argument
+//   [1000,'oklch(.7 .2 40/1)',1],
+//   [500, 'oklch(.7 .2 80/1)',1],
+//   [250, 'oklch(.7 .2 120/1)',1],
+//   [125, 'oklch(.7 .2 160/1)',1]
+// ]);
+// $:freq("<125 250 500 1000 2000 4000>*4").s("sine")
+//   .color("<blue cyan green yellow orange red>*4")
+//   .gain("<6 5 4 3 2 1>*4".div(4))._spectrum({width:800,speed:4})
+window.useSpectrum = function ({lines=7,base=2000,next=1/2,alpha=1,hue=40,hueStep=40}=opts,stops=[]) {
+  document.querySelectorAll('style').forEach(
+  n => n.append(
+  '#pre, .cm-widget-container>canvas{'+
+    'position:relative;'+
+    'transform: scaleY(175%) translateY(20%);'+
+    'z-index:-1;'+
+    'filter:saturate(1.5);'+
+    'background:'+lineargradient(stops,lines,base,next,alpha,hue,hueStep)+
+  '}'))
 }
 
 // global functions
