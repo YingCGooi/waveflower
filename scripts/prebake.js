@@ -1,11 +1,81 @@
 // CSS overrides
-document.querySelectorAll('style').forEach(n => {
-  n.append('[type=range]{width:400px !important;accent-color:oklch(.7 .2 240);}')
-  n.append(':root { --background: #001 !important} ')
-  n.append('canvas {filter:saturate(4)}')  
-  n.append('#code .cm-line>*{background: #0000;}')
-  n.append('.cm-line{filter:hue-rotate(-15deg) saturate(3)}')
-})
+function useSaturate(amt=3,hue=-15) {
+  document.querySelectorAll('style').forEach(n => {
+    n.append('[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}')
+    n.append(':root { --background: #001 !important} ')
+    n.append('canvas {filter:saturate(' +amt+ ')}')  
+    n.append('#code .cm-line>*{background: #0000;}')
+    n.append('.cm-line{filter:hue-rotate(' +hue+ 'deg) saturate(' +amt+ ')}')
+  })
+}
+// @example:
+// useSpectrum(
+// {lines:4, base:1000, next:1/2, hue:40, hueStep:40, alpha:1},
+// [
+//   // [freq, color, width] --> setting this will override the config opts argument
+//   [1000,'oklch(.7 .2 40/1)',1],
+//   [500, 'oklch(.7 .2 80/1)',1],
+//   [250, 'oklch(.7 .2 120/1)',1],
+//   [125, 'oklch(.7 .2 160/1)',1]
+// ]);
+// $:freq("<125 250 500 1000 2000 4000>*4").s("sine")
+//   .color("<blue cyan green yellow orange red>*4")
+//   .gain("<6 5 4 3 2 1>*4".div(4))._spectrum({width:800,speed:4})
+function useSpectrum({lines=7,base=2000,next=1/2,alpha=1,hue=40,hueStep=40}=opts,stops=[]) {
+  console.log(lineargradient(stops,lines,base,next,alpha,hue,hueStep))
+  document.querySelectorAll('style').forEach(
+  n => n.append(
+  '#pre, .cm-widget-container>canvas{'+
+    'position:relative;'+
+    'transform: scaleY(175%) translateY(20%);'+
+    'z-index:-1;'+
+    'filter:saturate(1.5);'+
+    'background:'+lineargradient(stops,lines,base,next,alpha,hue,hueStep)+
+  '}'))
+}
+
+// CSS helper functions
+function lineargradient(
+  stops = [],  
+  steps = 7,
+  freq=8000, next=1/2, alpha=1,
+  hue=40, hueStep=40, 
+  w=.1, wmul=.1,
+  mode='to bottom',
+) {
+  const freqStops = {
+    [16000]: 4.4,
+    [8000] : 12.3,
+    [4000] : 20.6, // 5 *32 2^5
+    [2000] : 28.9, // 4 *16 2^4
+    [1000] : 37.2, // 3 *8 2^3 => 3 * -8.29
+    [500]  : 45.4, // 2 *4 2^2 => 2 * -8.29
+    [250]  : 53.7, // 1 *2 2^1 => -8.29
+    [125]  : 62,   // use as base
+    [62.5] : 70.3,
+  }
+  if (stops.length === 0) {
+    for (let i=0; i<steps; i++) {
+      let width = next < 1 ? w+(wmul*i) : w*steps-(wmul*i)
+      stops.push([
+        freq, 'oklch(.7 .2 '+hue+'/'+alpha+')', width
+      ])
+      hue += hueStep
+      freq *= next
+    }
+  }
+  if (next > 1) { stops = stops.reverse() }
+  return 'linear-gradient(' + mode + ',' +
+    stops.map(([freq, color, w])=>{
+      let stop = freqStops[freq] || (70.3 - 8.29*Math.log2(freq/62.5))      
+      return [
+        '#0000 ' + Number(stop - w).toFixed(2) + '%',
+        color + ' ' + stop + '%',
+        '#0000 ' + Number(stop + w).toFixed(2) + '%'
+      ].join(',')
+    }).join(',')
+  +')'
+}
 
 // global functions
 window.blockArrange = function (patArr=[
