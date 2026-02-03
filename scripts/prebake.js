@@ -1,17 +1,29 @@
 // CSS overrides
-// @name: wetEditor
-// @param: <Number> saturation amount (default 3)
-// @param: <Number> hue shift (default -15)
-// @example: useHue(3, -15)
-window.wetEditor = function (amount=3,hueShift=-15) {
+// use custom icon
+document.head.querySelectorAll('[rel=icon]').forEach(n => {
+  n.type = 'image/png'
+  n.href = 'https://waveflower.org/assets/r=sin2t.png'
+})
+
+/**
+ * @name wetEditor
+ * @synonyms useWet
+ * @alias useWet
+ * @param {Number} saturation amount (default 3)
+ * @param {Number} hue shift (default -15)
+ * @example useWet(3, -15)
+ */
+window.wetEditor = function (amount = 3, hueShift = -15) {
   document.querySelectorAll('style').forEach(n => {
     n.append('[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}')
     n.append(':root { --background: #001 !important} ')
-    n.append('canvas {filter:saturate(' +amount+ ')}')  
+    n.append('canvas {filter:saturate(' + amount + ')}')
     n.append('#code .cm-line>*{background: #0000;}')
-    n.append('.cm-line{filter:hue-rotate(' +hueShift+ 'deg) saturate(' +amount+ ')}')
+    n.append('.cm-line{filter:hue-rotate(' + hueShift + 'deg) saturate(' + amount + ')}')
   })
 }
+window.useWet = (a, h) => window.wetEditor(a, h)
+
 // CSS helper function
 function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, wmul = 0.1, mode = 'to bottom') {
   const freqStops = {
@@ -20,9 +32,9 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
     [4000]: 20.6, // 5 *32 2^5
     [2000]: 28.9, // 4 *16 2^4
     [1000]: 37.2, // 3 *8 2^3 => 3 * -8.29
-    [500]: 45.4, // 2 *4 2^2 => 2 * -8.29
-    [250]: 53.7, // 1 *2 2^1 => -8.29
-    [125]: 62, // use as base
+    [500]: 45.4,  // 2 *4 2^2 => 2 * -8.29
+    [250]: 53.7,  // 1 *2 2^1 => -8.29
+    [125]: 62,    // use as base
     [62.5]: 70.3,
   };
   // only construct a stops array if not provided
@@ -56,31 +68,34 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
   );
 }
 
-// @name: useSpectrum(<Object> config | <Array> stops)
-//
-// @param: <Object> config
-// @param: lines <Int> : generate up to number of lines
-// @param: base <Int> : start frequency to draw line
-// @param: next <Number> : subsequent frequency will multiply by this multiplier
-// @param: alpha <Number> : transparency of lines
-// @param: hue <Int> : starting hue ranges between 0-360
-// @param: hueStep <Int> : hue spacing between each subsequent hue, lower numbers mean colors will be closer
-// @param: thickness <Number> : line thickness (in px)
-// @param: mul <Number> : subsequent line thickness multiplier, positive => subsequently thicker lines
-//
-// @param: <Array> stops, an array of stops with this following format
-// @param: <Array> stop : [frequency <Int>, CSScolor <string>, thickness <Number (optional)>]
-// @example:
-// useSpectrum({lines:4, base:1000, next:1/2, hue:40, hueStep:40, alpha:1});
-// // OR
-// useSpectrum([
-//   [1000,'oklch(.7 .2 40/1)',1],
-//   [250, 'oklch(.7 .2 120/1)',1],
-// ]);
-//
-// $:freq("<125 250 500 1000 2000 4000>*4").s("sine")
-//   .color("<blue cyan green yellow orange red>*4")
-//   .gain("<6 5 4 3 2 1>*4".div(4))._spectrum({width:800,speed:4})
+/**
+* @name useSpectrum(<Object>config|<Array>stops)
+*
+* @param {Object} config contains these options:
+* @param {Int} lines: generate up to number of lines
+* @param {Int} base: line draws first at this frequency
+* @param {Number} next: subsequent frequency will multiply by this multiplier
+* @param {Number} alpha: transparency of lines
+* @param {Int} hue: starting hue ranges between 0-360
+* @param {Int} hueStep: hue spacing between each subsequent hue, lower numbers mean colors will be closer
+* @param {Number} thickness: line thickness (in px)
+* @param {Number} mul: subsequent line thickness multiplier, positive => subsequently thicker lines
+* -- OR --
+* @param {Array} stops, an array of stops with this following format:
+* @param {Array} stop: [frequency <Int>, CSScolor <string>, thickness <Number (optional)>]
+* @example
+* useSpectrum({lines:3, base:1000, next:1/2, hue:40, hueStep:40, alpha:.7});
+* // OR
+* useSpectrum([
+*   [1000,'oklch(.7 .2 40/.7)',1],
+*   [500, 'oklch(.7 .2 80/.7)',1],
+*   [250, 'oklch(.7 .2 120/.7)',1],
+* ]);
+*
+* $:freq("<125 250 500 1000 2000 4000>*4").s("sine")
+*   .color("<blue cyan green yellow orange red>*4")
+*   .gain("<6 5 4 3 2 1>*4".div(4))._spectrum({width:800})
+*/
 window.useSpectrum = function (opts) {
   let stops = [];
   const { lines = 7, base = 8000, next = 1 / 2, alpha = 1, hue = 40, hueStep = 40, thickness = 0.1, mul = 0.2 } = opts;
@@ -92,64 +107,64 @@ window.useSpectrum = function (opts) {
     .forEach((n) =>
       n.append(
         '#pre, .cm-widget-container>canvas{' +
-          'position:relative;' +
-          'transform: scaleY(175%) translateY(7%);' +
-          'z-index:-1;' +
-          'filter:saturate(1.5);' +
-          'background:' +
-          lineargradient(stops, lines, base, next, alpha, hue, hueStep, thickness, mul) +
-          '}',
+        'position:relative;' +
+        'transform: scaleY(175%) translateY(7%);' +
+        'z-index:-1;' +
+        'filter:saturate(1.5);' +
+        'background:' +
+        lineargradient(stops, lines, base, next, alpha, hue, hueStep, thickness, mul) +
+        '}',
       ),
     );
 };
 
 
 // global functions
-window.blockArrange = function (patArr=[
-  [note("A"),"<F F>"],[note("C"),"<0 F>"]
-], modifiers=[]) {
+window.blockArrange = function (patArr = [
+  [note("A"), "<F F>"], [note("C"), "<0 F>"]
+], modifiers = []) {
   return stack(
     patArr.map(([pat, maskPat]) => {
       return maskPat.withValue(v => {
-          const value = v.toString()
-          if (value == 0) { return }        
-          modifiers.forEach(([modifier, callback]) => {
-            if (value == modifier) { pat = callback(pat) }
-          })
-          return pat
+        const value = v.toString()
+        if (value == 0) { return }
+        modifiers.forEach(([modifier, callback]) => {
+          if (value == modifier) { pat = callback(pat) }
+        })
+        return pat
       }).innerJoin()
     }).flat()
   )
 }
 
 // function definitions and new registrations
-function supersynth(pat, sound='sawtooth', 
-  {d=.1,v=4,r=3/4,w=0.2,n=4,a=.01,g=3/4,l=7,t=0,os=[],gs=[],ts=[]} = {},
+function supersynth(pat, sound = 'sawtooth',
+  { d = .1, v = 4, r = 3 / 4, w = 0.2, n = 4, a = .01, g = 3 / 4, l = 7, t = 0, os = [], gs = [], ts = [] } = {},
 ) {
-  let lrpan = [Math.max(0.5-w,0), Math.min(0.5+w,1)]
+  let lrpan = [Math.max(0.5 - w, 0), Math.min(0.5 + w, 1)]
   const voices = []
-  if (os.length > 0) { n = os.length-1 } // override n if os is not empty
-  let sign = +1  
-  for (let i=0; i<=n; i++) {
-    let panning = lrpan[i%2]
-    let layer = pat.add(ts[i]||0).s(os[i]||sound).FX(gain(gs[i]||g)) // construct base layer
+  if (os.length > 0) { n = os.length - 1 } // override n if os is not empty
+  let sign = +1
+  for (let i = 0; i <= n; i++) {
+    let panning = lrpan[i % 2]
+    let layer = pat.add(ts[i] || 0).s(os[i] || sound).FX(gain(gs[i] || g)) // construct base layer
     if (i > 0) { layer = layer.pan(panning) } // subsequent layers
-    if (t > 0) { layer = layer.late(t*i) } // add optional time offset
-    if (v > 0) { layer = layer.vib(v*r**i).vmod(sign*d*r**i) } // vibs, alt between inc/dec detune
+    if (t > 0) { layer = layer.late(t * i) } // add optional time offset
+    if (v > 0) { layer = layer.vib(v * r ** i).vmod(sign * d * r ** i) } // vibs, alt between inc/dec detune
     voices.push(layer)
-    sign = -sign    
+    sign = -sign
   }
   return stack(...voices)
-    .attack(a).lpf(2**(l+5)).postgain(1/((n+1)**0.2))
+    .attack(a).lpf(2 ** (l + 5)).postgain(1 / ((n + 1) ** 0.2))
 }
 // register as a method
-register('supersynth', (param, x)=> {
+register('supersynth', (param, x) => {
   const aliases = {
-    depth:'d',detune:'d',vib:'v',vibrato:'v',ratio:'r',
-    detuner:'r',stereo:'w',width:'w',voices:'n',
-    att:'a',attack:'a',gain:'g',lp:'l',lowpass:'l',late:'t',off:'t',shift:'t',
-    oscs:'os',osc:'os',gains:'gs',oscgains:'gs',transposes:'ts',noteadd:'ts',
-  }  
+    depth: 'd', detune: 'd', vib: 'v', vibrato: 'v', ratio: 'r',
+    detuner: 'r', stereo: 'w', width: 'w', voices: 'n',
+    att: 'a', attack: 'a', gain: 'g', lp: 'l', lowpass: 'l', late: 't', off: 't', shift: 't',
+    oscs: 'os', osc: 'os', gains: 'gs', oscgains: 'gs', transposes: 'ts', noteadd: 'ts',
+  }
   Object.keys(aliases).forEach(a => {
     if (param[a] !== undefined) {
       param[aliases[a]] = param[a]
@@ -159,7 +174,7 @@ register('supersynth', (param, x)=> {
     return supersynth(x, param)
   }
   if (Array.isArray(param)) {
-    return supersynth(x, param[0], {osc: param})
+    return supersynth(x, param[0], { osc: param })
   }
   if (typeof param == 'object') {
     return supersynth(x, (param.s || 'sawtooth'), param)
@@ -195,11 +210,11 @@ let glide = register(
           const freqF = getFrequencyFromValue(value, value.s === 'sbd' ? 29 : 36); // target
           const freqI = prev.length
             ? prev.reduce((closest, v) => {
-                const phase = glideT > 0 ? Math.min((t - v.t) / glideT, 1) : 1;
-                const cand = v.freqI + phase * (v.freqF - v.freqI);
-                if (closest == null) return cand;
-                return Math.abs(cand - freqF) < Math.abs(closest - freqF) ? cand : closest;
-              }, null)
+              const phase = glideT > 0 ? Math.min((t - v.t) / glideT, 1) : 1;
+              const cand = v.freqI + phase * (v.freqF - v.freqI);
+              if (closest == null) return cand;
+              return Math.abs(cand - freqF) < Math.abs(closest - freqF) ? cand : closest;
+            }, null)
             : freqF;
           if (trig) {
             curr.push({ freqI, freqF, t });
