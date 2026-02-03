@@ -1,87 +1,70 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      Waveflower: Audio signal visualization in radial form - @strudel/repl
-      available with respect to AGPL-3.0 license
-    </title>
-    <link rel="icon" href="./assets/r=sin2t_oy.png" type="image/png" />
-    <link rel="stylesheet" href="./stylesheets/style.css" />
-  </head>
 
-  <body>
-    <script src="https://colorjs.io/dist/color.global.js"></script>
-    <!-- use "/color.global.min.js" for production -->
-    <script>
-      var params = new URLSearchParams(window.location.search);
-      if (params.get("repl")) {
-        const strudel = document.createElement("script");
-        strudel.src = "https://unpkg.com/@strudel/repl@latest";
-        document.body.appendChild(strudel);
-      }
-    </script>
-    <script src="./scripts/util.js"></script>
-    <section class="interface">
-      <form id="waveform">
-        <label title="Sine"
-          ><i aria-label="sine">∿</i
-          ><input checked type="radio" name="osc" value="sine"
-        /></label>
-        <label title="Triangle"
-          ><i aria-label="triangle">⋀⋁</i
-          ><input type="radio" name="osc" value="triangle"
-        /></label>
-        <label title="Square"
-          ><i aria-label="square">⊓⊔</i
-          ><input type="radio" name="osc" value="square"
-        /></label>
-        <label title="Sawtooth"
-          ><i aria-label="sawtooth">⊿⊿</i
-          ><input type="radio" name="osc" value="sawtooth"
-        /></label>
-        <label title="Set oscillator frequency (Hz)">
-          <small>ⓘ</small> <strong>OSC</strong>
-          <input
-            type="number"
-            name="freq"
-            value="220"
-            min="1"
-            max="16000"
-            placeholder="Hz"
-          />
-        </label>
-        <label title="Set base period interval (1/s)">
-          <strong>BASE</strong>
-          <select id="base-select" name="base"></select>
-          <script>
-            for (let i = 16; i < 70; i++) {
-              const f = midiToFreq(i);
-              const n = midiToNote(i);
-              const o = document.createElement("option");
-              o.value = f.toFixed(2);
-              o.innerHTML = `${n} ${Math.round(f)}/s`;
-              $("[name=base]").appendChild(o);
-            }
-          </script>
-        </label>
-      </form>
-      <fieldset>
-        <button id="play">Play</button>
-        <button id="stop">Stop</button>
-      </fieldset>
-      <input id="fileinput" type="file" accept="*" />
-      <nav>
-        <a href="https://github.com/YingCGooi/waveflower/blob/main/LICENSE">
-          <span class="flip">⇱</span> view AGPL-3.0 license + source
-        </a>
-      </nav>
-    </section>
-    <section id="canvases"><!-- all canvases go in here --></section>
-    <strudel-editor id="repl"></strudel-editor>
-  </body>
-  <script src="./scripts/wave.js"></script>
-  <script src="./scripts/handlers.js"></script>
-  <link rel="stylesheet" href="./stylesheets/override.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    Waveflower: Audio signal visualization in radial form - @strudel/repl
+    available with respect to AGPL-3.0 license
+  </title>
+  <link rel="icon" href="./assets/r=sin2t.png" type="image/png" />
+  <link rel="stylesheet" href="./stylesheets/style.css" />
+</head>
+
+<body>
+  <script src="https://colorjs.io/dist/color.global.js"></script>
+  <!-- use "/color.global.min.js" for production -->
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    if (params.get("repl")) {
+      const strudel = document.createElement("script");
+      strudel.src = "https://unpkg.com/@strudel/repl@latest";
+      document.body.appendChild(strudel);
+    }
+  </script>
+  <script src="./scripts/util.js"></script>
+  <section class="interface">
+    <form id="waveform">
+      <label title="Sine"><i aria-label="sine">∿</i><input checked type="radio" name="osc" value="sine" /></label>
+      <label title="Triangle"><i aria-label="triangle">⋀⋁</i><input type="radio" name="osc" value="triangle" /></label>
+      <label title="Square"><i aria-label="square">⊓⊔</i><input type="radio" name="osc" value="square" /></label>
+      <label title="Sawtooth"><i aria-label="sawtooth">⊿⊿</i><input type="radio" name="osc" value="sawtooth" /></label>
+      <label title="Set oscillator frequency (Hz)">
+        <small>ⓘ</small> <strong>OSC</strong>
+        <input type="number" name="freq" value="220" min="1" max="16000" placeholder="Hz" />
+      </label>
+      <label title="Set base period interval (1/s)">
+        <strong>BASE</strong>
+        <select id="base-select" name="base"></select>
+        <script>
+          for (let i = 16; i < 70; i++) {
+            const f = midiToFreq(i);
+            const n = midiToNote(i);
+            const o = document.createElement("option");
+            o.value = f.toFixed(2);
+            o.innerHTML = `${n} ${Math.round(f)}/s`;
+            $("[name=base]").appendChild(o);
+          }
+        </script>
+      </label>
+    </form>
+    <fieldset>
+      <button id="play">Play</button>
+      <button id="stop">Stop</button>
+    </fieldset>
+    <input id="fileinput" type="file" accept="*" />
+    <nav>
+      <a href="https://github.com/YingCGooi/waveflower/blob/main/LICENSE">
+        <span class="flip">⇱</span> view AGPL-3.0 license + source
+      </a>
+    </nav>
+  </section>
+  <section id="canvases"><!-- all canvases go in here --></section>
+  <strudel-editor id="repl"></strudel-editor>
+</body>
+<script src="./scripts/wave.js"></script>
+<script src="./scripts/handlers.js"></script>
+<link rel="stylesheet" href="./stylesheets/override.css" />
+
 </html>
