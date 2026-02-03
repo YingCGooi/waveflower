@@ -4,7 +4,13 @@ document.head.querySelectorAll('[rel=icon]').forEach(n => {
   n.type = 'image/png'
   n.href = 'https://waveflower.org/assets/r=sin2t.png'
 })
-
+// use custom title
+setTimeout(() => {
+  const title = document.head.querySelector('title')
+  if (title.innerText.startsWith('Strudel')) {
+    title.innerText = 'Strudel - Waveflower Prebaked REPL'
+  }
+}, 100)
 /**
  * @name wetEditor
  * @synonyms useWet
