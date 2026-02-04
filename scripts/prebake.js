@@ -314,34 +314,76 @@ Pattern.prototype.pg = function (amt) {
 const URL = 'https://waveflower.org/scripts/prebake.js';
 
 // JSDoc parsing + HTML insertion
-window.useJSDoc = async function () {
-  const nav = document.querySelector('nav[aria-label="Menu Panel"]');
-  const divs = nav.querySelectorAll('div');
-  let divNamesList = divs[0];
-  divs.forEach((n) => (n.children.length > 99 || n?.firstChild?.tagName === 'A' ? (divNamesList = n) : 0));
+window.useJSDoc = async function (url = URL) {
+  function nav() {
+    return document.querySelector('nav[aria-label="Menu Panel"]');
+  }
+  // function reference() {
+  //   return Array.from(nav().querySelectorAll('button')).filter((b) => b.innerText.toLowerCase() == 'reference')[0];
+  // }
 
   let docs = [];
   try {
-    const response = await fetch(URL);
+    const response = await fetch(url);
     if (!response.ok) throw new Error('Response status: ' + response.status);
     const s = await response.text();
     docs = String(s)
       .split(/(\/\*\*)|(\*\/)/)
-      .filter((p) => p && p.includes('@name'))
+      .filter((p) => p && p.substring(0, 64).includes('@name'))
       .map((p) => p.split('\n'));
+    console.info('JSdocs parsed from ' + URL, docs);
   } catch (error) {
     console.error(error.message);
   }
 
-  docs.map((doc) => {
-    let a = document.createElement('A');
-    a.className = divNamesList.firstChild.className + ' ' + 'block';
-    a.style = 'color: oklch(from var(--caret) l .2 h);';
-    a.innerText = doc
-      .filter((l) => l.includes('@name'))[0]
-      .split('@name')[1]
-      .trim();
-    divNamesList.prepend(a);
-    return a;
+  let prepended = 0; // token for rate limiting
+  setInterval(() => (prepended = 0), 1000); // reset rate limit
+
+  // observe mutations and prepend to the divNamesList
+  new MutationObserver((mutationsList) => {
+    let toMutate = false;
+    for (const mutation of mutationsList) {
+      if (
+        mutation.type === 'childList' &&
+        mutation.addedNodes.length > 0 &&
+        !mutation.target.className.includes('cm-lineNumbers') &&
+        !mutation.target.className.includes('cm-gutters')
+      ) {
+        toMutate = true;
+      }
+    }
+    // do not prepend until the next second
+    if (prepended > 1 || !toMutate) {
+      return;
+    }
+    const divs = nav().querySelectorAll('div');
+    let divNamesList = null;
+    divs.forEach((n) =>
+      n.previousElementSibling &&
+      n.previousElementSibling.firstChild &&
+      n.previousElementSibling.firstChild.tagName === 'INPUT' // sibling is a search input box
+        ? (divNamesList = n)
+        : 0,
+    );
+
+    docs.forEach((doc) => {
+      if (!divNamesList) {
+        return;
+      }
+      let a = document.createElement('A');
+      a.className = divNamesList.firstChild.className + ' ' + 'block';
+      a.style = 'color: oklch(from var(--caret) l .2 h);';
+      a.innerText = doc
+        .filter((l) => l.includes('@name'))[0]
+        .split('@name')[1]
+        .trim();
+      divNamesList.prepend(a);
+      prepended += 1;
+    });
+  }).observe(document.body, {
+    childList: true,
+    subtree: true,
   });
 };
+
+useJSDoc();
