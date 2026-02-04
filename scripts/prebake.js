@@ -11,6 +11,14 @@ setTimeout(() => {
     title.innerText = 'Strudel - Waveflower Prebaked REPL'
   }
 }, 100)
+
+window.removePrebakeCSS = function () {
+  document.querySelectorAll('style').forEach(n => { 
+     let parts = n.innerText.split('#pre')
+     n.innerText = parts[0]
+ })
+}
+
 /**
  * @name wetEditor
  * @synonyms useWet
@@ -21,11 +29,12 @@ setTimeout(() => {
  */
 window.wetEditor = function (amount = 3, hueShift = -15) {
   document.querySelectorAll('style').forEach(n => {
-    n.append('[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}')
-    n.append(':root { --background: #001 !important} ')
-    n.append('canvas {filter:saturate(' + amount + ')}')
-    n.append('#code .cm-line>*{background: #0000;}')
-    n.append('.cm-line{filter:hue-rotate(' + hueShift + 'deg) saturate(' + amount + ')}')
+    window.removePrebakeCSS();
+    n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}')
+    n.append('#pre,:root { --background: #001 !important} ')
+    n.append('#pre,canvas {filter:saturate(' + amount + ')}')
+    n.append('#pre,#code .cm-line>*{background: #0000;}')
+    n.append('#pre,.cm-line{filter:hue-rotate(' + hueShift + 'deg) saturate(' + amount + ')}')
   })
 }
 window.useWet = (a, h) => window.wetEditor(a, h)
@@ -111,6 +120,7 @@ window.useSpectrum = function (opts) {
   document
     .querySelectorAll('style')
     .forEach((n) =>
+      window.removePrebakeCSS();
       n.append(
         '#pre, .cm-widget-container>canvas{' +
         'position:relative;' +
