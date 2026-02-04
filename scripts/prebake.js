@@ -62,25 +62,18 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
     }
   }
   stops = stops.sort(([fa], [fb]) => fb - fa); // ensure stops are sorted in descending order
-  return (
-    'linear-gradient(' +
-    mode +
-    ',' +
-    stops
-      .map(([freq, color, w]) => {
-        if (!w) {
-          w = 1 / 2;
-        }
-        let stop = freqStops[freq] || 70.3 - 8.29 * Math.log2(freq / 62.5);
-        return [
-          '#0000 ' + Number(stop - w).toFixed(2) + '%',
-          color + ' ' + stop + '%',
-          '#0000 ' + Number(stop + w).toFixed(2) + '%',
-        ].join(',');
-      })
-      .join(',') +
-    ')'
-  );
+  stops = stops.map(([freq, color, w]) => {
+    if (!w) {
+      w = 1 / 2;
+    }
+    let stop = freqStops[freq] || 70.3 - 8.29 * Math.log2(freq / 62.5);
+    return [
+      '#0000 ' + Number(stop - w).toFixed(2) + '%',
+      color + ' ' + stop + '%',
+      '#0000 ' + Number(stop + w).toFixed(2) + '%',
+    ].join(',');
+  });
+  return 'linear-gradient(' + mode + ',' + stops.join(',') + ')';
 }
 
 /**
