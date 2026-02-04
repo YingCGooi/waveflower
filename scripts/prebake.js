@@ -77,7 +77,7 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
 }
 
 /**
- * @name useSpectrum(<Object>config|<Array>stops)
+ * @name useSpectrum
  *
  * @param {Object} config contains these options:
  * @param {Int} lines: generate up to number of lines
@@ -308,4 +308,40 @@ Pattern.prototype.upn = function (pat, oc = 3) {
 };
 Pattern.prototype.pg = function (amt) {
   return this.postgain(amt);
+};
+
+// URL to current prebake for JSDoc processing
+const URL = 'https://waveflower.org/scripts/prebake.js';
+
+// JSDoc parsing + HTML insertion
+window.useJSDoc = async function () {
+  const nav = document.querySelector('nav[aria-label="Menu Panel"]');
+  const divs = nav.querySelectorAll('div');
+  let divNamesList = divs[0];
+  divs.forEach((n) => (n.children.length > 99 || n?.firstChild?.tagName === 'A' ? (divNamesList = n) : 0));
+
+  let docs = [];
+  try {
+    const response = await fetch(URL);
+    if (!response.ok) throw new Error('Response status: ' + response.status);
+    const s = await response.text();
+    docs = String(s)
+      .split(/(\/\*\*)|(\*\/)/)
+      .filter((p) => p && p.includes('@name'))
+      .map((p) => p.split('\n'));
+  } catch (error) {
+    console.error(error.message);
+  }
+
+  docs.map((doc) => {
+    let a = document.createElement('A');
+    a.className = divNamesList.firstChild.className + ' ' + 'block';
+    a.style = 'color: oklch(from var(--caret) l .2 h);';
+    a.innerText = doc
+      .filter((l) => l.includes('@name'))[0]
+      .split('@name')[1]
+      .trim();
+    divNamesList.prepend(a);
+    return a;
+  });
 };
