@@ -321,11 +321,11 @@ const URL = 'https://waveflower.org/scripts/prebake.js';
 const TAGS = {
   name: (name) => '<h3 class="font-mono my-0 pt-4">' + name + '</h3>',
   tags: (tags) => '<span class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' + tags + '</span>',
-  synonyms: (syn) => '<p><code>' + syn + '</code></p>',
+  synonyms: (syn) => '<p><em>synonyms</em> <code>' + syn + '</code></p>',
   text: (text) => '<p><p>' + text + '</p></p>',
   example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
-  memberof: (mem) => '<p><em>member of</em><code>' + mem + '</code></p>',
-  returns: (ret) => '<p><em>returns</em><code>' + ret + '</code></p>',
+  memberof: (mem) => '<p><em>member of</em> <code>' + mem + '</code></p>',
+  returns: (ret) => '<p><em>returns</em> <code>' + ret + '</code></p>',
   param: (type, name, desc, listStyle = 'square') =>
     '<li style="list-style-type:' +
     listStyle +
