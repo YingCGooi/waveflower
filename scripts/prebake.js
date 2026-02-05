@@ -93,13 +93,15 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
  * @param {Array} stop: [frequency <Int>, CSScolor <string>, thickness <Number (optional)>]
  * @example
  * useSpectrum({lines:3, base:1000, next:1/2, hue:40, hueStep:40, alpha:.7});
- * // OR
+ *
+ * @example
  * useSpectrum([
  *   [1000,'oklch(.7 .2 40/.7)',1],
  *   [500, 'oklch(.7 .2 80/.7)',1],
  *   [250, 'oklch(.7 .2 120/.7)',1],
  * ]);
  *
+ * @example
  * $:freq("<125 250 500 1000 2000 4000>*4").s("sine")
  *   .color("<blue cyan green yellow orange red>*4")
  *   .gain("<6 5 4 3 2 1>*4".div(4))._spectrum({width:800})
@@ -384,12 +386,14 @@ window.useJSDoc = async function (url = URL) {
         : 0,
     );
 
+    // remove all existing .pre elements before adding new ones
+    document.querySelectorAll('.pre').forEach((n) => n.remove());
     docs.forEach((doc) => {
       if (!divNamesList) {
         return;
       }
       let a = document.createElement('A');
-      a.className = divNamesList.firstChild.className + ' ' + 'block';
+      a.className = divNamesList.firstChild.className + ' ' + 'block' + ' ' + 'pre';
       a.style = 'color: oklch(from var(--caret) l .2 h);';
       a.innerText = doc
         .filter((l) => l.includes('@name '))[0]
