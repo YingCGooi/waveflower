@@ -331,12 +331,12 @@ const TAGS = {
     listStyle +
     ';list-style-position:inside;font-weight:400;letter-spacing:-.1px">' +
     '<code style=' +
-    '"color: oklch(from var(--tw-ring-color) l c h / 1);font-weight: 700;padding: 2px 4px;"' +
+    '"color: oklch(from var(--tw-ring-color) l c h / 1) !important;font-weight: 700;padding: 2px 4px;"' +
     '>' +
     type +
     '</code>' +
     '<code class="border border-muted" style=' +
-    '"margin-right:.7em;color: oklch(from var(--caret) l .1 h);padding: 1px 4px;font-weight: 400;filter: contrast(1.5);"' +
+    '"margin-right:.7em;color: oklch(from var(--caret) l .1 h) !important;padding: 1px 4px;font-weight: 400;filter: contrast(1.5);"' +
     '>' +
     name +
     '</code>' +
@@ -406,69 +406,79 @@ window.useJSDoc = async function (url = URL) {
 
     // remove all existing .pre elements before adding new ones
     document.querySelectorAll('.pre').forEach((n) => n.remove());
+    let as = [];
     docs.forEach((doc) => {
       if (!divNamesList) {
         return;
       }
       let a = document.createElement('A');
       a.className = divNamesList.firstChild.className + ' ' + 'block' + ' ' + 'pre';
-      a.style = 'color: oklch(from var(--caret) l .2 h);';
+      a.style = 'color: oklch(from var(--caret) l .2 h);font-family: inherit;';
       a.innerText = doc
         .filter((l) => l.includes('@name '))[0]
         .split('@name')[1]
         .trim();
+      a.href = '#' + a.innerText;
       divNamesList.prepend(a);
+      as.push(a);
       prepended += 1;
     });
 
     let sections = docs
-      .map((d) => {
+      .map((d, i) => {
         let isExample = false;
         let isParam = false;
-        return (
-          '<section>' +
-          d
-            .map((l) => l.split(/(\*\s+\@)|(\s)/).filter((s) => s && s.length > 1 && !s.includes('@')))
-            .map(([tag, v1, v2, ...v3]) => {
-              if (isExample) {
-                if (tag === undefined) {
-                  isExample = false;
-                  return '</pre>';
-                }
-                if (tag === 'example') {
-                  tag = '';
-                }
-                return [tag, v1, v2, ...v3].join(' ') + '\n';
+        return d
+          .map((l) => l.split(/(\*\s+\@)|(\s)/).filter((s) => s && s.length > 1 && !s.includes('@')))
+          .map(([tag, v1, v2, ...v3]) => {
+            if (isExample) {
+              if (tag === undefined) {
+                isExample = false;
+                return '</pre>';
               }
               if (tag === 'example') {
-                isExample = true;
-                return '<pre class="bg-background">';
+                tag = '';
               }
-              if (tag && !TAGS[tag]) {
-                return TAGS.text([tag, v1, v2, v3.join(' ')].join(' '));
+              return [tag, v1, v2, ...v3].join(' ') + '\n';
+            }
+            if (tag === 'example') {
+              isExample = true;
+              return '<pre class="bg-background">';
+            }
+            if (tag && !TAGS[tag]) {
+              return TAGS.text([tag, v1, v2, v3.join(' ')].join(' '));
+            }
+            if (!tag) {
+              return '';
+            }
+            if (tag === 'param') {
+              v1 = v1.replaceAll('{', '&lt;').replaceAll('}', '&gt;');
+              if (v1.includes('[')) {
+                // disable list style for all [Object] param
+                return TAGS[tag](v1, v2, v3.join(' '), 'none');
               }
-              if (!tag) {
-                return '';
-              }
-              if (tag === 'param') {
-                v1 = v1.replaceAll('{', '&lt;').replaceAll('}', '&gt;');
-                if (v1.includes('[')) {
-                  // disable list style for all [Object] param
-                  return TAGS[tag](v1, v2, v3.join(' '), 'none');
-                }
-              }
-              return TAGS[tag](v1, v2, v3.join(' '));
-            })
-            .join('') +
-          '</section>'
-        );
+            }
+            return TAGS[tag](v1, v2, v3.join(' '));
+          })
+          .join('');
       })
       .join('');
-    let reference = document.querySelector('#reference-container');
-    reference ? (reference.firstElementChild.innerHTML = sections) : 0;
+    sections.reverse().forEach((s, i) => {
+      let section = document.createElement('section');
+      section.id = as[i].innerText;
+      section.className = 'pre';
+      section.innerHTML = s;
+      let reference = document.querySelector('#reference-container');
+      reference ? reference.firstElementChild.prepend(section) : 0;
+    });
   }).observe(document.body, {
     childList: true,
     subtree: true,
   });
 };
 useJSDoc();
+
+window.useListMarkerColor = function (color = 'var(--tw-prose-bullets)') {
+  document.querySelectorAll('style').forEach((n) => n.append('#pre,::marker { color:' + color + ' }'));
+};
+useListMarkerColor();
