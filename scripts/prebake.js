@@ -80,7 +80,7 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
  *
  * @name useSpectrum
  * Draws spectral lines on canvas, useful for pinpointing frequency ranges in ._spectrum()
- * @param {Object} config contains these options:
+ * @param {[Object]} config contains these options:
  * @param {Int} lines: generate up to number of lines
  * @param {Int} base: line draws first at this frequency
  * @param {Number} next: subsequent frequency will multiply by this multiplier
@@ -90,7 +90,7 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
  * @param {Number} thickness: line thickness (in px)
  * @param {Number} mul: subsequent line thickness multiplier, positive => subsequently thicker lines
  * -- OR --
- * @param {Array} stops: an array of stops with this following format:
+ * @param {[Array]} stops: an array of stops with this following format:
  * @param {Array} stop: [frequency <Int>, CSScolor <string>, thickness <Number (optional)>]
  * @example
  * useSpectrum({lines:3, base:1000, next:1/2, hue:40, hueStep:40, alpha:.7});
@@ -324,15 +324,17 @@ const TAGS = {
   example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
   memberof: (mem) => '<p><code>' + mem + '</code></p>',
   returns: (ret) => '<p><code>' + mem + '</code></p>',
-  param: (type, name, desc) =>
-    '<li style="list-style-type:square;list-style-position: inside;">' +
+  param: (type, name, desc, listStyle = 'square') =>
+    '<li style="list-style-type:' +
+    listStyle +
+    ';list-style-position:inside;font-weight:400;letter-spacing:-.1px">' +
     '<code style=' +
     '"color: oklch(from var(--tw-ring-color) l c h / 1);font-weight: 700;padding: 2px 4px;"' +
     '>' +
     type +
     '</code>' +
     '<code class="border border-muted" style=' +
-    '"color: margin: 0 .5em;oklch(from var(--caret) l .1 h);padding: 1px 4px;font-weight: 400;filter: contrast(1.5);"' +
+    '"margin-right:.7em;color: oklch(from var(--caret) l .1 h);padding: 1px 4px;font-weight: 400;filter: contrast(1.5);"' +
     '>' +
     name +
     '</code>' +
@@ -362,7 +364,7 @@ window.useJSDoc = async function (url = URL) {
     const s = await response.text();
     docs = String(s)
       .split(/(\/\*\*)|(\*\/)/)
-      .filter((p) => p && p.substring(0, 512).includes('@name '))
+      .filter((p) => p && p.substring(0, 512).includes('@' + 'name'))
       .map((p) => p.split('\n'));
     console.info('JSdocs parsed from ' + URL, docs);
   } catch (error) {
@@ -446,7 +448,11 @@ window.useJSDoc = async function (url = URL) {
                 return '';
               }
               if (tag === 'param') {
-                v1 = v1.replaceAll('{', '<').replaceAll('}', '>');
+                v1 = v1.replaceAll('{', '&lt;').replaceAll('}', '&gt;');
+                if (v1.includes('[')) {
+                  // disable list style for all [Object] param
+                  return TAGS[tag](v1, v2, v3.join(' '), 'none');
+                }
               }
               return TAGS[tag](v1, v2, v3.join(' '));
             })
