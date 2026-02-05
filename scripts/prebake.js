@@ -463,14 +463,16 @@ window.useJSDoc = async function (url = URL) {
           .join('');
       })
       .join('');
-    sections.reverse().forEach((s, i) => {
-      let section = document.createElement('section');
-      section.id = as[i].innerText;
-      section.className = 'pre';
-      section.innerHTML = s;
-      let reference = document.querySelector('#reference-container');
-      reference ? reference.firstElementChild.prepend(section) : 0;
-    });
+    Array.from(sections)
+      .reverse()
+      .forEach((s, i) => {
+        let section = document.createElement('section');
+        section.id = as[i].innerText;
+        section.className = 'pre';
+        section.innerHTML = s;
+        let reference = document.querySelector('#reference-container');
+        reference ? reference.firstElementChild.prepend(section) : 0;
+      });
   }).observe(document.body, {
     childList: true,
     subtree: true,
