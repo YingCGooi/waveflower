@@ -8,6 +8,7 @@ document.head.querySelectorAll('[rel=icon]').forEach((n) => {
 let windowTitle = 'Strudel [Prebaked] REPL';
 /**
  * @name useTitle
+ * @tags prebake
  * set a custom title to your browser window
  * does not override the '@title' tag
  * @param {String} title set browser window title
@@ -26,6 +27,11 @@ setTimeout(() => {
   }
 }, 100);
 
+/**
+ * @name removePrebakeCSS
+ * @tags prebake
+ * resets css to original state, removing all css overrides tagged with the #pre selector
+ */
 window.removePrebakeCSS = function () {
   document.querySelectorAll('style').forEach((n) => {
     let parts = n.innerText.split('#pre');
@@ -177,7 +183,7 @@ window.blockArrange = function (
 };
 
 // function definitions and new registrations
-function supersynth(
+window.supersynth = function (
   pat,
   sound = 'sawtooth',
   { d = 0.1, v = 4, r = 3 / 4, w = 0.2, n = 4, a = 0.01, g = 3 / 4, l = 7, t = 0, os = [], gs = [], ts = [] } = {},
@@ -210,8 +216,85 @@ function supersynth(
     .attack(a)
     .lpf(2 ** (l + 5))
     .postgain(1 / (n + 1) ** 0.2);
-}
-// register as a method
+};
+/**
+ * @name .supersynth
+ * @memberof {Pattern}
+ * @returns {Pattern}
+ * @tags prebake
+ * create supersaws, supersquares, supersines and anything in between!
+ * use directly on a Pattern: Pattern.supersynth(sound[String] | config[Object] | oscs[Array])
+ * or as a top-level function: supersynth([Pattern], sound[String], config[Object])
+ * @param {[String]} sound any sound, defaults to 5 voices
+ * --- OR ---
+ * @param {[Array]} oscs shape for each osc voice (accepts any valid sound like "sine" or "piano"!)
+ * --- OR ---
+ * @param {[Object]} config options:
+ * @param {Number} detune/d: detune / vibmod depth amount (in semitones)
+ * @param {Number} vibrato/vib/v: [Number] vibrato speed (in Hz)
+ * @param {Number} ratio/r: of detune of subsequent osc'sc, (default 3/4)
+ * @param {Number,0->1} stereo/width/w : [Number,0->1] stereo width, (default=0.2)
+ * @param {Int} voices/n: number of additional voices, (default=4, or unison of 5, range=[0,infinity))
+ * @param {Number} attack/att/a: (default=0.01 seconds)
+ * @param {Number} gain/g: controls overall gain of voices
+ * @param {NumberArray} gains/gs: gain ratios; gs:[3, 2, 2, 1, 1] will make oscs take 3/9,2/9,2/9,1/9,1/9 factor of overall gain, respectively
+ * @param {Int,1->10} lowpass/lp/l: low-pass filter to apply in step, normalized 1->10, each step is double prev freq (default=7 [+ 5], which is 2**12=4096 Hz)
+ * @param {Number} late/off/shift/t: delay each subsequent osc start time (by seconds)
+ * @param {IntArray} transposes/ts: overrides each osc midi value by adding/subtracting; ts:[0, 12, 12] will make 2nd, 3rd oscs to play at 1 octave higher
+ * @param {Array} osc: an array of shapes, each one corresponds to the voice at index n, which at 0 is the main voice
+ *
+ * @example
+ * $:"A".supersynth(['sawtooth', 'sine', 'square']).note()._scope()
+ * // => 1st voice is sawtooth, 2nd voice is sine
+ *
+ * @example
+ * const ez = (start, end) => saw.rangex(start, end).slow(8)
+ * $:n(cat(
+ *   `~ 8 7 5 ~ ~ ~ ~`,
+ *   `~ 2 1 3 ~ ~ ~ ~`,
+ *   `~ 0 1 5 ~ ~ ~ ~`,
+ * `<[~ 2 1 6 ~ ~ ~ <~ -2>]
+ *   [0 1 0 -1 ~ ~ ~ ~]>`,
+ * ).add(6)).trans(-24)
+ *   .supersynth({
+ *     o: ['sqr','sqr','sqr','pink','pink'],
+ *     n: 4,
+ *     r: 4/3,
+ *     d: 1/4,
+ *     w: 0.3,
+ *     g: .7,
+ *   }).scale("Bb:major")
+ * .lpf(ez(2000,8000)).hpf(500)
+ * .rel(.7).ftype(0)
+ * .room(.1).size(7).rdim(500).delay(0.2)
+ * ._scope()
+ *
+ * @example
+ * $:chord("<[Gm D# F Gm]!3 [Bb D# F Gm]>").n(0)
+ *   .mode("root").slow(2).voicing().segment(8)
+ *   .transpose(-24)
+ *   .makesuper({s: "sawtooth", n: 3, d: 1/3, w:0})
+ *   .lpf(ez(200,700)).gain(1).attack(1/20).sustain(ez(1/2,2))
+ *   .lpe(2).lpd(ez(1/20,3)).lps(ez(.1,2)).color('oklch(.6 .24 270)')._scope()
+ *
+ * @example
+ * $:chord("<[Gm D# F Gm]!3 [Bb D# F Gm]>").n("[0,1,2] [0,1,3] [0,1,2] [0,1,4]")
+ *   .mode("root").slow(2).voicing()
+ *   .transpose(-24)
+ *   .makesuper({
+ *     s: "sawtooth",
+ *     g: .5,
+ *     a: 1/6,
+ *     n: 2,
+ *     d: 1/3,
+ *     v: 0,
+ *     r: 4/3,
+ *     w: .5,
+ *   }).rel(1/5)
+ *   .ftype(2).lpf(ez(100,700))
+ *   .room(.2).rlp(300).size(6).hpf(180)
+ *   .color('oklch(.7 .2 240)')._scope()
+ */
 register('supersynth', (param, x) => {
   const aliases = {
     depth: 'd',
@@ -244,15 +327,15 @@ register('supersynth', (param, x) => {
     }
   });
   if (typeof param == 'string') {
-    return supersynth(x, param);
+    return window.supersynth(x, param);
   }
   if (Array.isArray(param)) {
-    return supersynth(x, param[0], { osc: param });
+    return window.supersynth(x, param[0], { osc: param });
   }
   if (typeof param == 'object') {
-    return supersynth(x, param.s || 'sawtooth', param);
+    return window.supersynth(x, param.s || 'sawtooth', param);
   }
-  return supersynth(x);
+  return window.supersynth(x);
 });
 
 // glossingg's prebakes
