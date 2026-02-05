@@ -24,7 +24,8 @@ window.removePrebakeCSS = function () {
  * @synonyms useWet
  * @param {Number} saturation amount (default 3)
  * @param {Number} hue shift (default -15)
- * @example useWet(3, -15)
+ * @example
+ * useWet(3, -15)
  */
 window.wetEditor = function (amount = 3, hueShift = -15) {
   document.querySelectorAll('style').forEach((n) => {
@@ -321,22 +322,34 @@ const TAGS = {
   synonyms: (syn) => '<p><code>' + syn + '</code></p>',
   text: (text) => '<p><p>' + text + '</p></p>',
   example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
+  memberof: (mem) => '<p><code>' + mem + '</code></p>',
+  returns: (ret) => '<p><code>' + mem + '</code></p>',
   param: (type, name, desc) =>
-    '<li><span style=' +
-    'color: var(--caret); padding-right: .7rem; font-weight: 400' +
+    '<li style="list-style-type:square;list-style-position: inside;">' +
+    '<code style=' +
+    '"color: oklch(from var(--tw-ring-color) l c h / 1);font-weight: 700;padding: 2px 4px;"' +
     '>' +
     type +
-    '</span>' +
-    '<span class="border border-muted" style=' +
-    'color: var(--tw-ring-offset-color); font-weight: 700; padding-right: .7rem; font-family: monospaced' +
+    '</code>' +
+    '<code class="border border-muted" style=' +
+    '"color: margin: 0 .5em;oklch(from var(--caret) l .1 h);padding: 1px 4px;font-weight: 400;filter: contrast(1.5);"' +
     '>' +
     name +
-    '</span>' +
+    '</code>' +
     desc +
     '</li>',
 };
 
-// JSDoc parsing + HTML insertion
+/**
+ * @name useJSDoc
+ * @synonyms useDoc
+ * Enables JSDoc processing + HTML insertion into the reference tab
+ * @param {String} url text content containing JSDoc to pull from
+ * @example
+ * useJSDoc('https://codeberg.org/glossing/Strudel_Scripts/raw/branch/main/scripts.mjs')
+ * useDoc()
+ */
+
 window.useJSDoc = async function (url = URL) {
   function nav() {
     return document.querySelector('nav[aria-label="Menu Panel"]');
@@ -431,6 +444,9 @@ window.useJSDoc = async function (url = URL) {
               }
               if (!tag) {
                 return '';
+              }
+              if (tag === 'param') {
+                v1 = v1.replaceAll('{', '<').replaceAll('}', '>');
               }
               return TAGS[tag](v1, v2, v3.join(' '));
             })
