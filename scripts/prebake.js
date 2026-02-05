@@ -26,6 +26,7 @@ window.removePrebakeCSS = function () {
  * @param {Number} saturation amount (default 3)
  * @param {Number} hue shift (default -15)
  * @example useWet(3, -15)
+ * @example wetEditor(3)
  */
 window.wetEditor = function (amount = 3, hueShift = -15) {
   document.querySelectorAll('style').forEach((n) => {
@@ -77,6 +78,8 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
 }
 
 /**
+ * Draws spectral lines on canvas, useful for pinpointing frequency ranges in ._spectrum()
+ *
  * @name useSpectrum
  *
  * @param {Object} config contains these options:
@@ -93,13 +96,15 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
  * @param {Array} stop: [frequency <Int>, CSScolor <string>, thickness <Number (optional)>]
  * @example
  * useSpectrum({lines:3, base:1000, next:1/2, hue:40, hueStep:40, alpha:.7});
- * // OR
+ *
+ * @example
  * useSpectrum([
  *   [1000,'oklch(.7 .2 40/.7)',1],
  *   [500, 'oklch(.7 .2 80/.7)',1],
  *   [250, 'oklch(.7 .2 120/.7)',1],
  * ]);
  *
+ * @example
  * $:freq("<125 250 500 1000 2000 4000>*4").s("sine")
  *   .color("<blue cyan green yellow orange red>*4")
  *   .gain("<6 5 4 3 2 1>*4".div(4))._spectrum({width:800})
@@ -313,7 +318,34 @@ Pattern.prototype.pg = function (amt) {
 // URL to current prebake for JSDoc processing
 const URL = 'https://waveflower.org/scripts/prebake.js';
 
-// JSDoc parsing + HTML insertion
+const TAGS = {
+  //<div id='reference-container'>
+  //<div class="prose dark:prose-invert min-w-full px-1 text-sm">
+  //<section>
+  // <div class="flex flex-row items-center mt-8 justify-between">
+  name: (name) => '<h3 class="font-mono my-0 pt-4">' + name + '</h3>',
+  tags: (tags) => '<span class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' + tags + '</span>',
+  // <div>
+  synonyms: (syn) => '<p><code>' + syn + '</code></p>',
+  text: (text) => '<p><p>' + text + '</p></p>',
+  example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
+  // <ul>
+  param: (type, name, desc) =>
+    '<li><span class="paramtype">' + type + '</span>' + '<span class="paramname">' + name + '</span>' + desc + '</li>',
+  // </ul>
+  //</section>
+  //</div>
+  //</div>
+};
+
+/**
+* JSDoc parsing + HTML insertion
+* @name useJSDoc
+* @synonyms useDoc
+* @param {String} url to fetch text containing JS docs
+* @example useJSDoc()
+* @example useDoc('https://waveflower.org/scripts/prebake.js')
+*/
 window.useJSDoc = async function (url = URL) {
   function nav() {
     return document.querySelector('nav[aria-label="Menu Panel"]');
@@ -380,10 +412,23 @@ window.useJSDoc = async function (url = URL) {
       divNamesList.prepend(a);
       prepended += 1;
     });
+    docs.map(
+      (d) =>
+        '<section>' +
+        d
+          .map((l) => {
+            return;
+          })
+          .join() +
+        '</section>',
+    );
   }).observe(document.body, {
     childList: true,
     subtree: true,
   });
 };
+window.useDoc = window.useJSDoc
 
 useJSDoc();
+
+//docs.map((d) => d.map((l) => l.split(/(\*\s+\@)|(\s)/).filter((s) => s && s.length > 1 && !s.includes('@')).map));
