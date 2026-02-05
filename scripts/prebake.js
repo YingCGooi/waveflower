@@ -22,11 +22,9 @@ window.removePrebakeCSS = function () {
 /**
  * @name wetEditor
  * @synonyms useWet
- * @alias useWet
  * @param {Number} saturation amount (default 3)
  * @param {Number} hue shift (default -15)
  * @example useWet(3, -15)
- * @example wetEditor(3)
  */
 window.wetEditor = function (amount = 3, hueShift = -15) {
   document.querySelectorAll('style').forEach((n) => {
@@ -78,10 +76,9 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
 }
 
 /**
- * Draws spectral lines on canvas, useful for pinpointing frequency ranges in ._spectrum()
  *
  * @name useSpectrum
- *
+ * Draws spectral lines on canvas, useful for pinpointing frequency ranges in ._spectrum()
  * @param {Object} config contains these options:
  * @param {Int} lines: generate up to number of lines
  * @param {Int} base: line draws first at this frequency
@@ -92,19 +89,17 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
  * @param {Number} thickness: line thickness (in px)
  * @param {Number} mul: subsequent line thickness multiplier, positive => subsequently thicker lines
  * -- OR --
- * @param {Array} stops, an array of stops with this following format:
+ * @param {Array} stops: an array of stops with this following format:
  * @param {Array} stop: [frequency <Int>, CSScolor <string>, thickness <Number (optional)>]
  * @example
  * useSpectrum({lines:3, base:1000, next:1/2, hue:40, hueStep:40, alpha:.7});
- *
- * @example
+ * // OR
  * useSpectrum([
  *   [1000,'oklch(.7 .2 40/.7)',1],
  *   [500, 'oklch(.7 .2 80/.7)',1],
  *   [250, 'oklch(.7 .2 120/.7)',1],
  * ]);
  *
- * @example
  * $:freq("<125 250 500 1000 2000 4000>*4").s("sine")
  *   .color("<blue cyan green yellow orange red>*4")
  *   .gain("<6 5 4 3 2 1>*4".div(4))._spectrum({width:800})
@@ -319,40 +314,31 @@ Pattern.prototype.pg = function (amt) {
 const URL = 'https://waveflower.org/scripts/prebake.js';
 
 const TAGS = {
-  //<div id='reference-container'>
-  //<div class="prose dark:prose-invert min-w-full px-1 text-sm">
-  //<section>
-  // <div class="flex flex-row items-center mt-8 justify-between">
   name: (name) => '<h3 class="font-mono my-0 pt-4">' + name + '</h3>',
   tags: (tags) => '<span class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' + tags + '</span>',
-  // <div>
   synonyms: (syn) => '<p><code>' + syn + '</code></p>',
   text: (text) => '<p><p>' + text + '</p></p>',
   example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
-  // <ul>
   param: (type, name, desc) =>
-    '<li><span class="paramtype">' + type + '</span>' + '<span class="paramname">' + name + '</span>' + desc + '</li>',
-  // </ul>
-  //</section>
-  //</div>
-  //</div>
+    '<li><span style=' +
+    'color: var(--caret); padding-right: .7rem; font-weight: 400' +
+    '>' +
+    type +
+    '</span>' +
+    '<span class="border border-muted" style=' +
+    'color: var(--tw-ring-offset-color); font-weight: 700; padding-right: .7rem; font-family: monospaced' +
+    '>' +
+    name +
+    '</span>' +
+    desc +
+    '</li>',
 };
 
-/**
-* JSDoc parsing + HTML insertion
-* @name useJSDoc
-* @synonyms useDoc
-* @param {String} url to fetch text containing JS docs
-* @example useJSDoc()
-* @example useDoc('https://waveflower.org/scripts/prebake.js')
-*/
+// JSDoc parsing + HTML insertion
 window.useJSDoc = async function (url = URL) {
   function nav() {
     return document.querySelector('nav[aria-label="Menu Panel"]');
   }
-  // function reference() {
-  //   return Array.from(nav().querySelectorAll('button')).filter((b) => b.innerText.toLowerCase() == 'reference')[0];
-  // }
 
   let docs = [];
   try {
@@ -361,7 +347,7 @@ window.useJSDoc = async function (url = URL) {
     const s = await response.text();
     docs = String(s)
       .split(/(\/\*\*)|(\*\/)/)
-      .filter((p) => p && p.substring(0, 64).includes('@name'))
+      .filter((p) => p && p.substring(0, 512).includes('@name '))
       .map((p) => p.split('\n'));
     console.info('JSdocs parsed from ' + URL, docs);
   } catch (error) {
@@ -384,8 +370,8 @@ window.useJSDoc = async function (url = URL) {
         toMutate = true;
       }
     }
-    // do not prepend until the next second
-    if (prepended > 1 || !toMutate) {
+    // do not prepend until the rate limit resets
+    if (prepended > 1 || !toMutate || !nav()) {
       return;
     }
     const divs = nav().querySelectorAll('div');
@@ -406,29 +392,54 @@ window.useJSDoc = async function (url = URL) {
       a.className = divNamesList.firstChild.className + ' ' + 'block';
       a.style = 'color: oklch(from var(--caret) l .2 h);';
       a.innerText = doc
-        .filter((l) => l.includes('@name'))[0]
+        .filter((l) => l.includes('@name '))[0]
         .split('@name')[1]
         .trim();
       divNamesList.prepend(a);
       prepended += 1;
     });
-    docs.map(
-      (d) =>
-        '<section>' +
-        d
-          .map((l) => {
-            return;
-          })
-          .join() +
-        '</section>',
-    );
+
+    let sections = docs
+      .map((d) => {
+        let isExample = false;
+        let isParam = false;
+        return (
+          '<section>' +
+          d
+            .map((l) => l.split(/(\*\s+\@)|(\s)/).filter((s) => s && s.length > 1 && !s.includes('@')))
+            .map(([tag, v1, v2, ...v3]) => {
+              if (isExample) {
+                if (tag === undefined) {
+                  isExample = false;
+                  return '</pre>';
+                }
+                if (tag === 'example') {
+                  tag = '';
+                }
+                return [tag, v1, v2, ...v3].join(' ') + '\n';
+              }
+              if (tag === 'example') {
+                isExample = true;
+                return '<pre class="bg-background">';
+              }
+              if (tag && !TAGS[tag]) {
+                return TAGS.text([tag, v1, v2, v3.join(' ')].join(' '));
+              }
+              if (!tag) {
+                return '';
+              }
+              return TAGS[tag](v1, v2, v3.join(' '));
+            })
+            .join('') +
+          '</section>'
+        );
+      })
+      .join('');
+    let reference = document.querySelector('#reference-container');
+    reference ? (reference.firstElementChild.innerHTML = sections) : 0;
   }).observe(document.body, {
     childList: true,
     subtree: true,
   });
 };
-window.useDoc = window.useJSDoc
-
 useJSDoc();
-
-//docs.map((d) => d.map((l) => l.split(/(\*\s+\@)|(\s)/).filter((s) => s && s.length > 1 && !s.includes('@')).map));
