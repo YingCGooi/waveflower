@@ -4,11 +4,25 @@ document.head.querySelectorAll('[rel=icon]').forEach((n) => {
   n.type = 'image/png';
   n.href = 'https://waveflower.org/assets/r=sin2t.png';
 });
-// use custom title
+
+let windowTitle = 'Strudel [Prebaked] REPL';
+/**
+ * @name useTitle
+ * set a custom title to your browser window
+ * does not override the '@title' tag
+ * @param {String} title set browser window title
+ * @example
+ * useTitle('Strudel [Prebaked] REPL')
+ */
+window.useTitle = function (title = 'Strudel [Prebaked] REPL') {
+  windowTitle = title;
+};
+
 setTimeout(() => {
   const title = document.head.querySelector('title');
+  // avoid clashing with the @title mutations
   if (title.innerText.startsWith('Strudel')) {
-    title.innerText = 'Strudel - Waveflower Prebaked REPL';
+    title.innerText = title;
   }
 }, 100);
 
