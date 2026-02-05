@@ -22,6 +22,7 @@ window.removePrebakeCSS = function () {
 /**
  * @name wetEditor
  * @synonyms useWet
+ * @tags prebake
  * @param {Number} saturation amount (default 3)
  * @param {Number} hue shift (default -15)
  * @example
@@ -80,6 +81,7 @@ function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, w
  *
  * @name useSpectrum
  * Draws spectral lines on canvas, useful for pinpointing frequency ranges in ._spectrum()
+ * @tags prebake
  * @param {[Object]} config contains these options:
  * @param {Int} lines: generate up to number of lines
  * @param {Int} base: line draws first at this frequency
@@ -322,8 +324,8 @@ const TAGS = {
   synonyms: (syn) => '<p><code>' + syn + '</code></p>',
   text: (text) => '<p><p>' + text + '</p></p>',
   example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
-  memberof: (mem) => '<p><code>' + mem + '</code></p>',
-  returns: (ret) => '<p><code>' + mem + '</code></p>',
+  memberof: (mem) => '<p><em>member of</em><code>' + mem + '</code></p>',
+  returns: (ret) => '<p><em>returns</em><code>' + ret + '</code></p>',
   param: (type, name, desc, listStyle = 'square') =>
     '<li style="list-style-type:' +
     listStyle +
@@ -344,6 +346,7 @@ const TAGS = {
 
 /**
  * @name useJSDoc
+ * @tags prebake
  * @synonyms useDoc
  * Enables JSDoc processing + HTML insertion into the reference tab
  * @param {String} url text content containing JSDoc to pull from
