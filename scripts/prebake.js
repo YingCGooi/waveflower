@@ -431,7 +431,8 @@ const TAGS = {
 
   synonyms: (syn) => '<p><em>synonyms</em> <code>' + syn + '</code></p>',
   text: (text) => '<p><p>' + codify(text) + '</p></p>',
-  example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
+  example: (eg) =>
+    '<pre class="bg-background" style="background:oklch(from var(--muted) l c h /.16) !important">' + eg + '</pre>',
 
   memberof: (mem) =>
     '<span style="margin:0 4px;text-align:right"><em style="color: var(--muted); font-size:small; filter:brightness(1.7)">memberof</em> <code style="font-weight:300;color:oklch(from var(--caret) .67 .2 h)">' +
