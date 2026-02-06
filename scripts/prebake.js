@@ -462,7 +462,8 @@ const TAGS = {
 };
 
 /**
- * @name useJSDoc @tags prebake
+ * @name useJSDoc
+ * @tags prebake
  * @synonyms useDoc
  * Enables JSDoc processing + HTML insertion into the reference tab
  * @param {String} url text content containing JSDoc to pull from
