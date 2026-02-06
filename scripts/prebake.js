@@ -458,6 +458,7 @@ window.useJSDoc = async function (url = URL) {
   }
 
   let docs = [];
+  let as = [];
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error('Response status: ' + response.status);
@@ -503,7 +504,6 @@ window.useJSDoc = async function (url = URL) {
 
     // remove all existing .pre elements before adding new ones
     document.querySelectorAll('.pre').forEach((n) => n.remove());
-    let as = [];
     docs.forEach((doc) => {
       if (!divNamesList) {
         return;
