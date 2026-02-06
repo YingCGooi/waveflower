@@ -414,7 +414,7 @@ Pattern.prototype.pg = function (amt) {
 
 // URL to current prebake for JSDoc processing
 const URL = 'https://waveflower.org/scripts/prebake.js';
-const sTagBorder = 'style="border-color:var(--foreground);margin: 0px 1rem';
+const sTagBorder = 'style="display:inline-block;border-color:var(--foreground);margin: 0px 1rem';
 const sParamType =
   ' style="border-color:oklch(from var(--caret) .67 .2 h);color:oklch(from var(--caret) .67 .2 h) !important;font-weight:300;padding: 2px 4px;" ';
 const sParamName =
@@ -422,27 +422,27 @@ const sParamName =
 
 const TAGS = {
   name: (name, tags = '') =>
-    '<h3 class="font-mono my-0 pt-4">' +
+    '<br/><h3 class="font-mono my-0 pt-4" style="font-family:inherit;font-weight:700;display:inline-block;padding-right:1rem;filter:brightness(120%)">' +
     name +
-    '<span ' +
-    sTagBorder +
-    'class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' +
-    tags +
-    '</span>' +
     '</h3>',
+
   tags: (tags) =>
     '<span ' + sTagBorder + 'class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' + tags + '</span>',
+
   synonyms: (syn) => '<p><em>synonyms</em> <code>' + syn + '</code></p>',
   text: (text) => '<p><p>' + text + '</p></p>',
   example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
+
   memberof: (mem) =>
     '<span style="margin:0"><em>member of</em> <code style="font-weight:300;color:oklch(from var(--caret) .67 .2 h)">' +
     mem.replace('{', '&lt;').replace('}', '&gt;') +
     '</code></span>',
+
   returns: (ret) =>
     '<span style="margin:0"><em>returns</em> <code style="font-weight:300;color:oklch(from var(--caret) .67 .2 h)">' +
     ret.replace('{', '&lt;').replace('}', '&gt;') +
     '</code></span>',
+
   param: (type, name, desc, listStyle = 'square') =>
     '<li style="list-style-type:' +
     listStyle +
@@ -585,7 +585,7 @@ window.useJSDoc = async function (url = URL) {
       .reverse()
       .forEach((s, i) => {
         let section = document.createElement('section');
-        section.id = s.match(/>(.*)<\/span/)[1];
+        section.id = s.match(/>(.*)<\/h/)[1];
         section.className = 'pre';
         section.innerHTML = s;
         let reference = document.querySelector('#reference-container');
