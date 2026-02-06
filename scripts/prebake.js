@@ -416,9 +416,9 @@ Pattern.prototype.pg = function (amt) {
 const URL = 'https://waveflower.org/scripts/prebake.js';
 const sTagBorder = 'style="border-color:var(--foreground);margin: 0px 1rem';
 const sParamType =
-  'style="border-color:oklch(from var(--caret) .67 .2 h);color:oklch(from var(--caret) .67 .2 h) !important;font-weight:300;padding: 2px 4px;"';
+  ' style="border-color:oklch(from var(--caret) .67 .2 h);color:oklch(from var(--caret) .67 .2 h) !important;font-weight:300;padding: 2px 4px;" ';
 const sParamName =
-  'style="margin-right:.7em;border-color:oklch(from var(--caret) l .15 h);color: oklch(from var(--caret) l .15 h) !important;font-family: inherit;padding: 1px 4px;font-weight: 400;filter: contrast(1.1);"';
+  ' style="margin-right:.7em;border-color:oklch(from var(--caret) l .15 h);color: oklch(from var(--caret) l .15 h) !important;font-family: inherit;padding: 1px 4px;font-weight: 400;filter: contrast(1.1);" ';
 
 const TAGS = {
   name: (name, tags = '') =>
@@ -447,12 +447,12 @@ const TAGS = {
     '<li style="list-style-type:' +
     listStyle +
     ';list-style-position:inside;font-weight:400;letter-spacing:-.1px">' +
-    '<code' +
+    '<code ' +
     sParamType +
     '>' +
     type +
     '</code>' +
-    '<code class="border border-muted' +
+    '<code class="border border-muted" ' +
     sParamName +
     '>' +
     name +
