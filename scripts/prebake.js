@@ -561,7 +561,9 @@ window.useJSDoc = async function (url = URL) {
       let isParam = false;
       return d
         .map((l) =>
-          l.split(/(\*\s+\@)|(\s)/).filter((s) => s && s.length > 0 && s !== ' ' && s !== '*' && !s.includes('@')),
+          l
+            .split(/(\*\s+\@)|(\s)/)
+            .filter((s) => s && s.length > 0 && s !== ' ' && s !== '* @' && s !== '*  @' && s !== '*'),
         )
         .map((d) => {
           console.info({ d });
