@@ -434,13 +434,13 @@ const TAGS = {
   example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
 
   memberof: (mem) =>
-    '<span style="margin:0"><em>member of</em> <code style="font-weight:300;color:oklch(from var(--caret) .67 .2 h)">' +
-    mem.replace('{', '&lt;').replace('}', '&gt;') +
+    '<span style="margin:0 1rem"><em style="color: var(--muted); font-size:small; filter:brightness(1.4)">memberof</em> <code style="font-weight:300;color:oklch(from var(--caret) .67 .2 h)">' +
+    mem.replaceAll('{', '&lt;').replaceAll('}', '&gt;') +
     '</code></span>',
 
   returns: (ret) =>
-    '<span style="margin:0"><em>returns</em> <code style="font-weight:300;color:oklch(from var(--caret) .67 .2 h)">' +
-    ret.replace('{', '&lt;').replace('}', '&gt;') +
+    '<span style="margin:0 1rem"><em style="color: var(--muted); font-size:small; filter:brightness(1.4)">returns</em> <code style="font-weight:300;color:oklch(from var(--caret) .67 .2 h)">' +
+    ret.replaceAll('{', '&lt;').replaceAll('}', '&gt;') +
     '</code></span>',
 
   param: (type, name, desc, listStyle = 'square') =>
