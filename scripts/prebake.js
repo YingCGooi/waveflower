@@ -556,6 +556,7 @@ window.useJSDoc = async function (url = URL) {
       as.push(a);
       prepended += 1;
     });
+    console.info({ docs });
 
     let sections = docs.map((d, i) => {
       let isExample = false;
