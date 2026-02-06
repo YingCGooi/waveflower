@@ -521,45 +521,43 @@ window.useJSDoc = async function (url = URL) {
       prepended += 1;
     });
 
-    let sections = docs
-      .map((d, i) => {
-        let isExample = false;
-        let isParam = false;
-        return d
-          .map((l) => l.split(/(\*\s+\@)|(\s)/).filter((s) => s && s.length > 1 && !s.includes('@')))
-          .map(([tag, v1, v2, ...v3]) => {
-            if (isExample) {
-              if (tag === undefined) {
-                isExample = false;
-                return '</pre>';
-              }
-              if (tag === 'example') {
-                tag = '';
-              }
-              return [tag, v1, v2, ...v3].join(' ') + '\n';
+    let sections = docs.map((d, i) => {
+      let isExample = false;
+      let isParam = false;
+      return d
+        .map((l) => l.split(/(\*\s+\@)|(\s)/).filter((s) => s && s.length > 1 && !s.includes('@')))
+        .map(([tag, v1, v2, ...v3]) => {
+          if (isExample) {
+            if (tag === undefined) {
+              isExample = false;
+              return '</pre>';
             }
             if (tag === 'example') {
-              isExample = true;
-              return '<pre class="bg-background">';
+              tag = '';
             }
-            if (tag && !TAGS[tag]) {
-              return TAGS.text([tag, v1, v2, v3.join(' ')].join(' '));
+            return [tag, v1, v2, ...v3].join(' ') + '\n';
+          }
+          if (tag === 'example') {
+            isExample = true;
+            return '<pre class="bg-background">';
+          }
+          if (tag && !TAGS[tag]) {
+            return TAGS.text([tag, v1, v2, v3.join(' ')].join(' '));
+          }
+          if (!tag) {
+            return '';
+          }
+          if (tag === 'param') {
+            v1 = v1.replaceAll('{', '&lt;').replaceAll('}', '&gt;');
+            if (v1.includes('[')) {
+              // disable list style for all [Object] param
+              return TAGS[tag](v1, v2, v3.join(' '), 'none');
             }
-            if (!tag) {
-              return '';
-            }
-            if (tag === 'param') {
-              v1 = v1.replaceAll('{', '&lt;').replaceAll('}', '&gt;');
-              if (v1.includes('[')) {
-                // disable list style for all [Object] param
-                return TAGS[tag](v1, v2, v3.join(' '), 'none');
-              }
-            }
-            return TAGS[tag](v1, v2, v3.join(' '));
-          })
-          .join('');
-      })
-      .join('');
+          }
+          return TAGS[tag](v1, v2, v3.join(' '));
+        })
+        .join('');
+    });
     console.info({ as, sections });
     Array.from(sections)
       .reverse()
