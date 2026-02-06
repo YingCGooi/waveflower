@@ -598,7 +598,9 @@ window.useJSDoc = async function (url = URL) {
   });
 };
 
-window.useListMarkerColor = function (color = 'var(--tw-prose-bullets)') {
-  document.querySelectorAll('style').forEach((n) => n.append('#pre,::marker { color:' + color + ' }'));
+window.useListMarkerColor = function (color = 'var(--caret)') {
+  document
+    .querySelectorAll('style')
+    .forEach((n) => n.append('#pre,::marker { color:' + color + '; filter:opacity(50%) }'));
 };
 useListMarkerColor();
