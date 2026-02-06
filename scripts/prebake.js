@@ -219,9 +219,9 @@ window.supersynth = function (
 };
 /**
  * @name supersynth
+ * @tags prebake
  * @memberof {Pattern}
  * @returns {Pattern}
- * @tags prebake
  * create supersaws, supersquares, supersines and anything in between!
  * use directly on a Pattern: Pattern.supersynth(sound[String] | config[Object] | oscs[Array])
  * or as a top-level function: supersynth([Pattern], sound[String], config[Object])
