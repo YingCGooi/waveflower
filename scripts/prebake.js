@@ -469,9 +469,9 @@ function codify(text = '', delimiter = '`') {
     .map((c) => {
       if (c === delimiter) {
         return open
-          ? '<code style="font-family:inherit; border-radius:2px; border:none; background:var(--muted); padding:2px 6px;">' &&
-              (open = false)
-          : '</code>' && (open = true);
+          ? (open = false) ||
+              '<code style="font-family:inherit; border-radius:2px; border:none; background:var(--muted); padding:2px 6px;">'
+          : (open = true) && '</code>';
       }
       return c;
     })
