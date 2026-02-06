@@ -23,7 +23,7 @@ setTimeout(() => {
   const title = document.head.querySelector('title');
   // avoid clashing with the @title mutations
   if (title.innerText.startsWith('Strudel')) {
-    title.innerText = title;
+    title.innerText = windowTitle;
   }
 }, 100);
 
