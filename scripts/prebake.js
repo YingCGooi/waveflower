@@ -561,6 +561,10 @@ window.useJSDoc = async function (url = URL) {
       let isParam = false;
       return d
         .map((l) => l.split(/(\*\s+\@)|(\s)/).filter((s) => s && s.length > 1 && !s.includes('@')))
+        .map((d) => {
+          console.info({ d });
+          return d;
+        })
         .map(([tag, v1, v2, ...v3]) => {
           if (isExample) {
             if (tag === undefined) {
@@ -595,6 +599,10 @@ window.useJSDoc = async function (url = URL) {
             }
           }
           return TAGS[tag](v1, v2, v3.join(' '));
+        })
+        .map((x) => {
+          console.info({ x });
+          return x;
         })
         .join('');
     });
