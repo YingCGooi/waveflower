@@ -430,7 +430,7 @@ const TAGS = {
     '<span ' + sTagBorder + 'class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' + tags + '</span>',
 
   synonyms: (syn) => '<p><em>synonyms</em> <code>' + syn + '</code></p>',
-  text: (text) => '<p><p>' + codify(text) + '</p></p>',
+  text: (text) => '<p style="font-size:.9em; letter-spacing:-.2px;"><p>' + codify(text) + '</p></p>',
   example: (eg) =>
     '<pre class="bg-background" style="background:oklch(from var(--muted) l c h /.16) !important">' + eg + '</pre>',
 
@@ -447,7 +447,7 @@ const TAGS = {
   param: (type, name, desc, listStyle = 'square') =>
     '<li style="list-style-type:' +
     listStyle +
-    ';list-style-position:inside;font-weight:400;letter-spacing:-.1px">' +
+    ';list-style-position:inside;font-weight:400;letter-spacing:-.2px;">' +
     '<code class="border border-muted" ' +
     sParamName +
     '>' +
@@ -589,7 +589,7 @@ window.useJSDoc = async function (url = URL) {
           if (tag === 'param') {
             v1.includes('{') && v1.includes('}')
               ? (v1 = v1.replaceAll('{', '&lt;').replaceAll('}', '&gt;'))
-              : (v2 = v1) && (v1 = ' ');
+              : (v2 = v1) && (v1 = '—');
             if (v1.includes('[')) {
               // disable list style for all [Object] param
               return TAGS[tag](v1, v2, v3.join(' '), 'none');
