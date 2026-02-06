@@ -430,7 +430,7 @@ const TAGS = {
     '<span ' + sTagBorder + 'class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' + tags + '</span>',
 
   synonyms: (syn) => '<p><em>synonyms</em> <code>' + syn + '</code></p>',
-  text: (text) => '<p><p>' + text + '</p></p>',
+  text: (text) => '<p><p>' + codify(text) + '</p></p>',
   example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
 
   memberof: (mem) =>
@@ -457,9 +457,22 @@ const TAGS = {
     '>' +
     type +
     '</code>' +
-    desc +
+    codify(desc) +
     '</li>',
 };
+
+function codify(text = '', delimiter = '`') {
+  var open = true;
+  s.split('')
+    .map((c) => {
+      if (c === delimiter) {
+        return open ? '<code style="font-family:inherit">' && (open = false) : '</code>' && (open = true);
+      }
+      return c;
+    })
+    .join('');
+  return text.split();
+}
 
 /**
  * @name useJSDoc
@@ -471,7 +484,6 @@ const TAGS = {
  * useJSDoc('https://codeberg.org/glossing/Strudel_Scripts/raw/branch/main/scripts.mjs')
  * useDoc()
  */
-
 window.useJSDoc = async function (url = URL) {
   function nav() {
     return document.querySelector('nav[aria-label="Menu Panel"]');
