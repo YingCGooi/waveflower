@@ -463,15 +463,18 @@ const TAGS = {
 
 function codify(text = '', delimiter = '`') {
   var open = true;
-  s.split('')
+  return text
+    .split('')
     .map((c) => {
       if (c === delimiter) {
-        return open ? '<code style="font-family:inherit">' && (open = false) : '</code>' && (open = true);
+        return open
+          ? '<code style="font-family:inherit; border-radius:2px; border:none; background:var(--muted); padding:2px 6px;">' &&
+              (open = false)
+          : '</code>' && (open = true);
       }
       return c;
     })
     .join('');
-  return text.split();
 }
 
 /**
