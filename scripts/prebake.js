@@ -431,8 +431,6 @@ const TAGS = {
 
   synonyms: (syn) => '<p><em>synonyms</em> <code>' + syn + '</code></p>',
   text: (text) => '<p style="font-size:.9em; letter-spacing:-.2px;"><p>' + codify(text) + '</p></p>',
-  example: (eg) =>
-    '<pre class="bg-background" style="background:oklch(from var(--muted) l c h /.16) !important">' + eg + '</pre>',
 
   memberof: (mem) =>
     '<span style="margin:0 4px;text-align:right"><em style="color: var(--muted); font-size:small; filter:brightness(1.7)">memberof</em> <code style="font-weight:300;color:oklch(from var(--caret) .67 .2 h)">' +
@@ -576,7 +574,7 @@ window.useJSDoc = async function (url = URL) {
           }
           if (tag === 'example') {
             isExample = true;
-            return '<pre class="bg-background">';
+            return '<pre class="bg-background" style="background:oklch(from var(--muted) l c h /.16) !important">';
           }
           if (tag && !TAGS[tag]) {
             return TAGS.text([tag, v1, v2, v3.join(' ')].join(' '));
