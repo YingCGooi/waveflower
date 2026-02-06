@@ -560,6 +560,7 @@ window.useJSDoc = async function (url = URL) {
           .join('');
       })
       .join('');
+    console.info({ as, sections });
     Array.from(sections)
       .reverse()
       .forEach((s, i) => {
