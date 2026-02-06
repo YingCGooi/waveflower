@@ -197,10 +197,12 @@ window.humanize = register('humanize', (amt, pat) => {
  */
 
 /**
+ *
+ * @name resolveValues
+ *
  * Resolves all patterns appearing in the `value` of the pattern into actual values
  * Similar to `outerJoin`, but applies to _all_ patterns within the value
  *
- * @name resolveValues
  * @memberof Pattern
  * @returns Pattern
  * @example
@@ -274,6 +276,10 @@ window.resolveValues = register('resolveValues', (pat) => {
 });
 
 /**
+ * @name state
+ * @memberof Pattern
+ * @returns Pattern
+ *
  * Sets up `state` propagation on the pattern. The state will be updated on each timestep where there
  * is a trigger, via the provided `updateFn`.
  *
@@ -283,9 +289,6 @@ window.resolveValues = register('resolveValues', (pat) => {
  * The state provides a `__count` value to support things like [Isorhythms](https://en.wikipedia.org/wiki/Isorhythm) and
  * the `__time` of the current trigger.
  *
- * @name state
- * @memberof Pattern
- * @returns Pattern
  * @param {function} updateFn The function used to update the state
  * @example
  * s("tri").struct("x ~ [~ x] ~ x!2").duration(0.75).lpf(200).lpenv(2).delay(0.5)
@@ -310,13 +313,13 @@ window.state = register('state', (updateFn, pat) => {
 });
 
 /**
- * Turns the pattern into a [Markov chain](https://en.wikipedia.org/wiki/Markov_chain) with values
- * equal to an index from the `table` parameter, which defines the transition probabilities between
- * indices. Each trigger will sample from the distribution. Often paired with `pick` or `pickOut`.
  *
  * @name markov
  * @memberof Pattern
  * @returns Pattern
+ * Turns the pattern into a [Markov chain](https://en.wikipedia.org/wiki/Markov_chain) with values
+ * equal to an index from the `table` parameter, which defines the transition probabilities between
+ * indices. Each trigger will sample from the distribution. Often paired with `pick` or `pickOut`.*
  * @param {number[][]} table Table of transition probabilities
  * @example
  * const markovTable = [[ 0, .2, .8], [ .3,  0, .7], [ .9, .1,  0]];
@@ -665,17 +668,17 @@ Pattern.prototype.sophie = function (squish = 0.1, splat = 0.1, speed = 4, clang
   return this.FX(delayt(squish).lfo({ dc: 0, da: splat, s: speed }).delay(1).dry(0).delayfb(clang)).fxr(2);
 };
 
-/* Trigger things!
-
-control = what will cause the trigger to happen (cc(..), keyDown(..), etc)
-grid = what time division to snap to. E.g. grid = 8 means triggering the sound will play it at the start of the next 8 bar section
-length = # of cycles to play the sound for after it starts
-
-@example
-$: s("hh").trig(keyDown("Control:j"), 1, 1)
-$: s("bd*4")
-
-*/
+/**
+ * @name trig
+ * Trigger things!
+ * @param control = what will cause the trigger to happen (cc(..), keyDown(..), etc)
+ * @param grid = what time division to snap to. E.g. grid = 8 means triggering the sound will play it at the start of the next 8 bar section
+ * @param length = # of cycles to play the sound for after it starts
+ *
+ * @example
+ * $: s("hh").trig(keyDown("Control:j"), 1, 1)
+ * $: s("bd*4")
+ */
 Pattern.prototype.trig = function (control, length = 16, grid = 8) {
   let qt = -1e9;
   const query = (state) => {

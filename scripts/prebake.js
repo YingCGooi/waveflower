@@ -447,15 +447,15 @@ const TAGS = {
     '<li style="list-style-type:' +
     listStyle +
     ';list-style-position:inside;font-weight:400;letter-spacing:-.1px">' +
-    '<code ' +
-    sParamType +
-    '>' +
-    type +
-    '</code>' +
     '<code class="border border-muted" ' +
     sParamName +
     '>' +
     name +
+    '</code>' +
+    '<code ' +
+    sParamType +
+    '>' +
+    type +
     '</code>' +
     desc +
     '</li>',
