@@ -414,16 +414,24 @@ Pattern.prototype.pg = function (amt) {
 
 // URL to current prebake for JSDoc processing
 const URL = 'https://waveflower.org/scripts/prebake.js';
+const sTagBorder = 'style="border-color:var(--foreground);margin: 0px 1rem';
+const sParamType =
+  'style="border-color:oklch(from var(--caret) .67 .2 h);color:oklch(from var(--caret) .67 .2 h) !important;font-weight:300;padding: 2px 4px;"';
+const sParamName =
+  'style="margin-right:.7em;border-color:oklch(from var(--caret) l .15 h);color: oklch(from var(--caret) l .15 h) !important;font-family: inherit;padding: 1px 4px;font-weight: 400;filter: contrast(1.1);"';
 
 const TAGS = {
-  name: (name, tags) =>
+  name: (name, tags = '') =>
     '<h3 class="font-mono my-0 pt-4">' +
     name +
-    '<span class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' +
+    '<span ' +
+    sTagBorder +
+    'class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' +
     tags +
     '</span>' +
     '</h3>',
-  tags: (tags) => '<span class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' + tags + '</span>',
+  tags: (tags) =>
+    '<span ' + sTagBorder + 'class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' + tags + '</span>',
   synonyms: (syn) => '<p><em>synonyms</em> <code>' + syn + '</code></p>',
   text: (text) => '<p><p>' + text + '</p></p>',
   example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
@@ -439,13 +447,13 @@ const TAGS = {
     '<li style="list-style-type:' +
     listStyle +
     ';list-style-position:inside;font-weight:400;letter-spacing:-.1px">' +
-    '<code style=' +
-    '"color:oklch(from var(--caret) .67 .2 h) !important;font-weight:300;padding: 2px 4px;"' +
+    '<code' +
+    sParamType +
     '>' +
     type +
     '</code>' +
-    '<code class="border border-muted" style=' +
-    '"margin-right:.7em;color: oklch(from var(--caret) l .15 h) !important;font-family: inherit;padding: 1px 4px;font-weight: 400;filter: contrast(1.1);"' +
+    '<code class="border border-muted' +
+    sParamName +
     '>' +
     name +
     '</code>' +
