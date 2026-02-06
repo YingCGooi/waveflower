@@ -597,7 +597,6 @@ window.useJSDoc = async function (url = URL) {
     subtree: true,
   });
 };
-useJSDoc();
 
 window.useListMarkerColor = function (color = 'var(--tw-prose-bullets)') {
   document.querySelectorAll('style').forEach((n) => n.append('#pre,::marker { color:' + color + ' }'));
