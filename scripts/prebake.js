@@ -422,7 +422,7 @@ const sParamName =
 
 const TAGS = {
   name: (name, tags = '') =>
-    '<br/><h3 class="font-mono my-0 pt-4" style="font-family:inherit;font-weight:700;display:inline-block;padding-right:1rem;filter:brightness(120%)">' +
+    '<h3 class="font-mono my-0 pt-4" style="font-family:inherit;font-weight:700;display:inline-block;padding-right:1rem;filter:brightness(120%)">' +
     name +
     '</h3>',
 
