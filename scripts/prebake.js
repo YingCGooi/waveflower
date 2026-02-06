@@ -571,7 +571,9 @@ window.useJSDoc = async function (url = URL) {
             return TAGS.name(v1, v2, v3.join(','));
           }
           if (tag === 'param') {
-            v1 = v1.replaceAll('{', '&lt;').replaceAll('}', '&gt;');
+            v1.includes('{') && v1.includes('}')
+              ? (v1 = v1.replaceAll('{', '&lt;').replaceAll('}', '&gt;'))
+              : (v1 = v2) && (v3 = v2 + ' ' + v3);
             if (v1.includes('[')) {
               // disable list style for all [Object] param
               return TAGS[tag](v1, v2, v3.join(' '), 'none');
