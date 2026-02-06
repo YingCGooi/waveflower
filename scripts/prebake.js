@@ -554,7 +554,6 @@ window.useJSDoc = async function (url = URL) {
       as.push(a);
       prepended += 1;
     });
-    console.info({ docs });
 
     let sections = docs.map((d, i) => {
       let isExample = false;
@@ -565,10 +564,6 @@ window.useJSDoc = async function (url = URL) {
             .split(/(\*\s+\@)|(\s)/)
             .filter((s) => s && s.length > 0 && s !== ' ' && s !== '* @' && s !== '*  @' && s !== '*'),
         )
-        .map((d) => {
-          console.info({ d });
-          return d;
-        })
         .map(([tag, v1, v2, ...v3]) => {
           if (isExample) {
             if (tag === undefined) {
