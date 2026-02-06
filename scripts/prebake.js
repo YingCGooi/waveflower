@@ -218,7 +218,7 @@ window.supersynth = function (
     .postgain(1 / (n + 1) ** 0.2);
 };
 /**
- * @name .supersynth
+ * @name supersynth
  * @memberof {Pattern}
  * @returns {Pattern}
  * @tags prebake
@@ -416,24 +416,36 @@ Pattern.prototype.pg = function (amt) {
 const URL = 'https://waveflower.org/scripts/prebake.js';
 
 const TAGS = {
-  name: (name) => '<h3 class="font-mono my-0 pt-4">' + name + '</h3>',
+  name: (name, tags) =>
+    '<h3 class="font-mono my-0 pt-4">' +
+    name +
+    '<span class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' +
+    tags +
+    '</span>' +
+    '</h3>',
   tags: (tags) => '<span class="ml-2 text-xs text-foreground border border-muted px-1 py-0.5">' + tags + '</span>',
   synonyms: (syn) => '<p><em>synonyms</em> <code>' + syn + '</code></p>',
   text: (text) => '<p><p>' + text + '</p></p>',
   example: (eg) => '<pre class="bg-background">' + eg + '</pre>',
-  memberof: (mem) => '<p><em>member of</em> <code>' + mem + '</code></p>',
-  returns: (ret) => '<p><em>returns</em> <code>' + ret + '</code></p>',
+  memberof: (mem) =>
+    '<span style="margin:0"><em>member of</em> <code style="font-weight:300;color:oklch(from var(--caret) .67 .2 h)">' +
+    mem.replace('{', '&lt;').replace('}', '&gt;') +
+    '</code></span>',
+  returns: (ret) =>
+    '<span style="margin:0"><em>returns</em> <code style="font-weight:300;color:oklch(from var(--caret) .67 .2 h)">' +
+    ret.replace('{', '&lt;').replace('}', '&gt;') +
+    '</code></span>',
   param: (type, name, desc, listStyle = 'square') =>
     '<li style="list-style-type:' +
     listStyle +
     ';list-style-position:inside;font-weight:400;letter-spacing:-.1px">' +
     '<code style=' +
-    '"color: oklch(from var(--tw-ring-color) l c h / 1) !important;font-weight: 700;padding: 2px 4px;"' +
+    '"color:oklch(from var(--caret) .67 .2 h) !important;font-weight:300;padding: 2px 4px;"' +
     '>' +
     type +
     '</code>' +
     '<code class="border border-muted" style=' +
-    '"margin-right:.7em;color: oklch(from var(--caret) l .1 h) !important;padding: 1px 4px;font-weight: 400;filter: contrast(1.5);"' +
+    '"margin-right:.7em;color: oklch(from var(--caret) l .15 h) !important;font-family: inherit;padding: 1px 4px;font-weight: 400;filter: contrast(1.1);"' +
     '>' +
     name +
     '</code>' +
@@ -442,8 +454,7 @@ const TAGS = {
 };
 
 /**
- * @name useJSDoc
- * @tags prebake
+ * @name useJSDoc @tags prebake
  * @synonyms useDoc
  * Enables JSDoc processing + HTML insertion into the reference tab
  * @param {String} url text content containing JSDoc to pull from
@@ -547,6 +558,9 @@ window.useJSDoc = async function (url = URL) {
           if (!tag) {
             return '';
           }
+          if (tag === 'name' && v2 === '@tags') {
+            return TAGS.name(v1, v2, v3.join(','));
+          }
           if (tag === 'param') {
             v1 = v1.replaceAll('{', '&lt;').replaceAll('}', '&gt;');
             if (v1.includes('[')) {
@@ -563,7 +577,7 @@ window.useJSDoc = async function (url = URL) {
       .reverse()
       .forEach((s, i) => {
         let section = document.createElement('section');
-        section.id = as[i].innerText;
+        section.id = s.match(/>(.*)<\/h/)[1];
         section.className = 'pre';
         section.innerHTML = s;
         let reference = document.querySelector('#reference-container');
