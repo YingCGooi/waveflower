@@ -585,7 +585,7 @@ window.useJSDoc = async function (url = URL) {
       .reverse()
       .forEach((s, i) => {
         let section = document.createElement('section');
-        section.id = s.match(/>(.*)<\/h/)[1];
+        section.id = s.match(/>(.*)<\/span/)[1];
         section.className = 'pre';
         section.innerHTML = s;
         let reference = document.querySelector('#reference-container');
