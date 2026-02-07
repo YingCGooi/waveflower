@@ -418,7 +418,7 @@ const sTagBorder = 'style="display:inline-block;border-color:var(--foreground);m
 const sParamType =
   ' style="border-color:oklch(from var(--caret) .67 .2 h);color:oklch(from var(--caret) .67 .2 h) !important;font-weight:300;padding: 2px 4px;" ';
 const sParamName =
-  ' style="margin-right:.7em;border-color:oklch(from var(--caret) l .15 h);color: oklch(from var(--caret) l .15 h) !important;font-family: inherit;padding: 1px 4px;font-weight: 400;filter: contrast(1.1);" ';
+  ' style="margin-right:2px;border-color:oklch(from var(--caret) l .15 h);color: oklch(from var(--caret) l .15 h) !important;font-family: inherit;padding: 1px 4px;font-weight: 400;filter: contrast(1.1);" ';
 
 const TAGS = {
   name: (name, tags = '') =>
@@ -544,7 +544,7 @@ window.useJSDoc = async function (url = URL) {
       }
       let a = document.createElement('A');
       a.className = divNamesList.firstChild.className + ' ' + 'block' + ' ' + 'pre';
-      a.style = 'color: oklch(from var(--caret) l .2 h);font-family: inherit;';
+      a.style = 'color: oklch(from var(--caret) .67 .18 h);font-family: inherit;';
       a.innerText = doc
         .filter((l) => l.includes('@name '))[0]
         .split('@name')[1]
@@ -618,9 +618,9 @@ window.useJSDoc = async function (url = URL) {
   });
 };
 
-window.useListMarkerColor = function (color = 'var(--caret)') {
+window.useListMarkerColor = function (color = 'var(--caret) !important') {
   document
     .querySelectorAll('style')
-    .forEach((n) => n.append('#pre,::marker { color:' + color + '; filter:opacity(50%) }'));
+    .forEach((n) => n.append('#pre,::marker { color:' + color + '; filter:opacity(50%);margin-right: 2px }'));
 };
 useListMarkerColor();
