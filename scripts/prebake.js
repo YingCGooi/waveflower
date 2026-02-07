@@ -483,8 +483,7 @@ function codify(text = '', delimiter = '`') {
  * Enables JSDoc processing + HTML insertion into the reference tab
  * @param {String} url text content containing JSDoc to pull from
  * @example
- * useJSDoc('https://codeberg.org/glossing/Strudel_Scripts/raw/branch/main/scripts.mjs')
- * useDoc()
+ * useJSDoc('https://waveflower.org/scripts/prebake.js')
  */
 window.useJSDoc = async function (url = URL) {
   function nav() {
@@ -609,10 +608,12 @@ window.useJSDoc = async function (url = URL) {
         section.id = s.match(/>(.*)<\/h/)[1];
         section.className = 'pre';
         section.innerHTML = s;
-        let reference = document.querySelector('#reference-container');
-        reference ? reference.firstElementChild.prepend(section) : 0;
-        reference.previousElementSibling.style.maxWidth = '30%';
-        reference.style.minWidth = '70%';
+        let ref = document.querySelector('#reference-container');
+        if (ref) {
+          ref.firstElementChild.prepend(section);
+          ref.previousElementSibling.style.maxWidth = '30%';
+          ref.style.minWidth = '70%';
+        }
       });
   }).observe(document.body, {
     childList: true,
