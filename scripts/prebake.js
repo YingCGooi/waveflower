@@ -611,6 +611,8 @@ window.useJSDoc = async function (url = URL) {
         section.innerHTML = s;
         let reference = document.querySelector('#reference-container');
         reference ? reference.firstElementChild.prepend(section) : 0;
+        reference.previousElementSibling.style.maxWidth = '30%';
+        reference.style.minWidth = '70%';
       });
   }).observe(document.body, {
     childList: true,
@@ -618,9 +620,10 @@ window.useJSDoc = async function (url = URL) {
   });
 };
 
-window.useListMarkerColor = function (color = 'var(--caret) !important') {
-  document
-    .querySelectorAll('style')
-    .forEach((n) => n.append('#pre,::marker { color:' + color + '; filter:opacity(50%);margin-right: 2px }'));
+window.useNiceLists = function (color = 'var(--caret) !important') {
+  document.querySelectorAll('style').forEach((n) => {
+    n.append('#pre,::marker { color:' + color + '; filter:opacity(50%);margin-right: 2px }');
+    n.append('.text-ellipsis {font-size: .9em !important; letter-spacing: -.4px;}');
+  });
 };
-useListMarkerColor();
+useNiceLists();
