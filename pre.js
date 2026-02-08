@@ -44,18 +44,21 @@ window.removePrebakeCSS = function () {
  * @synonyms useWet
  * @tags prebake
  * @param {Number} saturation amount (default 3)
+ * @param {Number} lineHeight multipler (default 1)
  * @param {Number} hue shift (default -15)
  * @example
  * useWet(3, -15)
  */
-window.wetEditor = function (amount = 3, hueShift = -15) {
+window.wetEditor = function (amount = 3, lineHeight = 1, hueShift = -15) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
     n.append('#pre,:root { --background: #001 !important} ');
     n.append('#pre,canvas {filter:saturate(' + amount + ')}');
     n.append('#pre,#code .cm-line>*{background: #0000;}');
-    n.append('#pre,.cm-line{filter:hue-rotate(' + hueShift + 'deg) saturate(' + amount + ')}');
+    n.append(
+      '#pre,.cm-line{line-height:' + lineHeight + 'em;filter:hue-rotate(' + hueShift + 'deg) saturate(' + amount + ')}',
+    );
   });
 };
 window.useWet = (a, h) => window.wetEditor(a, h);
