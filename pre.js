@@ -49,7 +49,7 @@ window.removePrebakeCSS = function () {
  * @example
  * useWet(3, -15)
  */
-window.wetEditor = function (amount = 3, lineHeight = 1, hueShift = -15) {
+window.wetEditor = function (amount = 3, lineHeight = 1.33, hueShift = -15) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
