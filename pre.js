@@ -699,7 +699,7 @@ function pitchwheel({
     margin = padding;
   }
   if (margin === 'auto') {
-    margin = ctx.canvas.width / 10;
+    margin = ctx.canvas.width / 12;
   }
   const h = ctx.canvas.height;
   ctx.clearRect(0, 0, w, h);
@@ -795,11 +795,11 @@ function pitchwheel({
       }
       if (labels) {
         let roffset = 1;
-        if (freq > root * 2) {
-          roffset = 1.1;
+        if (freq >= root * 2) {
+          roffset = 1.09;
         }
-        if (freq > root * 4) {
-          roffset = 1.2;
+        if (freq >= root * 4) {
+          roffset = 1.18;
         }
         const [xl, yl] = circlePos(centerX, centerY, radius * labels * roffset, angle);
         const textSize = String(radius ** 0.6);
