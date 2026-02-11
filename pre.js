@@ -699,7 +699,7 @@ function pitchwheel({
     margin = padding;
   }
   if (margin === 'auto') {
-    margin = ctx.canvas.width / 12;
+    margin = ctx.canvas.width / 14;
   }
   const h = ctx.canvas.height;
   ctx.clearRect(0, 0, w, h);
@@ -734,7 +734,8 @@ function pitchwheel({
     const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
     const [x, y] = circlePos(centerX, centerY, radius, angle);
     if (labels) {
-      const [xl, yl] = circlePos(centerX, centerY, radius * labels, angle);
+      const baseLabel = 1.07; // so that text is drawn outside of dots
+      const [xl, yl] = circlePos(centerX, centerY, radius * labels * baseLabel, angle);
       const textSize = String(radius ** 0.6);
       ctx.font = textSize + 'px monocraft';
       ctx.fillText(i, xl - textSize / 1.7, yl + textSize / 3);
