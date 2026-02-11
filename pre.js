@@ -631,3 +631,203 @@ window.useNiceLists = function (color = 'var(--caret) !important') {
   });
 };
 useNiceLists();
+
+const c = midiToFreq(36);
+const circlePos = (cx, cy, radius, angle) => {
+  angle = angle * Math.PI * 2;
+  const x = Math.sin(angle) * radius + cx;
+  const y = Math.cos(angle) * radius + cy;
+  return [x, y];
+};
+
+const freq2angle = (freq, root, equalDivisionOfAngle = true) => {
+  if (equalDivisionOfAngle) {
+    return 0.5 - (Math.log2(freq / root) % 1);
+  } else {
+    let normalizer = 1;
+    if (freq < root) {
+      normalizer = 0.5;
+    } else if (freq > root * 2) {
+      normalizer = 2;
+    } else if (freq > root * 4) {
+      normalizer = 4;
+    } else if (freq > root * 8) {
+      normalizer = 8;
+    } else if (freq > root * 16) {
+      normalizer = 16;
+    } else if (freq > root * 32) {
+      normalizer = 32;
+    } else if (freq > root * 64) {
+      normalizer = 64;
+    }
+    freq = freq / normalizer;
+    return 0.5 - ((freq / root) % 1);
+  }
+};
+
+// overrides default pitchwheel
+function pitchwheel({
+  haps,
+  ctx,
+  id,
+  hapcircles = 1,
+  circle = 0,
+  edo = 12,
+  labels = 0,
+  root = c,
+  thickness = 3,
+  lineJoin = 'round',
+  linejoin = '',
+  hapRadius = 6,
+  dotsize = 0,
+  mode = 'flake',
+  margin = 'auto',
+  padding = 0,
+  exponential = false,
+  glow = 0,
+} = {}) {
+  const connectdots = mode === 'polygon';
+  const centerlines = mode === 'flake';
+  const w = ctx.canvas.width;
+  if (dotsize) {
+    hapRadius = dotsize;
+  }
+  if (linejoin) {
+    lineJoin = linejoin;
+  }
+  if (padding) {
+    margin = padding;
+  }
+  if (margin === 'auto') {
+    margin = ctx.canvas.width / 10;
+  }
+  const h = ctx.canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  const color = getTheme().foreground;
+
+  const size = Math.min(w, h);
+  const radius = size / 2 - thickness / 2 - hapRadius - margin;
+  const centerX = w / 2;
+  const centerY = h / 2;
+
+  if (id) {
+    haps = haps.filter((hap) => hap.hasTag(id));
+  }
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineJoin = lineJoin;
+  lineJoin === 'round' ? (ctx.lineCap = 'round') : (ctx.lineCap = 'square'); // match line join style
+  ctx.globalAlpha = 1;
+  ctx.lineWidth = thickness;
+
+  if (circle) {
+    ctx.lineWidth = circle;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.stroke();
+  }
+
+  if (!edo) {
+    edo = 12;
+  }
+  Array.from({ length: edo }, (_, i) => {
+    const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
+    const [x, y] = circlePos(centerX, centerY, radius, angle);
+    if (labels) {
+      const [xl, yl] = circlePos(centerX, centerY, radius * labels, angle);
+      const textSize = String(radius ** 0.6);
+      ctx.font = textSize + 'px monocraft';
+      ctx.fillText(i, xl - textSize / 1.7, yl + textSize / 3);
+    }
+    ctx.beginPath();
+    ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
+    ctx.fill();
+  });
+  ctx.stroke();
+
+  let shape = [];
+  ctx.lineWidth = hapRadius;
+  haps.forEach((hap) => {
+    let freq;
+    try {
+      freq = getFrequency(hap);
+    } catch (err) {
+      return;
+    }
+    const angle = freq2angle(freq, root, !exponential);
+    const [x, y] = circlePos(centerX, centerY, radius, angle);
+    const hapColor = hap.value.color || color;
+    ctx.strokeStyle = hapColor;
+    ctx.fillStyle = hapColor;
+    const { velocity = 1, gain = 1 } = hap.value || {};
+    const alpha = velocity * gain;
+    ctx.globalAlpha = alpha;
+    shape.push([x, y, angle, hapColor, alpha, freq]);
+    ctx.beginPath();
+    if (hapcircles) {
+      ctx.moveTo(x + hapRadius, y);
+      ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+    if (centerlines) {
+      if (glow) {
+        ctx.shadowColor = hapColor;
+        ctx.shadowBlur = glow;
+      }
+      ctx.lineWidth = thickness;
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  });
+
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = 1;
+
+  if (connectdots && shape.length) {
+    shape = shape.sort((a, b) => a[2] - b[2]);
+    ctx.beginPath();
+    ctx.moveTo(shape[0][0], shape[0][1]);
+    shape.forEach(([x, y, angle, color, alpha, freq]) => {
+      if (glow) {
+        ctx.shadowColor = color;
+        ctx.shadowBlur = glow;
+      }
+      if (labels) {
+        let roffset = 1;
+        if (freq > root * 2) {
+          roffset = 1.1;
+        }
+        if (freq > root * 4) {
+          roffset = 1.2;
+        }
+        const [xl, yl] = circlePos(centerX, centerY, radius * labels * roffset, angle);
+        const textSize = String(radius ** 0.6);
+        ctx.fillStyle = color;
+        ctx.font = textSize + 'px monocraft';
+        const i = Math.log2(freq / root) * edo;
+        ctx.fillText(i.toFixed(0), xl - textSize / 1.7, yl + textSize / 3 - roffset ** 10);
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = thickness;
+      ctx.globalAlpha = alpha;
+      ctx.lineTo(x, y);
+    });
+    ctx.lineTo(shape[0][0], shape[0][1]);
+    ctx.stroke();
+  }
+  return;
+}
+
+Pattern.prototype.pitchwheel = function (options = {}) {
+  let { ctx = getDrawContext(), id = 1 } = options;
+  return this.tag(id).onPaint((_, time, haps) =>
+    pitchwheel({
+      ...options,
+      time,
+      ctx,
+      haps: haps.filter((hap) => hap.isActive(time)),
+      id,
+    }),
+  );
+};
