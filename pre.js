@@ -5,7 +5,7 @@ document.head.querySelectorAll('[rel=icon]').forEach((n) => {
   n.href = 'https://waveflower.org/assets/r=sin2t.png';
 });
 
-let windowTitle = 'Strudel [Prebaked] REPL';
+let windowTitle = '[Prebaked] Strudel REPL';
 /**
  * @name useTitle
  * @tags prebake
@@ -49,7 +49,7 @@ window.removePrebakeCSS = function () {
  * @example
  * useWet(3, -15)
  */
-window.wetEditor = function (amount = 3, lineHeight = 1.33, hueShift = -15) {
+window.wetEditor = function (amount = 3, lineHeight = 1.4, hueShift = -12) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
@@ -59,7 +59,7 @@ window.wetEditor = function (amount = 3, lineHeight = 1.33, hueShift = -15) {
     n.append(
       '#pre,.cm-line{line-height:' + lineHeight + 'em;filter:hue-rotate(' + hueShift + 'deg) saturate(' + amount + ')}',
     );
-    n.append('#pre,.bg-lineHighlight,{background:#001}');
+    n.append('#pre,.bg-lineHighlight,cm-gutter,cm-lineNumbers{background:#001}');
   });
 };
 window.useWet = (a, h) => window.wetEditor(a, h);
