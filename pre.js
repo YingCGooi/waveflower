@@ -670,13 +670,13 @@ const centsToNote = {
   // 1162:
 };
 
-const C = midiToFreq(36);
-const D = midiToFreq(38);
-const E = midiToFreq(40);
-const F = midiToFreq(41);
-const G = midiToFreq(43);
-const A = midiToFreq(45);
-const B = midiToFreq(47);
+const C = midiToFreq(36 + 12);
+const D = midiToFreq(38 + 12);
+const E = midiToFreq(40 + 12);
+const F = midiToFreq(41 + 12);
+const G = midiToFreq(43 + 12);
+const A = midiToFreq(45 + 12);
+const B = midiToFreq(47 + 12);
 
 const circlePos = (cx, cy, radius, angle) => {
   angle = angle * Math.PI * 2;
@@ -710,31 +710,32 @@ const freq2angle = (freq, root, equalDivisionOfAngle = true) => {
   }
 };
 
-// overrides default pitchwheel
 function pitchwheel({
   haps,
   ctx,
   id,
   hapcircles = 1,
-  circle = 0,
+  circle = 3,
   edo = 12,
   labels = 1.07,
   root = C,
-  thickness = 3,
-  lineJoin = 'round',
+  thickness = 18,
+  lineJoin = 'miter',
   linejoin = '',
   hapRadius = 6,
-  dotsize = 0,
+  dotsize = false,
   mode = 'polygon',
   margin = 'auto',
   padding = 0,
   exponential = true,
   glow = 0,
+  font = 'monocraft',
+  textsize = 1,
 } = {}) {
   const connectdots = mode === 'polygon';
   const centerlines = mode === 'flake';
   const w = ctx.canvas.width;
-  if (dotsize) {
+  if (dotsize || dotsize === 0) {
     hapRadius = dotsize;
   }
   if (linejoin) {
@@ -761,14 +762,14 @@ function pitchwheel({
   ctx.strokeStyle = color;
   ctx.fillStyle = color;
   ctx.lineJoin = lineJoin;
-  lineJoin === 'round' ? (ctx.lineCap = 'round') : (ctx.lineCap = 'square'); // match line join style
+  lineJoin === 'round' ? (ctx.lineCap = 'round') : (ctx.lineCap = 'butt'); // shrink caps
   ctx.globalAlpha = 1;
   ctx.lineWidth = thickness;
 
   if (circle) {
     ctx.lineWidth = circle;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, radius + thickness / 2, 0, 2 * Math.PI);
     ctx.stroke();
   }
 
@@ -779,11 +780,10 @@ function pitchwheel({
     const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
     const [x, y] = circlePos(centerX, centerY, radius, angle);
     if (labels) {
-      const baseLabel = 1.07; // so that text is drawn outside of dots
-      const [xl, yl] = circlePos(centerX, centerY, radius * labels * baseLabel, angle);
-      const textSize = String(radius ** 0.6);
-      ctx.font = textSize + 'px monocraft';
-      ctx.fillText(i, xl - textSize / 1.7, yl + textSize / 3);
+      const [xl, yl] = circlePos(centerX, centerY, radius * labels + thickness / 3, angle);
+      const size = String(radius ** (textsize * 0.6));
+      ctx.font = size + 'px ' + font;
+      ctx.fillText(i, xl - size / 2, yl + size / 3);
     }
     ctx.beginPath();
     ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
@@ -839,13 +839,15 @@ function pitchwheel({
         ctx.shadowColor = color;
         ctx.shadowBlur = glow;
       }
+
       if (labels) {
-        const [xl, yl] = circlePos(centerX, centerY, radius * labels, angle);
-        const textSize = String(radius ** 0.6);
+        const [xl, yl] = circlePos(centerX, centerY, radius * labels + thickness / 3, angle);
+        const size = String(radius ** (textsize * 6));
         ctx.fillStyle = color;
-        ctx.font = textSize + 'px monocraft';
+        ctx.font = size + 'px ' + font;
         const i = (Math.log2(freq / root) * edo) % edo;
-        ctx.fillText(i.toFixed(0), xl - textSize / 1.7, yl + textSize);
+        console.log({ i, edo, angle: angle.toFixed(2), freq: freq.toFixed(1) });
+        ctx.fillText(i.toFixed(0), xl - size / 2, yl + size / 3);
       }
       ctx.strokeStyle = color;
       ctx.lineWidth = thickness;
@@ -858,17 +860,14 @@ function pitchwheel({
   return;
 }
 
-Pattern.prototype.pitchwheel = function (options = {}) {
-  let { ctx = getDrawContext(), id = 1 } = options;
-  return this.tag(id).onPaint((_, time, haps) =>
-    pitchwheel({
-      ...options,
-      time,
-      ctx,
-      haps: haps.filter((hap) => hap.isActive(time)),
-      id,
-    }),
-  );
+Pattern.prototype.rainbowCycle = function (offset = 10, cycles = 8) {
+  const hues = Array(cycles)
+    .fill(0)
+    .map((_, i) => {
+      const hue = (360 / cycles) * i + offset;
+      return 'oklch(.7 .2 ' + hue + ')';
+    });
+  return this.color(slowcat(...hues));
 };
 
 register('lpp', (min, max, x) => x.lpf(perlin.rangex(min, max)));
