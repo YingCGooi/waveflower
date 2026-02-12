@@ -59,6 +59,7 @@ window.wetEditor = function (amount = 3, lineHeight = 1.33, hueShift = -15) {
     n.append(
       '#pre,.cm-line{line-height:' + lineHeight + 'em;filter:hue-rotate(' + hueShift + 'deg) saturate(' + amount + ')}',
     );
+    n.append('#pre,.bg-lineHighlight,{background:#001}');
   });
 };
 window.useWet = (a, h) => window.wetEditor(a, h);
@@ -632,7 +633,51 @@ window.useNiceLists = function (color = 'var(--caret) !important') {
 };
 useNiceLists();
 
-const c = midiToFreq(36);
+// centsToNote is based on 31edo, which contains all 12edo notes
+// as this is an approximation, please only use this for visualization/closest match only
+// ◃ = half-flat; ‡ = half-sharp
+const centsToNote = {
+  0: 'A',
+  39: 'A‡',
+  77: 'A♯',
+  116: 'B♭',
+  155: 'B◃',
+  194: 'B',
+  232: 'B‡',
+  271: 'B♯',
+  310: 'C',
+  348: 'C‡',
+  387: 'C♯',
+  426: 'D♭',
+  465: 'D◃',
+  503: 'D',
+  542: 'D‡',
+  581: 'D♯',
+  619: 'E♭',
+  // 658:
+  // 697:
+  // 735:
+  // 774:
+  // 813:
+  // 852:
+  // 890:
+  // 929:
+  // 968:
+  // 1006:
+  // 1045:
+  // 1084:
+  // 1123:
+  // 1162:
+};
+
+const C = midiToFreq(36);
+const D = midiToFreq(38);
+const E = midiToFreq(40);
+const F = midiToFreq(41);
+const G = midiToFreq(43);
+const A = midiToFreq(45);
+const B = midiToFreq(47);
+
 const circlePos = (cx, cy, radius, angle) => {
   angle = angle * Math.PI * 2;
   const x = Math.sin(angle) * radius + cx;
@@ -673,17 +718,17 @@ function pitchwheel({
   hapcircles = 1,
   circle = 0,
   edo = 12,
-  labels = 0,
-  root = c,
+  labels = 1.07,
+  root = C,
   thickness = 3,
   lineJoin = 'round',
   linejoin = '',
   hapRadius = 6,
   dotsize = 0,
-  mode = 'flake',
+  mode = 'polygon',
   margin = 'auto',
   padding = 0,
-  exponential = false,
+  exponential = true,
   glow = 0,
 } = {}) {
   const connectdots = mode === 'polygon';
@@ -795,19 +840,12 @@ function pitchwheel({
         ctx.shadowBlur = glow;
       }
       if (labels) {
-        let roffset = 1;
-        if (freq >= root * 2) {
-          roffset = 1.09;
-        }
-        if (freq >= root * 4) {
-          roffset = 1.18;
-        }
-        const [xl, yl] = circlePos(centerX, centerY, radius * labels * roffset, angle);
+        const [xl, yl] = circlePos(centerX, centerY, radius * labels, angle);
         const textSize = String(radius ** 0.6);
         ctx.fillStyle = color;
         ctx.font = textSize + 'px monocraft';
-        const i = Math.log2(freq / root) * edo;
-        ctx.fillText(i.toFixed(0), xl - textSize / 1.7, yl + textSize / 3 - roffset ** 10);
+        const i = (Math.log2(freq / root) * edo) % edo;
+        ctx.fillText(i.toFixed(0), xl - textSize / 1.7, yl + textSize);
       }
       ctx.strokeStyle = color;
       ctx.lineWidth = thickness;
@@ -832,3 +870,6 @@ Pattern.prototype.pitchwheel = function (options = {}) {
     }),
   );
 };
+
+register('lpp', (min, max, x) => x.lpf(perlin.rangex(min, max)));
+register('lep', (min, max, x) => x.lpe(perlin.rangex(min, max)));
