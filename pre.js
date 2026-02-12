@@ -730,7 +730,7 @@ function pitchwheel({
   exponential = true,
   glow = 0,
   font = 'monocraft',
-  textsize = 1,
+  textsize = 1.07,
 } = {}) {
   const connectdots = mode === 'polygon';
   const centerlines = mode === 'flake';
