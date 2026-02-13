@@ -636,39 +636,58 @@ useNiceLists();
 // centsToNote is based on 31edo, which contains all 12edo notes
 // as this is an approximation, please only use this for visualization/closest match only
 // ◃ = half-flat; ‡ = half-sharp
-const centsToNote = {
+const centsToANoteMap = {
   0: 'A',
-  39: 'A‡',
+  39: 'A‡', // or Bbb
   77: 'A♯',
   116: 'B♭',
-  155: 'B◃',
+  155: 'B◃', // or A##
   194: 'B',
-  232: 'B‡',
-  271: 'B♯',
+  232: 'B‡', // or Cb
+  271: 'B♯', // or C<
   310: 'C',
-  348: 'C‡',
+  348: 'C‡', // or B## or Dbb
   387: 'C♯',
   426: 'D♭',
-  465: 'D◃',
+  465: 'D◃', // or C##
   503: 'D',
-  542: 'D‡',
+  542: 'D‡', // or Ebb
   581: 'D♯',
   619: 'E♭',
-  // 658:
-  // 697:
-  // 735:
-  // 774:
-  // 813:
-  // 852:
-  // 890:
-  // 929:
-  // 968:
-  // 1006:
-  // 1045:
-  // 1084:
-  // 1123:
-  // 1162:
+  658: 'E◃', // or D## or Fbb
+  697: 'E',
+  735: 'E‡', // or Fb
+  774: 'F◃', // or E#
+  813: 'F',
+  852: 'F‡', // or E## or Gbb
+  890: 'F♯',
+  929: 'G♭',
+  968: 'G◃', // or F##
+  1006: 'G',
+  1045: 'G‡', // or Abb
+  1084: 'G♯',
+  1123: 'A♭',
+  1162: 'A⦉', // or G##
 };
+
+function centsToNote(cents = 0, root = A) {
+  cents = Math.round(cents);
+  // round cents to nearest integer,
+  // then seek 0, +1, seek -1
+  // if not found, then seek 0, +2, -2... continue until found
+  for (let seek = 0; seek < 100; seek++) {
+    if (centsToANoteMap[cents]) {
+      return centsToANoteMap[cents];
+    }
+    if (centsToANoteMap[cents + seek]) {
+      return centsToANoteMap[cents + seek];
+    }
+    if (centsToANoteMap[cents - seek]) {
+      return centsToANoteMap[cents - seek];
+    }
+  }
+  return 'noteNotFoundError';
+}
 
 const C = midiToFreq(36 + 12);
 const D = midiToFreq(38 + 12);
@@ -717,13 +736,14 @@ function pitchwheel({
   hapcircles = 1,
   circle = 3,
   edo = 12,
-  labels = 1.07,
+  labels = 'numbers',
+  distance = 1.1,
   root = C,
-  thickness = 18,
-  lineJoin = 'miter',
+  thickness = 20,
+  lineJoin = 'round',
   linejoin = '',
-  hapRadius = 6,
-  dotsize = false,
+  hapRadius = 0,
+  dotsize = 0,
   mode = 'polygon',
   margin = 'auto',
   padding = 0,
@@ -734,6 +754,8 @@ function pitchwheel({
 } = {}) {
   const connectdots = mode === 'polygon';
   const centerlines = mode === 'flake';
+  const labelnumbers = labels === 'numbers';
+  const labelletters = labels === 'letters';
   const w = ctx.canvas.width;
   if (dotsize || dotsize === 0) {
     hapRadius = dotsize;
@@ -745,7 +767,7 @@ function pitchwheel({
     margin = padding;
   }
   if (margin === 'auto') {
-    margin = ctx.canvas.width / 14;
+    margin = ctx.canvas.width / 12;
   }
   const h = ctx.canvas.height;
   ctx.clearRect(0, 0, w, h);
@@ -780,7 +802,7 @@ function pitchwheel({
     const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
     const [x, y] = circlePos(centerX, centerY, radius, angle);
     if (labels) {
-      const [xl, yl] = circlePos(centerX, centerY, radius * labels + thickness / 3, angle);
+      const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness / 3, angle);
       const size = String(radius ** (textsize * 0.6));
       ctx.font = size + 'px ' + font;
       ctx.fillText(i, xl - size / 2, yl + size / 3);
@@ -841,13 +863,18 @@ function pitchwheel({
       }
 
       if (labels) {
-        const [xl, yl] = circlePos(centerX, centerY, radius * labels + thickness / 3, angle);
+        const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness / 3, angle);
         const size = String(radius ** (textsize * 6));
         ctx.fillStyle = color;
         ctx.font = size + 'px ' + font;
         const i = (Math.log2(freq / root) * edo) % edo;
-        console.log({ i, edo, angle: angle.toFixed(2), freq: freq.toFixed(1) });
-        ctx.fillText(i.toFixed(0), xl - size / 2, yl + size / 3);
+        if (labelnumbers) {
+          ctx.fillText(i.toFixed(0), xl - size / 2, yl + size / 3);
+        }
+        if (labelletters) {
+          const cents = (i * 1200) / edo;
+          console.info({ cents, letter: centsToNote(cents) });
+        }
       }
       ctx.strokeStyle = color;
       ctx.lineWidth = thickness;
