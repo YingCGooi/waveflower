@@ -6,14 +6,15 @@ var ENV = {
   alphaExponent: 0,
   blurFactor: 0.5,
   dpr: window.devicePixelRatio,
-  lineWidthStart: 3.3, // start = tail of spiral
-  lineWidthEnd: 1, // end = head of spiral
+  lineWidthStart: 9, // start = tail of spiral
+  lineWidthEnd: 4, // end = head of spiral
   lineColorStart: 'oklch(0.5 0.3 290)',
-  lineColorEnd: 'oklch(0.8 0.24 220)',
+  lineColorEnd: 'oklch(0.8 0.24 240)',
   interpolationSpace: 'oklch',
   syncPeriodPhase: true,
   smoothingTimeConstant: 1,
   analyzerWaitDelayMs: 400,
+  hueOffsets: -40,
 };
 
 class AudioSourceManager {

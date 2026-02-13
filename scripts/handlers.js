@@ -98,7 +98,7 @@ $('#play').addEventListener('click', (e) => {
           // if k is an integer less than 10, use main class
         }
         if (!hasAny(replVisualizers, (v) => v.canvasClass === k)) {
-          replVisualizers.push(new Visualizer(canvasClass, analysers[k], Number(k.at(-1)) * 30, 2));
+          replVisualizers.push(new Visualizer(canvasClass, analysers[k], Number(k.at(-1)) * ENV.hueOffsets, 2));
         }
         analysers[k].fftSize = ENV.fftSize;
         analysers[k].sampleRate = ENV.sampleRate;
