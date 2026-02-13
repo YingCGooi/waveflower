@@ -1,20 +1,20 @@
-const MAIN_CLASS = "main";
+const MAIN_CLASS = 'main';
 let replVisualizers = [];
 let intervalID = 0;
 let lastAnimationID = 0;
 
 window.onload = () => {
   let urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get("repl")) {
-    manager.setREPL($("#repl").editor);
+  if (urlParams.get('repl')) {
+    manager.setREPL($('#repl').editor);
   }
   let u = window.location.href;
-  const parts = u.split("#");
+  const parts = u.split('#');
   if (parts.length > 1) {
     const code = hashTocode(parts[parts.length - 1]);
-    $(".cm-content").textContent = code;
+    $('.cm-content').textContent = code;
   }
-  const base = $("[name=base]");
+  const base = $('[name=base]');
   base.value = ENV.baseFrequency;
 };
 
@@ -26,14 +26,14 @@ window.onresize = () => {
   visualizer.resize();
 };
 
-const base = $("[name=base]");
+const base = $('[name=base]');
 base.value = ENV.baseFrequency;
 base.onchange = (e) => {
   ENV.baseFrequency = Number(e.target.value);
-  if (ENV.baseFrequency > 110 && ENV.fftSize > 1024) {
+  if (ENV.baseFrequency > 110 && ENV.fftSize > 2048) {
     ENV.fftSize = ENV.fftSize / 2;
   }
-  if (ENV.baseFrequency <= 110 && ENV.fftSize < 2048) {
+  if (ENV.baseFrequency <= 110 && ENV.fftSize < 4096) {
     ENV.fftSize = ENV.fftSize * 2;
   }
   let v = visualizer;
@@ -42,7 +42,7 @@ base.onchange = (e) => {
   infoLog(`base period set to 1/${e.target.value}s`);
 };
 
-const freqInput = $("input[name=freq]");
+const freqInput = $('input[name=freq]');
 freqInput.value = ENV.baseFrequency; // reset to base frequency at start
 freqInput.onchange = (e) => manager.setOSCfreq(freqInput.value);
 
@@ -62,19 +62,19 @@ const drawFrames = (currentTime) => {
   return lastAnimationID;
 };
 
-$("#fileinput").onchange = (event) => {
+$('#fileinput').onchange = (event) => {
   const r = new FileReader();
   r.readAsArrayBuffer(event.target.files[0]);
   r.onload = (e) => {
     manager.ctx.decodeAudioData(
       e.target.result,
       (buffer) => manager.updateBuffer(buffer),
-      (err) => console.error(err)
+      (err) => console.error(err),
     );
   };
 };
 
-$all("input[name=osc]").forEach((radio) => {
+$all('input[name=osc]').forEach((radio) => {
   radio.onchange = (e) => {
     if (e.target.checked) {
       manager.setOSCtype(e.target.value);
@@ -82,17 +82,14 @@ $all("input[name=osc]").forEach((radio) => {
   };
 });
 
-$("#play").addEventListener("click", (e) => {
-  visualizer.calculateColorSteps(
-    new Color(ENV.lineColorStart),
-    new Color(ENV.lineColorEnd)
-  );
+$('#play').addEventListener('click', (e) => {
+  visualizer.calculateColorSteps(new Color(ENV.lineColorStart), new Color(ENV.lineColorEnd));
   if (manager.replHasCode()) {
-    manager.playREPL(() => { });
+    manager.playREPL(() => {});
     replVisualizers = []; // reset temp array
     intervalID = setInterval(() => {
       for (k in analysers) {
-        let canvasClass = k
+        let canvasClass = k;
         if (!Object.hasOwn(analysers, k)) {
           continue;
         }
@@ -101,9 +98,7 @@ $("#play").addEventListener("click", (e) => {
           // if k is an integer less than 10, use main class
         }
         if (!hasAny(replVisualizers, (v) => v.canvasClass === k)) {
-          replVisualizers.push(
-            new Visualizer(canvasClass, analysers[k], Number(k.at(-1)) * 90)
-          );
+          replVisualizers.push(new Visualizer(canvasClass, analysers[k], Number(k.at(-1)) * 90));
         }
         analysers[k].fftSize = ENV.fftSize;
         analysers[k].sampleRate = ENV.sampleRate;
@@ -114,14 +109,14 @@ $("#play").addEventListener("click", (e) => {
     }, ENV.analyzerWaitDelayMs); // wait for 'analysers' object to initialize
     return;
   }
-  if ($("#fileinput").value !== "" && !manager.isFileplaying) {
-    infoLog("file buffer start");
+  if ($('#fileinput').value !== '' && !manager.isFileplaying) {
+    infoLog('file buffer start');
     manager.playBuffer();
     drawFrames();
     return;
   } else if (!manager.isOSCplaying) {
-    infoLog("osc start");
-    manager.setOSCtype($("input[name=osc]:checked").value);
+    infoLog('osc start');
+    manager.setOSCtype($('input[name=osc]:checked').value);
     manager.setOSCfreq(freqInput.value);
     manager.playOSC();
     drawFrames();
@@ -129,24 +124,24 @@ $("#play").addEventListener("click", (e) => {
   }
 });
 
-$("#stop").addEventListener("click", (e) => {
-  const f = $("#fileinput");
-  if (f.value !== "") {
-    f.value = "";
+$('#stop').addEventListener('click', (e) => {
+  const f = $('#fileinput');
+  if (f.value !== '') {
+    f.value = '';
   }
   manager.isREPLplaying && manager.stopREPL();
   manager.isOSCplaying && manager.stopOSC();
   manager.isFileplaying && manager.stopBuffer();
-  infoLog("stop");
+  infoLog('stop');
   cancelAnimationFrame(lastAnimationID);
   clearInterval(intervalID);
 });
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "F2" && !document.fullscreenElement) {
-    $("#canvases").requestFullscreen();
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'F2' && !document.fullscreenElement) {
+    $('#canvases').requestFullscreen();
   }
-  if (e.key == "ESC") {
+  if (e.key == 'ESC') {
     document.exitFullscreen?.();
   }
 });
