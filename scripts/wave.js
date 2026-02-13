@@ -1,16 +1,16 @@
 var ENV = {
   fftSize: 2048,
-  colorSpace: "display-p3",
+  colorSpace: 'display-p3',
   sampleRate: 44100,
-  baseFrequency: 155.56,
+  baseFrequency: 110.0,
   alphaExponent: 0,
   blurFactor: 0.5,
   dpr: window.devicePixelRatio,
   lineWidthStart: 3.3, // start = tail of spiral
   lineWidthEnd: 1, // end = head of spiral
-  lineColorStart: "oklch(0.5 0.3 290)",
-  lineColorEnd: "oklch(0.8 0.24 220)",
-  interpolationSpace: "oklch",
+  lineColorStart: 'oklch(0.5 0.3 290)',
+  lineColorEnd: 'oklch(0.8 0.24 220)',
+  interpolationSpace: 'oklch',
   syncPeriodPhase: true,
   smoothingTimeConstant: 1,
   analyzerWaitDelayMs: 400,
@@ -20,7 +20,7 @@ class AudioSourceManager {
   constructor(
     audioContext = new window.AudioContext({
       sampleRate: ENV.sampleRate,
-    })
+    }),
   ) {
     this.ctx = audioContext;
     this.analyzer = this.generateAnalyzer();
@@ -31,14 +31,14 @@ class AudioSourceManager {
     this.isOSCplaying = false;
     this.isFileplaying = false;
   }
-  setREPL(repl = $("#repl").editor) {
+  setREPL(repl = $('#repl').editor) {
     this.repl = repl;
   }
   replHasCode() {
     if (!this.repl) {
       return false;
     }
-    return this.repl.code.trim() !== "";
+    return this.repl.code.trim() !== '';
   }
   playREPL(forceScopeFn = () => {}) {
     forceScopeFn(this.repl);
@@ -76,7 +76,7 @@ class AudioSourceManager {
   }
   playBuffer() {
     if (this.isFileplaying) {
-      infoLog("file buffer already playing");
+      infoLog('file buffer already playing');
       return;
     }
     this.bufferSource.start();
@@ -89,7 +89,7 @@ class AudioSourceManager {
   }
   playOSC() {
     if (this.isOSCplaying) {
-      infoLog("osc already playing");
+      infoLog('osc already playing');
       return;
     }
     this.oscillator.start();
@@ -100,7 +100,7 @@ class AudioSourceManager {
     this.oscillator = this.generateOSC();
     this.isOSCplaying = false;
   }
-  setOSCtype(type = $("input[name=osc]:checked").value) {
+  setOSCtype(type = $('input[name=osc]:checked').value) {
     this.oscillator.type = type;
   }
   setOSCfreq(freq = ENV.baseFrequency) {
@@ -109,14 +109,15 @@ class AudioSourceManager {
 }
 
 class Visualizer {
-  constructor(canvasClass = "", analyzer = new AnalyserNode(), hueRotate = 0) {
-    this.sectionID = "#canvases";
+  constructor(canvasClass = '', analyzer = new AnalyserNode(), hueRotate = 0, scaleDrawRadius = 1) {
+    this.sectionID = '#canvases';
     this.canvasClass = canvasClass;
     this.hueRotate = hueRotate;
     this.resetCanvasElements();
     const dim = Math.min(window.innerHeight, window.innerWidth);
     this.dim = dim;
     this.drawRadius = (this.dim * ENV.dpr) / 2;
+    this.scaleDrawRadius = scaleDrawRadius;
     this.resize(this.dim);
     this.analyzer = analyzer;
     this.currentTimeDomain = this.getTimeDomainArray();
@@ -125,33 +126,28 @@ class Visualizer {
     this.lastTimeDomainCache = { 0: 0 };
     this.lastTimeDomainRadians = new Float32Array(ENV.fftSize);
     this.colorSteps = [ENV.lineColorStart, ENV.lineColorEnd];
-    this.calculateColorSteps(
-      new Color(ENV.lineColorStart),
-      new Color(ENV.lineColorEnd)
-    );
+    this.calculateColorSteps(new Color(ENV.lineColorStart), new Color(ENV.lineColorEnd));
   }
 
   resetCanvasElements() {
-    const numPeriods = Math.ceil(
-      ENV.fftSize / (ENV.sampleRate / ENV.baseFrequency)
-    );
-    const canvasSelector = this.sectionID + ">." + this.canvasClass;
+    const numPeriods = Math.ceil(ENV.fftSize / (ENV.sampleRate / ENV.baseFrequency));
+    const canvasSelector = this.sectionID + '>.' + this.canvasClass;
     while ($(canvasSelector) != null) {
       $(this.sectionID).removeChild($(canvasSelector));
     }
     for (let i = 0; i < numPeriods; i++) {
-      let canvas = document.createElement("canvas");
-      canvas.id = this.canvasClass + "_" + i;
+      let canvas = document.createElement('canvas');
+      canvas.id = this.canvasClass + '_' + i;
       canvas.classList.add(this.canvasClass);
       $(this.sectionID).appendChild(canvas);
     }
     this.canvases = $all(canvasSelector);
     this.contexts = [];
     this.canvases.forEach((canvas) => {
-      const ctx = canvas.getContext("2d", { colorSpace: ENV.colorSpace });
+      const ctx = canvas.getContext('2d', { colorSpace: ENV.colorSpace });
       this.contexts.push(ctx);
     });
-    return this.canvases, this.contexts;
+    return (this.canvases, this.contexts);
   }
 
   scaleResolutionTo(dpr = 2, canvas, ctx) {
@@ -198,11 +194,11 @@ class Visualizer {
     data = new Float32Array(),
     i = 1,
     offsetRadian = 0,
-    SAMPLES_PER_PERIOD = ENV.sampleRate / ENV.baseFrequency
+    SAMPLES_PER_PERIOD = ENV.sampleRate / ENV.baseFrequency,
   ) {
     const RADIANS_PER_SAMPLE = (2 * Math.PI) / SAMPLES_PER_PERIOD;
-    let r0 = data[i - 1] * this.drawRadius;
-    let r1 = data[i] * this.drawRadius;
+    let r0 = data[i - 1] * this.drawRadius * this.scaleDrawRadius;
+    let r1 = data[i] * this.drawRadius * this.scaleDrawRadius;
     let th0 = ((i - 1) * RADIANS_PER_SAMPLE) % (2 * Math.PI);
     let th1 = (i * RADIANS_PER_SAMPLE) % (2 * Math.PI);
 
@@ -241,15 +237,9 @@ class Visualizer {
       let ctx = this.contexts[period];
       ctx.strokeStyle = this.strokeColorJS(period, this.contexts.length);
       ctx.lineWidth = this.lineWidth(period, this.contexts.length);
-      ctx.filter = `blur(${
-        ENV.blurFactor * (this.canvases.length - 1 - period)
-      }px)`;
+      ctx.filter = `blur(${ENV.blurFactor * (this.canvases.length - 1 - period)}px)`;
 
-      let [[r0, r1], [th0, th1], [_, flipped]] = this.computePoints(
-        data,
-        i,
-        offsetRadian
-      );
+      let [[r0, r1], [th0, th1], [_, flipped]] = this.computePoints(data, i, offsetRadian);
       ctx.moveTo(r0 * Math.cos(th0), r0 * Math.sin(th0));
       ctx.lineTo(r1 * Math.cos(th1), r1 * Math.sin(th1));
       currTimeDomainRadians[i] = flipped ? th1 - Math.PI : th1;
@@ -262,12 +252,7 @@ class Visualizer {
   clear() {
     for (let i = 0; i < this.contexts.length; i++) {
       let ctx = this.contexts[i];
-      ctx.clearRect(
-        -this.drawRadius,
-        -this.drawRadius,
-        this.drawRadius * 2,
-        this.drawRadius * 2
-      );
+      ctx.clearRect(-this.drawRadius, -this.drawRadius, this.drawRadius * 2, this.drawRadius * 2);
     }
   }
 
