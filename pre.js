@@ -53,7 +53,7 @@ window.wetEditor = function (amount = 3, lineHeight = 1.4, hueShift = -12) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
-    n.append('#pre,:root { --background: #0017 !important} ');
+    n.append('#pre,:root { --background: #0017 !important; --lineBackground: #fff2 !important} ');
     n.append('#pre,canvas {filter:saturate(' + amount + ')}');
     n.append('#pre,#code .cm-line>*{background: #0000;}');
     n.append(
