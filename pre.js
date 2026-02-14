@@ -768,7 +768,6 @@ const freq2angle = (freq, root, equalDivisionOfAngle = true) => {
     return 0.5 - ((freq / root) % 1);
   }
 };
-
 function pitchwheel({
   haps,
   ctx,
@@ -781,7 +780,8 @@ function pitchwheel({
   div = false, // alias to edo
   mode = 'polygon', // polygon or flake
   labels = 'letters', // numbers or letters
-  alpha = 2 / 3, // alpha of labels
+  alpha = 0, // alpha of labels
+  edolabels = false, // alias of alpha
   distance = 1.1,
   font = 'monocraft',
   textsize = 1.07,
@@ -815,6 +815,9 @@ function pitchwheel({
   }
   if (divisions || div) {
     edo = divisions || div;
+  }
+  if (edolabels) {
+    alpha = edolabels;
   }
   const h = ctx.canvas.height;
   ctx.clearRect(0, 0, w, h);
