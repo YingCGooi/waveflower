@@ -815,9 +815,6 @@ function pitchwheel({
   if (divisions || div) {
     edo = divisions || div;
   }
-  if (edolabels) {
-    alpha = edolabels;
-  }
   const h = ctx.canvas.height;
   ctx.clearRect(0, 0, w, h);
   const color = getTheme().foreground;
