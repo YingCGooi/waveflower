@@ -687,13 +687,13 @@ const centsToANoteMap = {
 const reverseNoteArray = Object.keys(centsToANoteMap).map((key) => [centsToANoteMap[key], key]);
 const noteToCentsMap = Object.fromEntries(reverseNoteArray);
 
-const C = midiToFreq(36 + 12);
-const D = midiToFreq(38 + 12);
-const E = midiToFreq(40 + 12);
-const F = midiToFreq(41 + 12);
-const G = midiToFreq(43 + 12);
-const A = midiToFreq(45 + 12);
-const B = midiToFreq(47 + 12);
+window.C = midiToFreq(36 + 12);
+window.D = midiToFreq(38 + 12);
+window.E = midiToFreq(40 + 12);
+window.F = midiToFreq(41 + 12);
+window.G = midiToFreq(43 + 12);
+window.A = midiToFreq(45 + 12);
+window.B = midiToFreq(47 + 12);
 
 const freq2Note = {
   [Math.round(midiToFreq(36 + 12))]: 'C',
