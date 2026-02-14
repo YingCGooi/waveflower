@@ -780,7 +780,6 @@ function pitchwheel({
   div = false, // alias to edo
   mode = 'polygon', // polygon or flake
   labels = 'letters', // numbers or letters
-  alpha = 0, // alpha of labels
   edolabels = false, // alias of alpha
   distance = 1.1,
   font = 'monocraft',
@@ -855,7 +854,7 @@ function pitchwheel({
       const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness / 3, angle);
       const size = String(radius ** (textsize * 0.6));
       ctx.font = size + 'px ' + font;
-      ctx.globalAlpha = alpha;
+      ctx.globalAlpha = edolabels;
       ctx.fillText(i, xl - size / 2, yl + size / 3);
     }
     ctx.beginPath();
