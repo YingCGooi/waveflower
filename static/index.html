@@ -90,6 +90,370 @@
         <h4>about()</h4>
         <p id="about"></p>
       </section>
+      <section>
+        <h4></h4>
+        <p>
+          <pre>
+// await import('https://waveflower.org/pre.js')
+// useWet(1.4,1.4)
+
+Pattern.prototype.rainbowCycle = function(offset=10,cycles=8) {
+  const hues = Array(cycles).fill(0).map((_,i)=>{
+    const hue = 360/cycles * i + offset
+    return 'oklch(.7 .2 '+(hue)+')'
+  })
+  return this.color(slowcat(...hues))
+}
+
+const centsToANoteMap = {
+  0: 'A',
+  39: 'A‡', // or Bbb
+  77: 'A♯',
+  116: 'B♭',
+  155: 'B◃', // or A##
+  194: 'B',
+  232: 'B‡', // or Cb
+  271: 'B♯', // or C<
+  310: 'C',
+  348: 'C‡', // or B## or Dbb
+  387: 'C♯', // EEEEE
+  426: 'D♭',
+  465: 'D◃', // or C##
+  503: 'D',
+  542: 'D‡', // or Ebb
+  581: 'D♯',
+  619: 'E♭',
+  658: 'E◃', // or D## or Fbb
+  697: 'E',  // GGGGGG
+  735: 'E‡', // or Fb
+  774: 'F◃', // or E#
+  813: 'F',
+  852: 'F‡', // or E## or Gbb
+  890: 'F♯',
+  929: 'G♭',
+  968: 'G◃', // or F##
+  1006: 'G',
+  1045: 'G‡', // or Abb
+  1084: 'G♯',
+  1123: 'A♭',
+  1162: 'A⦉', // or G##
+}
+// construct reversed {note: cents} object from above
+const reverseNoteArray = 
+  Object.keys(centsToANoteMap).map(key => [centsToANoteMap[key], key])
+const noteToCentsMap = Object.fromEntries(reverseNoteArray)
+
+const C=midiToFreq(36+12)
+const D=midiToFreq(38+12)
+const E=midiToFreq(40+12)
+const F=midiToFreq(41+12) 
+const G=midiToFreq(43+12)
+const A=midiToFreq(45+12)
+const B=midiToFreq(47+12)
+
+const freq2Note = {
+  [Math.round(midiToFreq(36+12))]: 'C',
+  [Math.round(midiToFreq(38+12))]: 'D',
+  [Math.round(midiToFreq(40+12))]: 'E',
+  [Math.round(midiToFreq(41+12))]: 'F',
+  [Math.round(midiToFreq(43+12))]: 'G',
+  [Math.round(midiToFreq(45+12))]: 'A',
+  [Math.round(midiToFreq(47+12))]: 'B',
+}
+
+window.findRootCents = (rootFreq=A) => {
+  rootFreq = Math.round(rootFreq)
+  const nt = freq2Note[rootFreq]
+  return Number(noteToCentsMap[nt])
+}
+
+// centsToNote copies the centsToANoteMap, and offsets its cents based on root cents
+// then seek note based on nearest cetns
+function centsToNote(cents=0, root=C) {
+  cents = Math.round(cents + window.findRootCents(root))
+  // if rootNote='C', rootCents=310, cents=400,then (+310) = 710 => 'E'
+  while (cents > 1200) { cents -= 1200 }
+  // round cents to nearest integer,
+  // then seek 0, +1, seek -1
+  // if not found, then seek 0, +2, -2... continue until found
+  for (let seek=0; seek<100; seek++) {
+    if (centsToANoteMap[cents])  {
+      return centsToANoteMap[cents]
+    }
+    if (centsToANoteMap[cents+seek])  {
+      return centsToANoteMap[cents+seek]
+    }
+    if (centsToANoteMap[cents-seek])  {
+      return centsToANoteMap[cents-seek]
+    }
+  }
+  return 'noteNotFoundError'
+};
+
+const circlePos = (cx, cy, radius, angle) => {
+  angle = angle * Math.PI * 2;
+  const x = Math.sin(angle) * radius + cx;
+  const y = Math.cos(angle) * radius + cy;
+  return [x, y];
+};
+
+const freq2angle = (freq, root, equalDivisionOfAngle = true) => {
+  if (equalDivisionOfAngle) {
+    return 0.5 - (Math.log2(freq / root) % 1);
+  } else {
+    let normalizer = 1;
+    if (freq < root) {
+      normalizer = 0.5;
+    } else if (freq > root * 2) {
+      normalizer = 2;
+    } else if (freq > root * 4) {
+      normalizer = 4;
+    } else if (freq > root * 8) {
+      normalizer = 8;
+    } else if (freq > root * 16) {
+      normalizer = 16;
+    } else if (freq > root * 32) {
+      normalizer = 32;
+    } else if (freq > root * 64) {
+      normalizer = 64;
+    }
+    freq = freq / normalizer;
+    return 0.5 - ((freq / root) % 1);
+  }
+};
+
+function pitchwheel({
+  haps,
+  ctx,
+  id,
+  hapcircles = 1,
+  circle = 3,
+  edo = 12,
+  labels = 'numbers',
+  distance = 1.1,
+  root = A,
+  thickness = 20,
+  lineJoin = 'round',
+  linejoin = '',
+  hapRadius = 0,
+  dotsize = 0,
+  mode = 'polygon',
+  margin = 'auto',
+  padding = 0,
+  exponential = true,
+  glow = 0,
+  font = 'monocraft',
+  textsize = 1.07,
+} = {}) {
+  const connectdots = mode === 'polygon';
+  const centerlines = mode === 'flake';
+  const labelnumbers = labels === 'numbers';
+  const labelletters = labels === 'letters';
+  const w = ctx.canvas.width;
+  if (dotsize || dotsize === 0) {
+    hapRadius = dotsize;
+  }
+  if (linejoin) {
+    lineJoin = linejoin;
+  }
+  if (padding) {
+    margin = padding;
+  }
+  if (margin === 'auto') {
+    margin = ctx.canvas.width / 12;
+  }
+  const h = ctx.canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  const color = getTheme().foreground;
+
+  const size = Math.min(w, h);
+  const radius = size / 2 - thickness / 2 - hapRadius - margin;
+  const centerX = w / 2;
+  const centerY = h / 2;
+
+  if (id) {
+    haps = haps.filter((hap) => hap.hasTag(id));
+  }
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineJoin = lineJoin;
+  lineJoin === 'round' ? (ctx.lineCap = 'round') : (ctx.lineCap = 'butt'); // shrink caps
+  ctx.globalAlpha = 1;
+  ctx.lineWidth = thickness;
+
+  if (circle) {
+    ctx.lineWidth = circle;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius+thickness/2, 0, 2 * Math.PI);
+    ctx.stroke();
+  }
+
+  if (!edo) {
+    edo = 12;
+  }
+  Array.from({ length: edo }, (_, i) => {
+    const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
+    const [x, y] = circlePos(centerX, centerY, radius, angle);
+    if (labels) {
+      const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness/3, angle);
+      const size = String(radius ** (textsize*.6));
+      ctx.font = size + 'px ' + font;
+      ctx.fillText(i, xl - size/2, yl + size / 3);
+    }
+    ctx.beginPath();
+    ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
+    ctx.fill();
+  });
+  ctx.stroke();
+
+  let shape = [];
+  ctx.lineWidth = hapRadius;
+  haps.forEach((hap) => {
+    let freq;
+    try {
+      freq = getFrequency(hap);
+    } catch (err) {
+      return;
+    }
+    const angle = freq2angle(freq, root, !exponential);
+    const [x, y] = circlePos(centerX, centerY, radius, angle);
+    const hapColor = hap.value.color || color;
+    ctx.strokeStyle = hapColor;
+    ctx.fillStyle = hapColor;
+    const { velocity = 1, gain = 1 } = hap.value || {};
+    const alpha = velocity * gain;
+    ctx.globalAlpha = alpha;
+    shape.push([x, y, angle, hapColor, alpha, freq]);
+    ctx.beginPath();
+    if (hapcircles) {
+      ctx.moveTo(x + hapRadius, y);
+      ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+    if (centerlines) {
+      if (glow) {
+        ctx.shadowColor = hapColor;
+        ctx.shadowBlur = glow;
+      }
+      ctx.lineWidth = thickness;
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  });
+
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = 1;
+
+  if (connectdots && shape.length) {
+    shape = shape.sort((a, b) => a[2] - b[2]);
+    ctx.beginPath();
+    ctx.moveTo(shape[0][0], shape[0][1]);
+    shape.forEach(([x, y, angle, color, alpha, freq]) => {
+      if (glow) {
+        ctx.shadowColor = color;
+        ctx.shadowBlur = glow;
+      }
+      
+      if (labels) {
+        const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness/3, angle);
+        const size = String(radius ** (textsize*.6));
+        ctx.fillStyle = color;
+        ctx.font = size + 'px ' + font;
+        const i = (Math.log2(freq / root) * edo) % edo;
+        if (labelnumbers) {
+          ctx.fillText(i.toFixed(0), xl - size/2, yl + size / 3);
+        }
+        if (labelletters) {
+          let cents = Math.round(i * 1200/edo)
+          while (cents < 0) {
+            cents = cents+1200
+          }      
+          ctx.clearRect(xl-size/2-4, yl-size/3-3, size*4/3, size*3/4)          
+          ctx.fillText(centsToNote(cents, root), xl - size/2, yl + size / 3);
+        }
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = thickness;
+      ctx.globalAlpha = alpha;
+      ctx.lineTo(x, y);
+    });
+    ctx.lineTo(shape[0][0], shape[0][1]);
+    ctx.stroke();
+  }
+  return;
+}
+
+Pattern.prototype.pitchwheel = function (options = {}) {
+  let { ctx = getDrawContext(), id = 1 } = options;
+  return this.tag(id).onPaint((_, time, haps) =>
+    pitchwheel({
+      ...options,
+      time,
+      ctx,
+      haps: haps.filter((hap) => hap.isActive(time)),
+      id,
+    }),
+  );
+};
+
+register('lpp', (min, max, x) => x.lpf(perlin.rangex(min, max)));
+register('lep', (min, max, x) => x.lpe(perlin.rangex(min, max)));
+
+
+// $:note("<[C,E,G] [F,A,C] [G,B,D4] [C,E,A]>").piano()
+// $:note("<[C,E,A] [C,E,G] [F,A,C] [G,B,D4]>").piano()
+// $:i("[0,3,7,8]").withBase(220).xen("13edo")
+$:s("[<bd:7 ~> <bd:7 ~> bd:7 bd:7 [[bd:7 <bd:7 ~>] <bd:7 ~>]]").gain(1/3)
+.duck(3).duckdepth(.5).duckatt(.01)
+$:s("alesishr16_hh")
+  .struct("x x x x x x x x x").gain(1/4)
+$:s("[bd:7 ~ bd:7 bd:7 bd:7]").gain(1/2)
+$:s("[[~ ~ sd:0] ~ sd:0]").gain(2/3)
+
+$:i(`<
+[0,  26, 46]
+[0,  20, 36]
+[58, 41, 20]
+[56, 10, 36]
+>`.sub(62)).seg(18).decay(.1).sus(.1)
+  .lpf(perlin.rangex(200,300)).lpe(perlin.rangex(2,4))
+  .withBase(220).xen("62edo")
+  .s("sawtooth").gain(1/2).orbit(3)
+
+$:i(`<
+[0 26 44 26 [62 0] 13 23 26 13]
+[15 10 18 10 30 [18 10] 15 18 10]
+[58 41 20 [41 20] 29 20 41 29 41]
+[34 36 10 18 [56 50] 32 34 36 18]
+>`).withBase(220).xen("31edo").s('piano')
+  .lpf(tri.rangex(200,4800).slow(8))
+  .gain(2/3)
+  .rainbowCycle()
+  ._pitchwheel({
+    edo: 31,
+    root: A,
+    mode: 'flake',
+    labels: 'letters',
+    height:400, width:600,thickness:24,exponential:true,
+  })
+$:i(`<
+[0,  26, 46]
+[0,  20, 36]
+[58, 41, 20]
+[56, 10, 36]
+>`.sub(62)).withBase(220).xen("62edo").s('piano')
+  .gain(2/3)
+  .rainbowCycle()
+  ._pitchwheel({
+    edo: 62,
+    root: A,
+    labels: 'letters',
+    height:600, width:600,thickness:24,exponential:true,
+  })
+          </pre>
+        </p>
+      </section>
     </main>
   </body>
   <script>
