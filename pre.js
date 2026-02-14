@@ -633,9 +633,23 @@ window.useNiceLists = function (color = 'var(--caret) !important') {
 };
 useNiceLists();
 
+// PITCHWHEEL ========================================================
+// IMPLEMENTATION ========================================================
+// BELOW ========================================================
+
 // centsToNote is based on 31edo, which contains all 12edo notes
 // as this is an approximation, please only use this for visualization/closest match only
 // ◃ = half-flat; ‡ = half-sharp
+Pattern.prototype.rainbowCycle = function (offset = 10, cycles = 8) {
+  const hues = Array(cycles)
+    .fill(0)
+    .map((_, i) => {
+      const hue = (360 / cycles) * i + offset;
+      return 'oklch(.7 .2 ' + hue + ')';
+    });
+  return this.color(slowcat(...hues));
+};
+
 const centsToANoteMap = {
   0: 'A',
   39: 'A‡', // or Bbb
@@ -669,9 +683,43 @@ const centsToANoteMap = {
   1123: 'A♭',
   1162: 'A⦉', // or G##
 };
+// construct reversed {note: cents} object from above
+const reverseNoteArray = Object.keys(centsToANoteMap).map((key) => [centsToANoteMap[key], key]);
+const noteToCentsMap = Object.fromEntries(reverseNoteArray);
 
-function centsToNote(cents = 0, root = A) {
-  cents = Math.round(cents);
+const C = midiToFreq(36 + 12);
+const D = midiToFreq(38 + 12);
+const E = midiToFreq(40 + 12);
+const F = midiToFreq(41 + 12);
+const G = midiToFreq(43 + 12);
+const A = midiToFreq(45 + 12);
+const B = midiToFreq(47 + 12);
+
+const freq2Note = {
+  [Math.round(midiToFreq(36 + 12))]: 'C',
+  [Math.round(midiToFreq(38 + 12))]: 'D',
+  [Math.round(midiToFreq(40 + 12))]: 'E',
+  [Math.round(midiToFreq(41 + 12))]: 'F',
+  [Math.round(midiToFreq(43 + 12))]: 'G',
+  [Math.round(midiToFreq(45 + 12))]: 'A',
+  [Math.round(midiToFreq(47 + 12))]: 'B',
+};
+
+window.findRootCents = (rootFreq = A) => {
+  rootFreq = Math.round(rootFreq);
+  const nt = freq2Note[rootFreq];
+  return Number(noteToCentsMap[nt]);
+};
+
+// centsToNote copies the centsToANoteMap, and offsets its cents based on root cents
+// then seek note based on nearest cetns
+function centsToNote(cents = 0, root = C) {
+  console.log('rootcents', findRootCents(root), 'cents', cents);
+  cents = Math.round(cents + window.findRootCents(root));
+  // if rootNote='C', rootCents=310, cents=400,then (+310) = 710 => 'E'
+  while (cents > 1200) {
+    cents -= 1200;
+  }
   // round cents to nearest integer,
   // then seek 0, +1, seek -1
   // if not found, then seek 0, +2, -2... continue until found
@@ -688,14 +736,6 @@ function centsToNote(cents = 0, root = A) {
   }
   return 'noteNotFoundError';
 }
-
-const C = midiToFreq(36 + 12);
-const D = midiToFreq(38 + 12);
-const E = midiToFreq(40 + 12);
-const F = midiToFreq(41 + 12);
-const G = midiToFreq(43 + 12);
-const A = midiToFreq(45 + 12);
-const B = midiToFreq(47 + 12);
 
 const circlePos = (cx, cy, radius, angle) => {
   angle = angle * Math.PI * 2;
@@ -738,7 +778,7 @@ function pitchwheel({
   edo = 12,
   labels = 'numbers',
   distance = 1.1,
-  root = C,
+  root = A,
   thickness = 20,
   lineJoin = 'round',
   linejoin = '',
@@ -864,7 +904,7 @@ function pitchwheel({
 
       if (labels) {
         const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness / 3, angle);
-        const size = String(radius ** (textsize * 6));
+        const size = String(radius ** (textsize * 0.6));
         ctx.fillStyle = color;
         ctx.font = size + 'px ' + font;
         const i = (Math.log2(freq / root) * edo) % edo;
@@ -872,8 +912,13 @@ function pitchwheel({
           ctx.fillText(i.toFixed(0), xl - size / 2, yl + size / 3);
         }
         if (labelletters) {
-          const cents = (i * 1200) / edo;
-          console.info({ cents, letter: centsToNote(cents) });
+          let cents = Math.round((i * 1200) / edo);
+          console.log(cents, i.toFixed(0));
+          while (cents < 0) {
+            cents = cents + 1200;
+          }
+          ctx.clearRect(xl - size / 2 - 4, yl - size / 3 - 3, (size * 4) / 3, (size * 3) / 4);
+          ctx.fillText(centsToNote(cents, root), xl - size / 2, yl + size / 3);
         }
       }
       ctx.strokeStyle = color;
@@ -887,14 +932,17 @@ function pitchwheel({
   return;
 }
 
-Pattern.prototype.rainbowCycle = function (offset = 10, cycles = 8) {
-  const hues = Array(cycles)
-    .fill(0)
-    .map((_, i) => {
-      const hue = (360 / cycles) * i + offset;
-      return 'oklch(.7 .2 ' + hue + ')';
-    });
-  return this.color(slowcat(...hues));
+Pattern.prototype.pitchwheel = function (options = {}) {
+  let { ctx = getDrawContext(), id = 1 } = options;
+  return this.tag(id).onPaint((_, time, haps) =>
+    pitchwheel({
+      ...options,
+      time,
+      ctx,
+      haps: haps.filter((hap) => hap.isActive(time)),
+      id,
+    }),
+  );
 };
 
 register('lpp', (min, max, x) => x.lpf(perlin.rangex(min, max)));
