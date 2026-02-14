@@ -775,22 +775,26 @@ function pitchwheel({
   id,
   hapcircles = 1,
   circle = 3,
-  edo = 12,
-  labels = 'numbers',
-  distance = 1.1,
   root = A,
-  thickness = 20,
-  lineJoin = 'round',
-  linejoin = '',
-  hapRadius = 0,
-  dotsize = 0,
-  mode = 'polygon',
-  margin = 'auto',
-  padding = 0,
-  exponential = true,
-  glow = 0,
+  edo = 12,
+  divisions = false, // alias to edo
+  div = false, // alias to edo
+  mode = 'polygon', // polygon or flake
+  labels = 'letters', // numbers or letters
+  alpha = 2 / 3, // alpha of labels
+  distance = 1.1,
   font = 'monocraft',
   textsize = 1.07,
+  thickness = 20,
+  lineweight = false, // alias to thickness
+  lineJoin = 'round',
+  linejoin = '', // alias to lineJoin
+  hapRadius = 0,
+  dotsize = 0, // alias to hapRadius
+  margin = 'auto',
+  padding = 0,
+  exponential = false,
+  glow = 0,
 } = {}) {
   const connectdots = mode === 'polygon';
   const centerlines = mode === 'flake';
@@ -808,6 +812,9 @@ function pitchwheel({
   }
   if (margin === 'auto') {
     margin = ctx.canvas.width / 12;
+  }
+  if (divisions || div) {
+    edo = divisions || div;
   }
   const h = ctx.canvas.height;
   ctx.clearRect(0, 0, w, h);
@@ -845,6 +852,7 @@ function pitchwheel({
       const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness / 3, angle);
       const size = String(radius ** (textsize * 0.6));
       ctx.font = size + 'px ' + font;
+      ctx.globalAlpha = alpha;
       ctx.fillText(i, xl - size / 2, yl + size / 3);
     }
     ctx.beginPath();
@@ -852,6 +860,7 @@ function pitchwheel({
     ctx.fill();
   });
   ctx.stroke();
+  ctx.globalAlpha = 1; // reset alpha
 
   let shape = [];
   ctx.lineWidth = hapRadius;
@@ -907,13 +916,13 @@ function pitchwheel({
         const size = String(radius ** (textsize * 0.6));
         ctx.fillStyle = color;
         ctx.font = size + 'px ' + font;
+        ctx.globalAlpha = 1;
         const i = (Math.log2(freq / root) * edo) % edo;
         if (labelnumbers) {
           ctx.fillText(i.toFixed(0), xl - size / 2, yl + size / 3);
         }
         if (labelletters) {
           let cents = Math.round((i * 1200) / edo);
-          console.log(cents, i.toFixed(0));
           while (cents < 0) {
             cents = cents + 1200;
           }
