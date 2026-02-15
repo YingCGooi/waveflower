@@ -59,7 +59,7 @@ window.wetEditor = function (amount = 3, lineHeight = 1.4, hueShift = -12) {
     n.append(
       '#pre,.cm-line{line-height:' + lineHeight + 'em;filter:hue-rotate(' + hueShift + 'deg) saturate(' + amount + ')}',
     );
-    n.append('#pre,#header,.bg-lineHighlight,.cm-gutter,.cm-lineNumbers,.cm-gutters{background:#0015}');
+    n.append('#pre,#header,.bg-lineHighlight,.cm-gutter,.cm-lineNumbers,.cm-gutters{background: #0015;}');
   });
 };
 window.useWet = (a, h) => window.wetEditor(a, h);
