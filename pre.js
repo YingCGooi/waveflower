@@ -639,13 +639,6 @@ window.useNiceLists = function (color = 'var(--caret) !important') {
 };
 useNiceLists();
 
-// PITCHWHEEL ========================================================
-// IMPLEMENTATION ========================================================
-// BELOW ========================================================
-
-// centsToNote is based on 31edo, which contains all 12edo notes
-// as this is an approximation, please only use this for visualization/closest match only
-// ◃ = half-flat; ‡ = half-sharp
 Pattern.prototype.rainbowCycle = function (offset = 10, cycles = 8) {
   const hues = Array(cycles)
     .fill(0)
@@ -656,6 +649,19 @@ Pattern.prototype.rainbowCycle = function (offset = 10, cycles = 8) {
   return this.color(slowcat(...hues));
 };
 
+// PITCHWHEEL ========================================================
+// IMPLEMENTATION ========================================================
+// BELOW ========================================================
+const circlePos = (cx, cy, radius, angle) => {
+  angle = angle * Math.PI * 2;
+  const x = Math.sin(angle) * radius + cx;
+  const y = Math.cos(angle) * radius + cy;
+  return [x, y];
+};
+
+// centsToNote is based on 31edo, which contains all 12edo notes
+// as this is an approximation, please only use this for visualization/closest match only
+// ◃ = half-flat; ‡ = half-sharp
 const centsToANoteMap = {
   0: 'A',
   39: 'A‡', // or Bbb
@@ -693,6 +699,15 @@ const centsToANoteMap = {
 const reverseNoteArray = Object.keys(centsToANoteMap).map((key) => [centsToANoteMap[key], key]);
 const noteToCentsMap = Object.fromEntries(reverseNoteArray);
 
+// make these global variables so they can be easily referenced
+// make these global variables so they can be easily referenced
+window.C2 = midiToFreq(36);
+window.D2 = midiToFreq(38);
+window.E2 = midiToFreq(40);
+window.F2 = midiToFreq(41);
+window.G2 = midiToFreq(43);
+window.A2 = midiToFreq(45);
+window.B2 = midiToFreq(47);
 window.C = midiToFreq(36 + 12);
 window.D = midiToFreq(38 + 12);
 window.E = midiToFreq(40 + 12);
@@ -702,6 +717,13 @@ window.A = midiToFreq(45 + 12);
 window.B = midiToFreq(47 + 12);
 
 const freq2Note = {
+  [Math.round(midiToFreq(36))]: 'C',
+  [Math.round(midiToFreq(38))]: 'D',
+  [Math.round(midiToFreq(40))]: 'E',
+  [Math.round(midiToFreq(41))]: 'F',
+  [Math.round(midiToFreq(43))]: 'G',
+  [Math.round(midiToFreq(45))]: 'A',
+  [Math.round(midiToFreq(47))]: 'B',
   [Math.round(midiToFreq(36 + 12))]: 'C',
   [Math.round(midiToFreq(38 + 12))]: 'D',
   [Math.round(midiToFreq(40 + 12))]: 'E',
@@ -711,7 +733,7 @@ const freq2Note = {
   [Math.round(midiToFreq(47 + 12))]: 'B',
 };
 
-window.findRootCents = (rootFreq = A) => {
+const findRootCents = (rootFreq = A) => {
   rootFreq = Math.round(rootFreq);
   const nt = freq2Note[rootFreq];
   return Number(noteToCentsMap[nt]);
@@ -719,8 +741,8 @@ window.findRootCents = (rootFreq = A) => {
 
 // centsToNote copies the centsToANoteMap, and offsets its cents based on root cents
 // then seek note based on nearest cetns
-function centsToNote(cents = 0, root = C) {
-  cents = Math.round(cents + window.findRootCents(root));
+function centsToNote(cents = 0, root = window.C) {
+  cents = Math.round(cents + findRootCents(root));
   // if rootNote='C', rootCents=310, cents=400,then (+310) = 710 => 'E'
   while (cents > 1200) {
     cents -= 1200;
@@ -741,13 +763,6 @@ function centsToNote(cents = 0, root = C) {
   }
   return 'noteNotFoundError';
 }
-
-const circlePos = (cx, cy, radius, angle) => {
-  angle = angle * Math.PI * 2;
-  const x = Math.sin(angle) * radius + cx;
-  const y = Math.cos(angle) * radius + cy;
-  return [x, y];
-};
 
 const freq2angle = (freq, root, equalDivisionOfAngle = true) => {
   if (equalDivisionOfAngle) {
@@ -773,6 +788,13 @@ const freq2angle = (freq, root, equalDivisionOfAngle = true) => {
     return 0.5 - ((freq / root) % 1);
   }
 };
+
+const offText = (ctx, text = '0') => ctx.measureText(text).width;
+const fillText = (ctx, text = '0', x, y) => {
+  ctx.clearRect(x - offText(ctx, text) / 2, y - offText(ctx, text) / 2.5, offText(ctx, text), offText(ctx, text));
+  ctx.fillText(text, x - offText(ctx, text) / 2, y + offText(ctx, text) / 2);
+};
+
 function pitchwheel({
   haps,
   ctx,
@@ -785,7 +807,8 @@ function pitchwheel({
   div = false, // alias to edo
   mode = 'polygon', // polygon or flake
   labels = 'letters', // numbers or letters
-  edolabels = false,
+  label = false, // alias of labels
+  indexlabels = false,
   distance = 1.1,
   font = 'monocraft',
   textsize = 1.07,
@@ -802,8 +825,8 @@ function pitchwheel({
 } = {}) {
   const connectdots = mode === 'polygon';
   const centerlines = mode === 'flake';
-  const labelnumbers = labels === 'numbers';
-  const labelletters = labels === 'letters';
+  const labelnumbers = label === 'numbers' || labels === 'numbers';
+  const labelletters = label === 'letters' || labels === 'letters';
   const w = ctx.canvas.width;
   if (dotsize || dotsize === 0) {
     hapRadius = dotsize;
@@ -836,7 +859,6 @@ function pitchwheel({
   ctx.fillStyle = color;
   ctx.lineJoin = lineJoin;
   lineJoin === 'round' ? (ctx.lineCap = 'round') : (ctx.lineCap = 'butt'); // shrink caps
-  ctx.globalAlpha = 1;
   ctx.lineWidth = thickness;
 
   if (circle) {
@@ -846,25 +868,45 @@ function pitchwheel({
     ctx.stroke();
   }
 
-  if (!edo) {
-    edo = 12;
-  }
+  edo = haps.length >= 1 && haps[0].value && haps[0].value.edo ? haps[0].value.edo : edo;
+  root = haps.length >= 1 && haps[0].value && haps[0].value.root ? haps[0].value.root : root;
+  const degreeIndexes =
+    haps.length >= 1 && haps[0].value && haps[0].value.degreeIndexes ? haps[0].value.degreeIndexes : null;
+  const intLabels = haps.length >= 1 && haps[0].value && haps[0].value.intLabels ? haps[0].value.intLabels : null;
+  const fontsize = String(radius ** (textsize * 0.6));
+  ctx.font = fontsize + 'px ' + font;
+  const edolabel = edo + ' EDO';
+
+  let [xl, yl] = circlePos(centerX, centerY, radius * distance, angle);
+
   Array.from({ length: edo }, (_, i) => {
     const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
     const [x, y] = circlePos(centerX, centerY, radius, angle);
+    [xl, yl] = circlePos(centerX, centerY, radius * distance, angle);
     if (labels) {
-      const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness / 3, angle);
-      const size = String(radius ** (textsize * 0.6));
-      ctx.font = size + 'px ' + font;
-      ctx.globalAlpha = edolabels;
-      ctx.fillText(i, xl - size / 2, yl + size / 3);
+      ctx.font = fontsize + 'px ' + font;
+      fillText(ctx, i, xl, yl);
     }
     ctx.beginPath();
-    ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
+
+    // Draw interval label for degree i when it exists:
+    if (degreeIndexes === null || degreeIndexes.includes(i)) {
+      ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
+      if (intLabels !== null) {
+        const degree = degreeIndexes.indexOf(i);
+        let intDegLabel = intLabels[degree];
+        if (intDegLabel) {
+          ctx.globalAlpha = 1;
+          fillText(ctx, intDegLabel, xl, yl);
+        }
+      }
+    } else {
+      ctx.globalAlpha = indexlabels;
+      ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
+    }
     ctx.fill();
   });
   ctx.stroke();
-  ctx.globalAlpha = 1; // reset alpha
 
   let shape = [];
   ctx.lineWidth = hapRadius;
@@ -903,9 +945,8 @@ function pitchwheel({
   });
 
   ctx.strokeStyle = color;
-  ctx.globalAlpha = 1;
 
-  if (connectdots && shape.length) {
+  if (shape.length) {
     shape = shape.sort((a, b) => a[2] - b[2]);
     ctx.beginPath();
     ctx.moveTo(shape[0][0], shape[0][1]);
@@ -917,27 +958,29 @@ function pitchwheel({
 
       if (labels) {
         const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness / 3, angle);
-        const size = String(radius ** (textsize * 0.6));
+        const size = String(radius ** (textsize * 0.63));
         ctx.fillStyle = color;
         ctx.font = size + 'px ' + font;
-        ctx.globalAlpha = 1;
         const i = (Math.log2(freq / root) * edo) % edo;
         if (labelnumbers) {
-          ctx.fillText(i.toFixed(0), xl - size / 2, yl + size / 3);
+          const txt = i.toFixed(0);
+          fillText(ctx, txt, xl, yl);
         }
         if (labelletters) {
           let cents = Math.round((i * 1200) / edo);
           while (cents < 0) {
             cents = cents + 1200;
           }
-          ctx.clearRect(xl - size / 2 - 4, yl - size / 3 - 3, (size * 4) / 3, (size * 3) / 4);
-          ctx.fillText(centsToNote(cents, root), xl - size / 2, yl + size / 3);
+          const nte = centsToNote(cents, root);
+          fillText(ctx, nte, xl, yl);
         }
       }
-      ctx.strokeStyle = color;
-      ctx.lineWidth = thickness;
-      ctx.globalAlpha = alpha;
-      ctx.lineTo(x, y);
+      if (connectdots) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = thickness;
+        ctx.globalAlpha = alpha;
+        ctx.lineTo(x, y);
+      }
     });
     ctx.lineTo(shape[0][0], shape[0][1]);
     ctx.stroke();
