@@ -714,7 +714,6 @@ window.findRootCents = (rootFreq = A) => {
 // centsToNote copies the centsToANoteMap, and offsets its cents based on root cents
 // then seek note based on nearest cetns
 function centsToNote(cents = 0, root = C) {
-  console.log('rootcents', findRootCents(root), 'cents', cents);
   cents = Math.round(cents + window.findRootCents(root));
   // if rootNote='C', rootCents=310, cents=400,then (+310) = 710 => 'E'
   while (cents > 1200) {
