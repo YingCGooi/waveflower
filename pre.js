@@ -661,13 +661,13 @@ const circlePos = (cx, cy, radius, angle) => {
 
 // centsToNote is based on 31edo, which contains all 12edo notes
 // as this is an approximation, please only use this for visualization/closest match only
-// ◃ = half-flat; ‡ = half-sharp
+// ⦉ = half-flat; ‡ = half-sharp
 const centsToANoteMap = {
   0: 'A',
   39: 'A‡', // or Bbb
   77: 'A♯',
   116: 'B♭',
-  155: 'B◃', // or A##
+  155: 'B⦉', // or A##
   194: 'B',
   232: 'B‡', // or Cb
   271: 'B♯', // or C<
@@ -675,20 +675,20 @@ const centsToANoteMap = {
   348: 'C‡', // or B## or Dbb
   387: 'C♯',
   426: 'D♭',
-  465: 'D◃', // or C##
+  465: 'D⦉', // or C##
   503: 'D',
   542: 'D‡', // or Ebb
   581: 'D♯',
   619: 'E♭',
-  658: 'E◃', // or D## or Fbb
+  658: 'E⦉', // or D## or Fbb
   697: 'E',
   735: 'E‡', // or Fb
-  774: 'F◃', // or E#
+  774: 'F⦉', // or E#
   813: 'F',
   852: 'F‡', // or E## or Gbb
   890: 'F♯',
   929: 'G♭',
-  968: 'G◃', // or F##
+  968: 'G⦉', // or F##
   1006: 'G',
   1045: 'G‡', // or Abb
   1084: 'G♯',
@@ -791,7 +791,7 @@ const freq2angle = (freq, root, equalDivisionOfAngle = true) => {
 
 const offText = (ctx, text = '0') => ctx.measureText(text).width;
 const fillText = (ctx, text = '0', x, y) => {
-  ctx.clearRect(x - offText(ctx, text) / 2, y - offText(ctx, text) / 2.5, offText(ctx, text), offText(ctx, text));
+  ctx.clearRect(x - offText(ctx, text) / 2, y - offText(ctx, text) / 2.5, offText(ctx, text) / 1.1, offText(ctx, text));
   ctx.fillText(text, x - offText(ctx, text) / 2, y + offText(ctx, text) / 2);
 };
 
@@ -808,7 +808,8 @@ function pitchwheel({
   mode = 'polygon', // polygon or flake
   labels = 'letters', // numbers or letters
   label = false, // alias of labels
-  indexlabels = false,
+  edolabel = false, // controls the alpha of the edo index label
+  degreelabel = true, // controls the alpha of the degree index label
   distance = 1.1,
   font = 'monocraft',
   textsize = 1.07,
@@ -827,6 +828,7 @@ function pitchwheel({
   const centerlines = mode === 'flake';
   const labelnumbers = label === 'numbers' || labels === 'numbers';
   const labelletters = label === 'letters' || labels === 'letters';
+  edolabel = Number(edolabel);
   const w = ctx.canvas.width;
   if (dotsize || dotsize === 0) {
     hapRadius = dotsize;
@@ -874,16 +876,19 @@ function pitchwheel({
     haps.length >= 1 && haps[0].value && haps[0].value.degreeIndexes ? haps[0].value.degreeIndexes : null;
   const intLabels = haps.length >= 1 && haps[0].value && haps[0].value.intLabels ? haps[0].value.intLabels : null;
   const fontsize = String(radius ** (textsize * 0.6));
-  ctx.font = fontsize + 'px ' + font;
-  const edolabel = edo + ' EDO';
 
   let [xl, yl] = circlePos(centerX, centerY, radius * distance, angle);
+  ctx.font = fontsize + 'px ' + font;
+  const edoname = edo + ' EDO';
+  ctx.globalAlpha = edolabel;
+  fillText(ctx, edoname, ctx.canvas.width / 2, ctx.canvas.height / 2.25);
 
   Array.from({ length: edo }, (_, i) => {
     const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
     const [x, y] = circlePos(centerX, centerY, radius, angle);
     [xl, yl] = circlePos(centerX, centerY, radius * distance, angle);
     if (labels) {
+      ctx.globalAlpha = edolabel;
       ctx.font = fontsize + 'px ' + font;
       fillText(ctx, i, xl, yl);
     }
@@ -896,12 +901,12 @@ function pitchwheel({
         const degree = degreeIndexes.indexOf(i);
         let intDegLabel = intLabels[degree];
         if (intDegLabel) {
-          ctx.globalAlpha = 1;
+          ctx.globalAlpha = degreelabel;
           fillText(ctx, intDegLabel, xl, yl);
         }
       }
     } else {
-      ctx.globalAlpha = indexlabels;
+      ctx.globalAlpha = edolabel;
       ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
     }
     ctx.fill();
