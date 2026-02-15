@@ -53,11 +53,17 @@ window.wetEditor = function (amount = 3, lineHeight = 1.4, hueShift = -12) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
-    n.append('#pre,:root { --background: #0017 !important; --lineBackground: #0000 !important} ');
-    n.append('#pre,canvas {filter:saturate(' + amount + ')}');
+    n.append('#pre,:root { --background: #0017 !important; --lineBackground: #0000 !important;} ');
+    n.append('#pre,canvas {filter:saturate(' + amount + ');}');
     n.append('#pre,#code .cm-line>*{background: #0000;}');
     n.append(
-      '#pre,.cm-line{line-height:' + lineHeight + 'em;filter:hue-rotate(' + hueShift + 'deg) saturate(' + amount + ')}',
+      '#pre,.cm-line{line-height:' +
+        lineHeight +
+        'em;filter:hue-rotate(' +
+        hueShift +
+        'deg) saturate(' +
+        amount +
+        ');}',
     );
     n.append('#pre,#header,.bg-lineHighlight,.cm-gutter,.cm-lineNumbers,.cm-gutters{background: #0015;}');
   });
@@ -151,7 +157,7 @@ window.useSpectrum = function (opts) {
           'filter:saturate(1.5);' +
           'background:' +
           lineargradient(stops, lines, base, next, alpha, hue, hueStep, thickness, mul) +
-          '}',
+          ';}',
       ),
     );
 };
@@ -580,7 +586,7 @@ window.useJSDoc = async function (url = URL) {
           }
           if (tag === 'example') {
             isExample = true;
-            return '<pre class="bg-background" style="background:oklch(from var(--muted) l c h /.16) !important">';
+            return '<pre class="bg-background" style="background:oklch(from var(--muted) l c h /.16) !important;">';
           }
           if (tag && !TAGS[tag]) {
             return TAGS.text([tag, v1, v2, v3.join(' ')].join(' '));
@@ -779,7 +785,7 @@ function pitchwheel({
   div = false, // alias to edo
   mode = 'polygon', // polygon or flake
   labels = 'letters', // numbers or letters
-  edolabels = false, // alias of alpha
+  edolabels = false,
   distance = 1.1,
   font = 'monocraft',
   textsize = 1.07,
