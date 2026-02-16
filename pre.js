@@ -652,6 +652,7 @@ Pattern.prototype.rainbowCycle = function (offset = 10, cycles = 8) {
 // PITCHWHEEL ========================================================
 // IMPLEMENTATION ========================================================
 // BELOW ========================================================
+
 const circlePos = (cx, cy, radius, angle) => {
   angle = angle * Math.PI * 2;
   const x = Math.sin(angle) * radius + cx;
@@ -659,7 +660,7 @@ const circlePos = (cx, cy, radius, angle) => {
   return [x, y];
 };
 
-// centsToNote is based on 31edo, which contains all 12edo notes
+// centsToANoteMap is based on 31edo, which also contains all 12edo notes
 // as this is an approximation, please only use this for visualization/closest match only
 // ⦉ = half-flat; ‡ = half-sharp
 const centsToANoteMap = {
@@ -700,21 +701,36 @@ const reverseNoteArray = Object.keys(centsToANoteMap).map((key) => [centsToANote
 const noteToCentsMap = Object.fromEntries(reverseNoteArray);
 
 // make these global variables so they can be easily referenced
-// make these global variables so they can be easily referenced
-window.C2 = midiToFreq(36);
-window.D2 = midiToFreq(38);
-window.E2 = midiToFreq(40);
-window.F2 = midiToFreq(41);
-window.G2 = midiToFreq(43);
-window.A2 = midiToFreq(45);
-window.B2 = midiToFreq(47);
-window.C = midiToFreq(36 + 12);
-window.D = midiToFreq(38 + 12);
-window.E = midiToFreq(40 + 12);
-window.F = midiToFreq(41 + 12);
-window.G = midiToFreq(43 + 12);
-window.A = midiToFreq(45 + 12);
-window.B = midiToFreq(47 + 12);
+const midiNoteToFreq = {
+  C2: midiToFreq(36),
+  D2: midiToFreq(38),
+  E2: midiToFreq(40),
+  F2: midiToFreq(41),
+  G2: midiToFreq(43),
+  A2: midiToFreq(45),
+  B2: midiToFreq(47),
+  c: midiToFreq(36 + 12),
+  d: midiToFreq(38 + 12),
+  e: midiToFreq(40 + 12),
+  f: midiToFreq(41 + 12),
+  g: midiToFreq(43 + 12),
+  a: midiToFreq(45 + 12),
+  b: midiToFreq(47 + 12),
+  C: midiToFreq(36 + 12),
+  D: midiToFreq(38 + 12),
+  E: midiToFreq(40 + 12),
+  F: midiToFreq(41 + 12),
+  G: midiToFreq(43 + 12),
+  A: midiToFreq(45 + 12),
+  B: midiToFreq(47 + 12),
+  C3: midiToFreq(36 + 24),
+  D3: midiToFreq(38 + 24),
+  E3: midiToFreq(40 + 24),
+  F3: midiToFreq(41 + 24),
+  G3: midiToFreq(43 + 24),
+  A3: midiToFreq(45 + 24),
+  B3: midiToFreq(47 + 24),
+};
 
 const freq2Note = {
   [Math.round(midiToFreq(36))]: 'C',
@@ -731,9 +747,20 @@ const freq2Note = {
   [Math.round(midiToFreq(43 + 12))]: 'G',
   [Math.round(midiToFreq(45 + 12))]: 'A',
   [Math.round(midiToFreq(47 + 12))]: 'B',
+  [Math.round(midiToFreq(36 + 24))]: 'C',
+  [Math.round(midiToFreq(38 + 24))]: 'D',
+  [Math.round(midiToFreq(40 + 24))]: 'E',
+  [Math.round(midiToFreq(41 + 24))]: 'F',
+  [Math.round(midiToFreq(43 + 24))]: 'G',
+  [Math.round(midiToFreq(45 + 24))]: 'A',
+  [Math.round(midiToFreq(47 + 24))]: 'B',
 };
 
-const findRootCents = (rootFreq = A) => {
+const findRootCents = (root = 'C') => {
+  let rootFreq = root; // if root is a lettered string, lookup its freq
+  if (Number(root) != root) {
+    rootFreq = midiNoteToFreq[root];
+  }
   rootFreq = Math.round(rootFreq);
   const nt = freq2Note[rootFreq];
   return Number(noteToCentsMap[nt]);
@@ -741,8 +768,13 @@ const findRootCents = (rootFreq = A) => {
 
 // centsToNote copies the centsToANoteMap, and offsets its cents based on root cents
 // then seek note based on nearest cetns
-function centsToNote(cents = 0, root = window.C) {
-  cents = Math.round(cents + findRootCents(root));
+function centsToNote(cents = 0, root = 'C') {
+  let rootFreq = root; // if root is a lettered string, lookup its freq
+  if (Number(root) != root) {
+    rootFreq = midiNoteToFreq[root];
+  }
+  rootFreq = Math.round(rootFreq);
+  cents = Math.round(cents + findRootCents(rootFreq));
   // if rootNote='C', rootCents=310, cents=400,then (+310) = 710 => 'E'
   while (cents > 1200) {
     cents -= 1200;
@@ -790,8 +822,15 @@ const freq2angle = (freq, root, equalDivisionOfAngle = true) => {
 };
 
 const offText = (ctx, text = '0') => ctx.measureText(text).width;
-const fillText = (ctx, text = '0', x, y) => {
-  ctx.clearRect(x - offText(ctx, text) / 2, y - offText(ctx, text) / 2.5, offText(ctx, text) / 1.1, offText(ctx, text));
+const fillText = (ctx, text = '0', x, y, clear = true) => {
+  clear
+    ? ctx.clearRect(
+        x - offText(ctx, text) / 1.5,
+        y - offText(ctx, text) / 2.5,
+        offText(ctx, text) * 1.25,
+        offText(ctx, text),
+      )
+    : null;
   ctx.fillText(text, x - offText(ctx, text) / 2, y + offText(ctx, text) / 2);
 };
 
@@ -801,24 +840,25 @@ function pitchwheel({
   id,
   hapcircles = 1,
   circle = 3,
-  root = A,
+  root = 'C',
   edo = 12,
   divisions = false, // alias to edo
   div = false, // alias to edo
-  mode = 'polygon', // polygon or flake
+  mode = 'flake', // polygon or flake
   labels = 'letters', // numbers or letters
   label = false, // alias of labels
-  edolabel = false, // controls the alpha of the edo index label
+  edolabel = 1 / 4, // controls the alpha of the edo index label
+  edolabels = false, // alias to edolabel
   degreelabel = true, // controls the alpha of the degree index label
-  distance = 1.1,
+  distance = 1.14,
   font = 'monocraft',
   textsize = 1.07,
   thickness = 20,
   lineweight = false, // alias to thickness
   lineJoin = 'round',
   linejoin = '', // alias to lineJoin
-  hapRadius = 0,
-  dotsize = 0, // alias to hapRadius
+  hapRadius = 7,
+  dotsize = 7, // alias to hapRadius
   margin = 'auto',
   padding = 0,
   exponential = false,
@@ -833,6 +873,9 @@ function pitchwheel({
   if (dotsize || dotsize === 0) {
     hapRadius = dotsize;
   }
+  if (lineweight) {
+    thickness = lineweight;
+  }
   if (linejoin) {
     lineJoin = linejoin;
   }
@@ -844,6 +887,9 @@ function pitchwheel({
   }
   if (divisions || div) {
     edo = divisions || div;
+  }
+  if (edolabels) {
+    edolabel = edolabels;
   }
   const h = ctx.canvas.height;
   ctx.clearRect(0, 0, w, h);
@@ -861,23 +907,19 @@ function pitchwheel({
   ctx.fillStyle = color;
   ctx.lineJoin = lineJoin;
   lineJoin === 'round' ? (ctx.lineCap = 'round') : (ctx.lineCap = 'butt'); // shrink caps
-  ctx.lineWidth = thickness;
-
-  if (circle) {
-    ctx.lineWidth = circle;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius + thickness / 2, 0, 2 * Math.PI);
-    ctx.stroke();
-  }
+  ctx.lineWidth = 1;
 
   edo = haps.length >= 1 && haps[0].value && haps[0].value.edo ? haps[0].value.edo : edo;
   root = haps.length >= 1 && haps[0].value && haps[0].value.root ? haps[0].value.root : root;
+  // if root is a lettered string, lookup its freq value
+  if (Number(root) != root) {
+    root = midiNoteToFreq[root];
+  }
   const degreeIndexes =
     haps.length >= 1 && haps[0].value && haps[0].value.degreeIndexes ? haps[0].value.degreeIndexes : null;
   const intLabels = haps.length >= 1 && haps[0].value && haps[0].value.intLabels ? haps[0].value.intLabels : null;
   const fontsize = String(radius ** (textsize * 0.6));
 
-  let [xl, yl] = circlePos(centerX, centerY, radius * distance, angle);
   ctx.font = fontsize + 'px ' + font;
   const edoname = edo + ' EDO';
   ctx.globalAlpha = edolabel;
@@ -886,22 +928,24 @@ function pitchwheel({
   Array.from({ length: edo }, (_, i) => {
     const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
     const [x, y] = circlePos(centerX, centerY, radius, angle);
-    [xl, yl] = circlePos(centerX, centerY, radius * distance, angle);
-    if (labels) {
+    let [xl, yl] = circlePos(centerX, centerY, radius * distance, angle);
+    if (edolabel) {
       ctx.globalAlpha = edolabel;
-      ctx.font = fontsize + 'px ' + font;
-      fillText(ctx, i, xl, yl);
+      ctx.font = fontsize * 0.85 + 'px ' + font;
+      fillText(ctx, i, xl, yl, false);
     }
     ctx.beginPath();
 
     // Draw interval label for degree i when it exists:
     if (degreeIndexes === null || degreeIndexes.includes(i)) {
-      ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
+      ctx.globalAlpha = edolabel;
+      hapRadius ? ctx.arc(x, y, hapRadius, 0, 2 * Math.PI) : null;
       if (intLabels !== null) {
         const degree = degreeIndexes.indexOf(i);
         let intDegLabel = intLabels[degree];
-        if (intDegLabel) {
+        if (intDegLabel && degreelabel) {
           ctx.globalAlpha = degreelabel;
+          ctx.font = fontsize * 0.8 + 'px ' + font;
           fillText(ctx, intDegLabel, xl, yl);
         }
       }
@@ -914,7 +958,7 @@ function pitchwheel({
   ctx.stroke();
 
   let shape = [];
-  ctx.lineWidth = hapRadius;
+  ctx.lineWidth = thickness;
   haps.forEach((hap) => {
     let freq;
     try {
@@ -932,9 +976,9 @@ function pitchwheel({
     ctx.globalAlpha = alpha;
     shape.push([x, y, angle, hapColor, alpha, freq]);
     ctx.beginPath();
-    if (hapcircles) {
+    if (hapcircles && hapRadius) {
       ctx.moveTo(x + hapRadius, y);
-      ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
+      // ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
       ctx.fill();
     }
     if (centerlines) {
@@ -962,8 +1006,8 @@ function pitchwheel({
       }
 
       if (labels) {
-        const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness / 3, angle);
-        const size = String(radius ** (textsize * 0.63));
+        const [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness / 4, angle);
+        const size = String(radius ** ((textsize * 2) / 3));
         ctx.fillStyle = color;
         ctx.font = size + 'px ' + font;
         const i = (Math.log2(freq / root) * edo) % edo;
@@ -990,9 +1034,58 @@ function pitchwheel({
     ctx.lineTo(shape[0][0], shape[0][1]);
     ctx.stroke();
   }
+  if (circle) {
+    ctx.lineWidth = circle;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius + thickness / 2, 0, 2 * Math.PI);
+    ctx.stroke();
+  }
   return;
 }
 
+/**
+ * Renders a pitch circle to visualize frequencies within one octave
+ * @name pitchwheel
+ * @tags visualization
+ *
+ * @param {number} root: frequency (in Hz) of root note (if edoScale() is set, this is automatically set to the root note)
+ * @param {string} root: string value of root note (e.g 'C2'/'G'/'F4', defaults to 'C')
+ * @param {int} edo: dots will be draw at intervals of equal division of octave (defaults to 12)
+ * @param {number/bool} label/labels: `'letters'` (show note letter) or `'numbers'` (show n or i value of hap)
+ * @param {number/bool} edolabel/edolabels: alpha (transparency) of edo labels from 0~1, default=0, if true, sets this to 1
+ * @param {number/bool} degreelabel: alpha (transparency) of edo scale degree labels (see edoScale() for more information)
+ * @param {number} distance: if non-zero, controls how far number labels are from the center (>1 => away from circle, default to 0)
+ * @param {string} font: set font family of the labels (defaults to 'monocraft')
+ * @param {number} textsize: controls the size factor of the text, in em (default 1.07)
+ * @param {number/bool} circle: circumference radius (defaults to 0 or false)
+ * @param {string} linejoin: `'round'` (line corners and caps are rounded) or 'miter' or 'bevel' (default 'round'; alias lineJoin)
+ * @param {string} mode: `'polygon'` (lines rendered to join dots) or defaults to `'flake'` (lines connected from center origin)
+ * @param {number} thickness/lineweight: adjust line stroke width (in px; defaults to 3)
+ * @param {number} dotsize/hapRadius: adjusts the size of dots along the circle (in px, defaults to 6; alias hapRadius)
+ * @param {number} padding/margin: controls the padding surrouding the wheel, larger values -> smaller wheel (default: 'auto')
+ * @param {bool} exponential: controls whether the next interval angle is based on actual frequency value (defaults to false -> equal division of intervals)
+ * if set to true, the major 3rd will be exactly 90 deg and major 5th exactly 180 deg
+ * @param {number/bool} glow: line shadow blur amount, default: 0
+ * @param {bool} hapcircles: when edo is not set, controls whether dots are drawn around the pitchwhell (default = true)
+ *
+ * @example
+ * n("0 .. 12").scale("C:chromatic")
+ * .s('sawtooth')
+ * .lpf(500)
+ * ._pitchwheel({
+ *   root: 'A',        // 0th note starts at A
+ *   edo: 31,          // dots are equally divided into 31 intervals
+ *   edolabels: 1/2,
+ *   degreelabel: 2/3,
+ *   circle: true,     // render circle to 1px
+ *   padding: 200,     // shrink wheel to prevent overflow
+ *   exponential: true,// intervals are rendered in natual exponential scale
+ *   linejoin: 'round',
+ *   thickness: 24,
+ *   dotsize: 4,
+ *   mode: 'polygon',
+ * })
+ */
 Pattern.prototype.pitchwheel = function (options = {}) {
   let { ctx = getDrawContext(), id = 1 } = options;
   return this.tag(id).onPaint((_, time, haps) =>
