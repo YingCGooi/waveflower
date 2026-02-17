@@ -349,6 +349,26 @@ register('supersynth', (param, x) => {
 });
 
 // glossingg's prebakes
+// Ping pong delay
+window.pong = register('pong', (mix, t, fb, pat) => {
+  return pat
+    .FX(
+      K(() => {
+        const mix = S(mix);
+        const t = S(t);
+        const fb = S(fb);
+        const input = audioin();
+        const L = add(0);
+        const R = add(0);
+        L.withIns(input, R.delay(t).mul(fb)).pan(-1);
+        R.withIns(add(0), L.delay(t).mul(fb)).pan(1);
+        const wet = poly(L, R).mix(2);
+        return add(input.mix(2).mul(1 - mix), wet.mul(mix)).out();
+      }),
+    )
+    .fxr(3);
+});
+
 let glide = register(
   'glide',
   (time, pat) => {
