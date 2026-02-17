@@ -1089,8 +1089,17 @@ function pitchwheel({
     ctx.stroke();
   }
   if (circle) {
-    ctx.lineWidth = circle;
+    const gradient = ctx.createConicGradient(0, centerX, centerY);
+    shape.forEach(([x, y, angle, color, alpha, freq]) => {
+      gradient.addColorStop(angle - 1 / 12, getTheme().foreground);
+      gradient.addColorStop(angle, color);
+      gradient.addColorStop(angle + 1 / 12, getTheme().foreground);
+    });
+    console.info({ gradient });
     ctx.beginPath();
+    ctx.fillStyle = gradient;
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = circle;
     ctx.arc(centerX, centerY, radius + thickness / 2, 0, 2 * Math.PI);
     ctx.stroke();
   }
