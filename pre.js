@@ -688,6 +688,32 @@ const circlePos = (cx, cy, radius, angle) => {
   return [x, y];
 };
 
+// centsTo12Note maps cents to note in 12TET
+const centsTo12Note = {
+  0: 'A',
+  77: 'A♯',
+  116: 'B♭',
+  194: 'B',
+  271: 'B♯',
+  310: 'C',
+  387: 'C♯',
+  426: 'D♭',
+  503: 'D',
+  581: 'D♯',
+  619: 'E♭',
+  697: 'E',
+  813: 'F',
+  890: 'F♯',
+  929: 'G♭',
+  1006: 'G',
+  1084: 'G♯',
+  1123: 'A♭',
+};
+
+// construct reversed {note: cents} object from above
+const revCentsTo12Note = Object.keys(centsTo12Note).map((key) => [centsTo12Note[key], key]);
+const twelveNoteToCents = Object.fromEntries(revCentsTo12Note);
+
 // centsToANoteMap is based on 31edo, which also contains all 12edo notes
 // as this is an approximation, please only use this for visualization/closest match only
 // ⦉ = half-flat; ‡ = half-sharp
@@ -784,41 +810,44 @@ const freq2Note = {
   [Math.round(midiToFreq(47 + 24))]: 'B',
 };
 
-const findRootCents = (root = 'C') => {
+const findRootCents = (root = 'C', twelveTET = false) => {
   let rootFreq = root; // if root is a lettered string, lookup its freq
   if (Number(root) != root) {
     rootFreq = midiNoteToFreq[root];
   }
   rootFreq = Math.round(rootFreq);
   const nt = freq2Note[rootFreq];
-  return Number(noteToCentsMap[nt]);
+  return twelveTET ? Number(twelveNoteToCents[nt]) : Number(noteToCentsMap[nt]);
 };
 
 // centsToNote copies the centsToANoteMap, and offsets its cents based on root cents
 // then seek note based on nearest cetns
-function centsToNote(cents = 0, root = 'C') {
+function centsToNote(cents = 0, root = 'C', twelveTET = false) {
   let rootFreq = root; // if root is a lettered string, lookup its freq
   if (Number(root) != root) {
     rootFreq = midiNoteToFreq[root];
   }
   rootFreq = Math.round(rootFreq);
-  cents = Math.round(cents + findRootCents(rootFreq));
+  cents = Math.round(cents + findRootCents(rootFreq, twelveTET));
   // if rootNote='C', rootCents=310, cents=400,then (+310) = 710 => 'E'
   while (cents > 1200) {
     cents -= 1200;
   }
+
+  let lookup = {};
+  twelveTET ? (lookup = centsTo12Note) : (lookup = centsToANoteMap);
   // round cents to nearest integer,
   // then seek 0, +1, seek -1
   // if not found, then seek 0, +2, -2... continue until found
   for (let seek = 0; seek < 100; seek++) {
-    if (centsToANoteMap[cents]) {
-      return centsToANoteMap[cents];
+    if (lookup[cents]) {
+      return lookup[cents];
     }
-    if (centsToANoteMap[cents + seek]) {
-      return centsToANoteMap[cents + seek];
+    if (lookup[cents + seek]) {
+      return lookup[cents + seek];
     }
-    if (centsToANoteMap[cents - seek]) {
-      return centsToANoteMap[cents - seek];
+    if (lookup[cents - seek]) {
+      return lookup[cents - seek];
     }
   }
   return 'noteNotFoundError';
@@ -949,9 +978,6 @@ function pitchwheel({
   const fontsize = String(radius ** (textsize * 0.6));
 
   ctx.font = fontsize + 'px ' + font;
-  const edoname = edo + ' EDO';
-  ctx.globalAlpha = edolabel;
-  fillText(ctx, edoname, ctx.canvas.width / 2, ctx.canvas.height / 2.25);
 
   Array.from({ length: edo }, (_, i) => {
     const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
@@ -1048,7 +1074,7 @@ function pitchwheel({
           while (cents < 0) {
             cents = cents + 1200;
           }
-          const nte = centsToNote(cents, root);
+          const nte = centsToNote(cents, root, edo === 12);
           fillText(ctx, nte, xl, yl);
         }
       }
