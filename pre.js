@@ -649,6 +649,14 @@ Pattern.prototype.rainbowCycle = function (offset = 10, cycles = 8) {
   return this.color(slowcat(...hues));
 };
 
+window.C = midiToFreq(36 + 12);
+window.D = midiToFreq(38 + 12);
+window.E = midiToFreq(40 + 12);
+window.F = midiToFreq(41 + 12);
+window.G = midiToFreq(43 + 12);
+window.A = midiToFreq(45 + 12);
+window.B = midiToFreq(47 + 12);
+
 // PITCHWHEEL ========================================================
 // IMPLEMENTATION ========================================================
 // BELOW ========================================================
