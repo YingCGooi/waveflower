@@ -1091,9 +1091,10 @@ function pitchwheel({
   if (circle) {
     const gradient = ctx.createConicGradient(0, centerX, centerY);
     shape.forEach(([x, y, angle, color, alpha, freq]) => {
-      gradient.addColorStop(angle - 1 / 12, getTheme().foreground);
-      gradient.addColorStop(angle, color);
-      gradient.addColorStop(angle + 1 / 12, getTheme().foreground);
+      let a = angle < 0 ? angle + 1 : angle > 1 ? angle - 1 : angle;
+      gradient.addColorStop(a - 1 / 12, getTheme().foreground);
+      gradient.addColorStop(a, color);
+      gradient.addColorStop(a + 1 / 12, getTheme().foreground);
     });
     console.info({ gradient });
     ctx.beginPath();
