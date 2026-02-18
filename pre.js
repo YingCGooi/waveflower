@@ -18,6 +18,20 @@ document.querySelector('.cm-editor').onfocus = (e) => {
 };
 
 /**
+ * @name addCSS
+ * @tags prebake
+ * adds any arbitrary css property to be applied to .cm-lines
+ *
+ * @example
+ * addCSS('font-weight: 300; line-height: .75em;')
+ */
+window.addCSS = function (css = '') {
+  document.querySelectorAll('style').forEach((n) => {
+    n.append('#pre,.cm-line{' + css + '}');
+  });
+};
+
+/**
  * @name removePrebakeCSS
  * @tags prebake
  * resets css to original state, removing all css overrides tagged with the #pre selector
