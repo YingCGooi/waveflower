@@ -5,27 +5,17 @@ document.head.querySelectorAll('[rel=icon]').forEach((n) => {
   n.href = 'https://waveflower.org/assets/r=sin2t.png';
 });
 
-let windowTitle = '[Prebaked] Strudel REPL';
-/**
- * @name useTitle
- * @tags prebake
- * set a custom title to your browser window
- * does not override the '@title' tag
- * @param {String} title set browser window title
- * @example
- * useTitle('Strudel [Prebaked] REPL')
- */
-window.useTitle = function (title = 'Strudel [Prebaked] REPL') {
-  windowTitle = title;
+// prevents auto scroll in mobile such that cursor ends up *behind* the virtual keyboard
+document.querySelectorAll('.cm-line').forEach((n) => {
+  n.onfocus = (e) => {
+    e.preventDefault();
+    e.focus({ preventScroll: true });
+  };
+});
+document.querySelector('.cm-editor').onfocus = (e) => {
+  e.preventDefault();
+  e.focus({ preventScroll: true });
 };
-
-setTimeout(() => {
-  const title = document.head.querySelector('title');
-  // avoid clashing with the @title mutations
-  if (title.innerText.startsWith('Strudel')) {
-    title.innerText = windowTitle;
-  }
-}, 100);
 
 /**
  * @name removePrebakeCSS
@@ -1096,7 +1086,6 @@ function pitchwheel({
       gradient.addColorStop(a, color);
       gradient.addColorStop(a + 1 / 12, getTheme().foreground);
     });
-    console.info({ gradient });
     ctx.beginPath();
     ctx.fillStyle = gradient;
     ctx.strokeStyle = gradient;
