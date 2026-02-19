@@ -1161,3 +1161,30 @@ Pattern.prototype.pitchwheel = function (options = {}) {
 
 register('lpp', (min, max, x) => x.lpf(perlin.rangex(min, max)));
 register('lep', (min, max, x) => x.lpe(perlin.rangex(min, max)));
+
+const wcords = {
+  root: '[1,3,5]',
+  hope: '[1,4,6]',
+  desp: '[3,5,7]',
+  glom: '[1,3,6]',
+  cont: '[5,7,2]',
+  mist: '[2,4,6]',
+};
+
+/**
+ * @name w
+ * @tags alias wcords
+ * use words instead of note letters or index values to describe chords
+ *
+ * @example
+ * $:w("<root cont glom desp hope root mist glom>")
+ * .scale('A#:major')
+ * .pitchwheel()
+ **/
+function w(ptrn) {
+  return ptrn.pick(wcords);
+}
+
+Pattern.prototype.w = function () {
+  return this.pick(wcords);
+};
