@@ -1166,8 +1166,8 @@ const wcords = {
   root: '[1,3,5]',
   hope: '[1,4,6]',
   desp: '[3,5,7]',
-  glom: '[1,3,6]',
-  cont: '[5,7,2]',
+  loom: '[1,3,6]',
+  joys: '[5,7,2]',
   mist: '[2,4,6]',
 };
 
@@ -1182,9 +1182,8 @@ const wcords = {
  * .pitchwheel()
  **/
 function w(ptrn) {
-  return ptrn.pick(wcords);
+  return ptrn.pick(wcords).n().sub(n(1));
 }
-
 Pattern.prototype.w = function () {
-  return this.pick(wcords);
+  return this.pick(wcords).n().sub(n(1));
 };
