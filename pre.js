@@ -1211,9 +1211,9 @@ const wcords = {
  * .scale('A#:major')
  * .pitchwheel()
  **/
-function w(ptrn) {
+window.w = function (ptrn) {
   return ptrn.pick(wcords).n().sub(n(1));
-}
+};
 Pattern.prototype.w = function () {
   return this.pick(wcords).n().sub(n(1));
 };
