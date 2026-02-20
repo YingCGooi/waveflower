@@ -1162,13 +1162,43 @@ Pattern.prototype.pitchwheel = function (options = {}) {
 register('lpp', (min, max, x) => x.lpf(perlin.rangex(min, max)));
 register('lep', (min, max, x) => x.lpe(perlin.rangex(min, max)));
 
+// prettier-ignore
 const wcords = {
-  root: '[1,3,5]',
-  hope: '[1,4,6]',
-  desp: '[3,5,7]',
-  loom: '[1,3,6]',
-  joys: '[5,7,2]',
-  mist: '[2,4,6]',
+  root: "[1,3,5]",
+  rooty: "[3,5,8]",
+  rootyy: "[5,8,11]",
+
+  hope: "[1,4,6]",
+  hopey: "[4,6,8]",
+  hopeyy: "[6,8,11]",
+  hopeful: "[4,6,8]",
+  hopium: "[6,8,11]",
+
+  desp: "[3,5,7]",
+  despy: "[5,7,10]",
+  despyy: "[7,10,12]",
+  despo: "[5,7,10]",
+  despoo: "[7,10,12]",
+  despair: "[7,10,12]",
+
+  loom: "[1,3,6]",
+  loomy: "[3,6,8]",
+  loomyy: "[6,8,10]",
+  gloomy: "[6,8,10]",
+
+  hero: "[5,7,9]",
+  heroy: "[7,9,12]",
+  heroyy: "[2,5,7]",
+  heroi: "[7,9,12]",
+  heroic: "[2,5,7]",
+
+  mist: "[2,4,6]",
+  misty: "[4,6,9]",
+  mystyy: "[6,9,11]",
+  mystic: "[6,9,11]",
+
+  // 7th chords
+  root7: "[1,3,5,7]",
 };
 
 /**
