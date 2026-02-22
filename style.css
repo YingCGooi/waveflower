@@ -9,7 +9,7 @@
          --muted-accent: oklch(0.4 0.15 240);
          --accent-color: oklch(0.77 0.17 240);
          --highlight-accent: oklch(0.9 0.17 240);
-         --strong: oklch(0.8 0.2 230);
+         --strong: oklch(0.63 0.23 250);
      }
 
      .gap {
