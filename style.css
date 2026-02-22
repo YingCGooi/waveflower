@@ -40,11 +40,12 @@
      h3,
      h4 {
          font-weight: 300;
+         font-family: 'Google Sans Code', monospace;
+         letter-spacing: -.07em;
          font-size: 4rem;
          color: var(--accent-color);
          display: flex;
          align-items: center;
-         padding: 24px 36px;
      }
 
      h4 {
@@ -77,6 +78,7 @@
          color: var(--strong);
      }
 
-     section {
+     section,
+     header {
          padding: 24px 36px;
      }
