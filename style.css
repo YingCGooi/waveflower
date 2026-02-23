@@ -1,84 +1,118 @@
-     * {
-         margin: 0;
-         padding: 0;
-         box-sizing: border-box;
-     }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-     :root {
-         --text-color: oklch(0.97 0.01 240/0.8);
-         --muted-accent: oklch(0.4 0.15 240);
-         --accent-color: oklch(0.77 0.17 240);
-         --highlight-accent: oklch(0.9 0.17 240);
-         --strong: oklch(0.63 0.23 250);
-     }
+:root {
+    --text-color: oklch(0.97 0.01 240/0.8);
+    --muted-accent: oklch(0.4 0.15 240);
+    --accent-color: oklch(0.77 0.17 240);
+    --highlight-accent: oklch(0.9 0.17 240);
+    --strong: oklch(0.63 0.23 250);
+    --links: oklch(0.63 0.23 250);
+}
 
-     .gap {
-         height: 0px;
-     }
+.default-color {
+    color: var(--text-color);
+}
 
-     body {
-         background: oklch(0.1 0.02 255);
-         color: var(--text-color);
-         display: flex;
-         flex-direction: column;
-         justify-content: flex-start;
-         align-items: center;
-         font-family: 'Google Sans Code', monospace;
-         letter-spacing: -0.1rem;
-         row-gap: 36px;
-     }
+.gap {
+    height: 0px;
+}
 
-     header,
-     main {
-         border-left: 0.4rem solid var(--muted-accent);
-         border-radius: 0.7rem;
-         background: oklch(from var(--muted-accent) 0.3 0.02 h / 0.5);
-         width: 800px;
-         max-width: 900px;
-     }
+.highlight {
+    color: var(--highlight-accent);
+    font-weight: 500;
+}
 
-     h3,
-     h4 {
-         font-weight: 300;
-         font-family: 'Google Sans Code', monospace;
-         letter-spacing: -.07em;
-         font-size: 4rem;
-         color: var(--accent-color);
-         display: flex;
-         align-items: center;
-     }
+body {
+    background: oklch(0.1 0.02 255);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    font-family: 'Google Sans Code', monospace;
+    letter-spacing: -0.1rem;
+    row-gap: 36px;
+}
 
-     h4 {
-         padding: 0;
-         font-size: 3rem;
-         font-weight: 400;
-     }
+header,
+main {
+    border-left: 0.4rem solid var(--muted-accent);
+    border-radius: 0.7rem;
+    background: oklch(from var(--muted-accent) 0.3 0.02 h / 0.5);
+    width: 800px;
+    max-width: 900px;
+}
 
-     img#waveflower-icon {
-         width: 84px;
-         height: 84px;
-         display: inline-block;
-         margin-right: 6px;
-         mix-blend-mode: lighten;
-     }
+h3,
+h4 {
+    font-weight: 300;
+    font-family: 'Google Sans Code', monospace;
+    letter-spacing: -.05em;
+    font-size: 4rem;
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+}
 
-     p {
-         margin-top: 12px;
-         font-weight: 200;
-         font-size: 1.33rem;
-         letter-spacing: -0.02rem;
-     }
+h4 {
+    padding: 0;
+    font-size: 3rem;
+    font-weight: 400;
+}
 
-     pre {
-         font-family: inherit;
-     }
+img#waveflower-icon {
+    width: 84px;
+    height: 84px;
+    display: inline-block;
+    margin-right: 6px;
+    mix-blend-mode: lighten;
+}
 
-     strong {
-         font-weight: 500;
-         color: var(--strong);
-     }
+img#waveflower-icon.small {
+    width: 56px;
+    height: 56px;
+}
 
-     section,
-     header {
-         padding: 24px 36px;
-     }
+p {
+    margin-top: 18px;
+    font-weight: 200;
+    font-size: 1.33rem;
+    letter-spacing: -0.02rem;
+    line-height: 1.7em;
+}
+
+pre {
+    font-family: inherit;
+}
+
+strong {
+    font-weight: 500;
+    color: var(--strong);
+}
+
+section,
+header {
+    padding: 24px 36px;
+}
+
+a {
+    color: var(--links);
+}
+
+a:hover {
+    color: var(--accent-color);
+}
+
+em {
+    padding: 0 8px;
+}
+
+audio {
+    width: 140px;
+    height: 1.5em;
+    vertical-align: middle;
+}
