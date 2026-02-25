@@ -626,7 +626,6 @@ window.B = midiToFreq(47 + 12);
 // PITCHWHEEL ========================================================
 // IMPLEMENTATION ========================================================
 // BELOW ========================================================
-
 const circlePos = (cx, cy, radius, angle) => {
   angle = angle * Math.PI * 2;
   const x = Math.sin(angle) * radius + cx;
@@ -1042,7 +1041,7 @@ function pitchwheel({
     const shapeNoteMap = {};
     // make a map of {'A#':0...}
     shape.forEach(([x, y, angle, color, alpha, freq, noteName]) => {
-      if (noteName) {
+      if (typeof noteName === 'String' && noteName) {
         const noteLetter = noteName.split(/\d/g)[0];
         if (shapeNoteMap[noteLetter] === undefined) {
           shapeNoteMap[noteLetter] = 1;
@@ -1054,6 +1053,9 @@ function pitchwheel({
     shape
       .toReversed()
       .map(([x, y, angle, color, alpha, freq, noteName]) => {
+        if (!noteName) {
+          return [x, y, angle, color, alpha, freq, noteName];
+        }
         const letter = noteName.split(/\d/g)[0];
         if (shapeNoteMap[letter] && shapeNoteMap[letter] > 1) {
           shapeNoteMap[letter] -= 1;
