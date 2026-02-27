@@ -963,6 +963,12 @@ function pitchwheel({
       ctx.font = fontsize * 0.85 + 'px ' + font;
       fillText(ctx, i, xl, yl, clearrect);
     }
+    if (notelabel) {
+      ctx.globalAlpha = notelabel;
+      ctx.font = fontsize * 0.87 + 'px ' + font;
+      const nte = centsToNote(i * 100, root, edo === 12);
+      fillText(ctx, nte, xl, yl, clearrect);
+    }
     ctx.beginPath();
 
     // Draw interval label for degree i when it exists:
