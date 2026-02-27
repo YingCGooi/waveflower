@@ -964,9 +964,10 @@ function pitchwheel({
       fillText(ctx, i, xl, yl, clearrect);
     }
     if (notelabel) {
+      const cents = Math.round((i * 1200) / edo);
+      const nte = centsToNote(cents, root, edo === 12);
       ctx.globalAlpha = notelabel;
-      ctx.font = fontsize * 0.87 + 'px ' + font;
-      const nte = centsToNote(i * 100, root, edo === 12);
+      ctx.font = fontsize * 0.75 + 'px ' + font;
       fillText(ctx, nte, xl, yl, clearrect);
     }
     ctx.beginPath();
