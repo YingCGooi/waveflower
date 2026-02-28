@@ -864,7 +864,7 @@ function pitchwheel({
   edo = 12,
   divisions = false, // alias to edo
   div = false, // alias to edo
-  mode = 'flake', // polygon or flake
+  mode = 'flake', // polygon, flake or flakygon (both)
   labels = false, // numbers or letters
   label = false, // alias of labels
   edolabel = 0, // controls the alpha of the edo index label
@@ -888,9 +888,10 @@ function pitchwheel({
   hapradiusx = 1,
   activedotrx = 1,
   clearrect = false,
+  notelabel = false,
 } = {}) {
-  const connectdots = mode === 'polygon';
-  const centerlines = mode === 'flake';
+  const connectdots = mode === 'polygon' || mode === 'both' || mode === 'flakygon';
+  const centerlines = mode === 'flake' || mode === 'both' || mode === 'flakygon';
   const labelnumbers = label === 'numbers' || labels === 'numbers';
   const labelletters = label === 'letters' || labels === 'letters';
   edolabel = Number(edolabel);
@@ -1048,7 +1049,7 @@ function pitchwheel({
     const shapeNoteMap = {};
     // make a map of {'A#':0...}
     shape.forEach(([x, y, angle, color, alpha, freq, noteName]) => {
-      if (typeof noteName === 'String' && noteName) {
+      if (noteName && noteName.length > 0) {
         const noteLetter = noteName.split(/\d/g)[0];
         if (shapeNoteMap[noteLetter] === undefined) {
           shapeNoteMap[noteLetter] = 1;
