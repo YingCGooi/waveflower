@@ -6,8 +6,11 @@
 
 :root {
     --text-color: oklch(0.97 0.01 240/0.8);
-    --muted-accent: oklch(0.4 0.15 240);
-    --accent-color: oklch(0.77 0.17 240);
+    --subtitle: oklch(0.77 0.07 240/0.8);
+    --trans-subtitle: oklch(0.77 0.07 240/0.4);
+    --muted-accent: oklch(0.42 0.15 240);
+    --trans-muted-accent: oklch(0.4 0.15 240/.7);
+    --accent: oklch(0.77 0.17 240);
     --highlight-accent: oklch(0.9 0.17 240);
     --strong: oklch(0.63 0.23 250);
     --links: oklch(0.63 0.23 250);
@@ -39,12 +42,22 @@ body {
 }
 
 header,
-main {
+section {
     border-left: 0.4rem solid var(--muted-accent);
     border-radius: 0.7rem;
     background: oklch(from var(--muted-accent) 0.3 0.02 h / 0.5);
     width: 800px;
     max-width: 900px;
+
+    @media (max-width: 720px) {
+        width: 100%;
+    }
+}
+
+.divider {
+    height: 3.5rem;
+    border-left: 0.42rem dotted var(--trans-muted-accent);
+    border-radius: 0;
 }
 
 h3,
@@ -52,16 +65,64 @@ h4 {
     font-weight: 300;
     font-family: 'Google Sans Code', monospace;
     letter-spacing: -.05em;
-    font-size: 4rem;
-    color: var(--accent-color);
+    font-size: 3rem;
+    color: var(--accent);
     display: flex;
     align-items: center;
+
+    @media (max-width: 720px) {
+        font-size: 2.5rem;
+    }
 }
 
 h4 {
     padding: 0;
-    font-size: 3rem;
+    font-size: 2.2rem;
+    font-weight: 300;
+    display: block;
+
+    @media (max-width: 720px) {
+        font-size: 2em;
+    }
+}
+
+h5 {
+    margin-top: 2rem;
+    font-size: 2.4rem;
     font-weight: 400;
+    color: var(--subtitle);
+}
+
+h4>em,
+h3>em {
+    padding: 0;
+    font-weight: 500;
+}
+
+h4+span,
+h3+span {
+    display: block;
+    margin-top: 1rem;
+    letter-spacing: -0.5px;
+    line-height: 1.7rem;
+    color: var(--subtitle);
+    font-size: 1.15rem;
+    font-weight: 300;
+
+    &>em {
+        color: var(--text-color);
+        font-weight: 400;
+    }
+}
+
+p+div.divider {
+    border-color: var(--trans-subtitle);
+    height: 2rem;
+    margin: 1rem 0;
+}
+
+.divider+h5 {
+    margin-top: 0;
 }
 
 img#waveflower-icon {
@@ -83,6 +144,34 @@ p {
     font-size: 1.33rem;
     letter-spacing: -0.02rem;
     line-height: 1.7em;
+
+    @media (max-width: 720px) {
+        font-size: 1.2rem;
+    }
+}
+
+section.bullets p::first-letter {
+    font-weight: 700;
+    color: var(--subtitle);
+}
+
+p.highlight {
+    color: var(--strong);
+    font-weight: 300;
+
+    &>em {
+        color: var(--accent);
+        font-weight: 500;
+    }
+}
+
+section.bullets p {
+    margin-top: .8rem;
+    line-height: 2rem;
+
+    &>strong {
+        color: inherit;
+    }
 }
 
 pre {
@@ -97,6 +186,10 @@ strong {
 section,
 header {
     padding: 24px 36px;
+
+    @media (max-width: 720px) {
+        padding: 24px 18px;
+    }
 }
 
 a {
@@ -104,11 +197,11 @@ a {
 }
 
 a:hover {
-    color: var(--accent-color);
+    color: var(--accent);
 }
 
 em {
-    padding: 0 8px;
+    padding: 0px;
 }
 
 audio {
