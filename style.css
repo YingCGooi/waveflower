@@ -6,6 +6,7 @@
 
 :root {
     --text-color: oklch(0.97 0.01 240/0.8);
+    --trans-text: oklch(0.97 0.01 240/0.3);
     --subtitle: oklch(0.77 0.07 240/0.8);
     --trans-subtitle: oklch(0.77 0.07 240/0.4);
     --muted-accent: oklch(0.42 0.15 240);
@@ -102,11 +103,11 @@ h3>em {
 h4+span,
 h3+span {
     display: block;
-    margin-top: 1rem;
+    margin-top: 1.25rem;
     letter-spacing: -0.5px;
-    line-height: 1.7rem;
+    line-height: 2rem;
     color: var(--subtitle);
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     font-weight: 300;
 
     &>em {
@@ -115,10 +116,37 @@ h3+span {
     }
 }
 
-p+div.divider {
+article {
+    margin-top: 1rem;
+    display: flex;
+}
+
+article h5 {
+    padding-right: 2rem;
+    margin: 0;
+}
+
+article p {
+    margin: 0;
+    margin-bottom: 1rem;
+    flex-basis: 50%;
+}
+
+article+div.divider,
+article div.divider {
     border-color: var(--trans-subtitle);
     height: 2rem;
-    margin: 1rem 0;
+    width: 0;
+    align-self: center;
+    margin: .5rem 2.5rem;
+}
+
+article div.divider {
+    height: calc(100% - 3rem);
+}
+
+article:last-of-type div.divider {
+    border: none;
 }
 
 .divider+h5 {
@@ -152,7 +180,7 @@ p {
 
 section.bullets p::first-letter {
     font-weight: 700;
-    color: var(--subtitle);
+    color: var(--trans-text);
 }
 
 p.highlight {
@@ -166,7 +194,6 @@ p.highlight {
 }
 
 section.bullets p {
-    margin-top: .8rem;
     line-height: 2rem;
 
     &>strong {
