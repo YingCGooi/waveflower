@@ -72,6 +72,7 @@ section {
     border-radius: 0;
 }
 
+h2,
 h3,
 h4 {
     font-weight: 300;
@@ -85,6 +86,10 @@ h4 {
     @media (max-width: 720px) {
         font-size: 2.5rem;
     }
+}
+
+h2 {
+    font-size: 3.33rem;
 }
 
 h4 {
@@ -166,17 +171,21 @@ article:last-of-type div.divider {
     margin-top: 0;
 }
 
+img#profile {
+    display: block;
+    mix-blend-mode: lighten;
+    width: 33%;
+    filter: hue-rotate(-2deg) saturate(84%) brightness(95%);
+    border: 6px solid var(--accent);
+    border-radius: 1.75rem;
+}
+
 img#waveflower-icon {
-    width: 84px;
-    height: 84px;
+    width: 5rem;
+    height: 5rem;
     display: inline-block;
     margin-right: 6px;
     mix-blend-mode: lighten;
-}
-
-img#waveflower-icon.small {
-    width: 56px;
-    height: 56px;
 }
 
 p {
@@ -233,6 +242,10 @@ header {
     }
 }
 
+header>.row {
+    padding: 1rem 0;
+}
+
 a {
     color: var(--links);
 }
@@ -249,4 +262,10 @@ audio {
     width: 140px;
     height: 1.5em;
     vertical-align: middle;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
