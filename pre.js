@@ -869,6 +869,7 @@ function pitchwheel({
   label = false, // alias of labels
   edolabel = 0, // controls the alpha of the edo index label
   edolabels = false, // alias to edolabel
+  customlabels = false, // false or must be an array
   degreelabel = true, // controls the alpha of the degree index label
   distance = 1.1,
   font = 'monocraft',
@@ -963,6 +964,9 @@ function pitchwheel({
     if (edolabel) {
       ctx.globalAlpha = edolabel;
       ctx.font = fontsize * 0.85 + 'px ' + font;
+      if (Array.isArray(customlabels)) {
+        i = customlabels[i];
+      }
       fillText(ctx, i, xl, yl, clearrect);
     }
     if (notelabel) {
