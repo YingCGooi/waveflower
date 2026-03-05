@@ -26,6 +26,7 @@
     --highlight-accent: oklch(0.9 0.17 240);
     --strong: oklch(0.63 0.23 250);
     --links: oklch(0.63 0.23 250);
+    --background: oklch(0.3 0.02 240 / 0.7);
 }
 
 .default-color {
@@ -68,8 +69,17 @@ section {
 
 .divider {
     height: 3.5rem;
-    border-left: 0.42rem dotted var(--trans-muted-accent);
+    border-right: 0.42rem dotted var(--trans-muted-accent);
     border-radius: 0;
+}
+
+section+.divider {
+    width: 1rem;
+    margin: .5rem 0;
+    height: 2rem;
+    display: inline-block;
+    text-align: center;
+    border-color: var(--background);
 }
 
 h2,
@@ -148,6 +158,10 @@ article p {
     margin-bottom: 1rem;
     flex-basis: 50%;
     font-weight: 300;
+}
+
+article p:only-of-type {
+    flex-basis: 100%;
 }
 
 article+div.divider,
