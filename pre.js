@@ -889,6 +889,7 @@ function pitchwheel({
   activedotrx = 1,
   clearrect = false,
   notelabel = false,
+  notelabeldistance = 0.94,
 } = {}) {
   const connectdots = mode === 'polygon' || mode === 'both' || mode === 'flakygon';
   const centerlines = mode === 'flake' || mode === 'both' || mode === 'flakygon';
@@ -965,11 +966,12 @@ function pitchwheel({
       fillText(ctx, i, xl, yl, clearrect);
     }
     if (notelabel) {
+      let [xn, yn] = circlePos(centerX, centerY, radius * notelabeldistance, angle);
       const cents = Math.round((i * 1200) / edo);
       const nte = centsToNote(cents, root, edo === 12);
       ctx.globalAlpha = notelabel;
       ctx.font = fontsize * 0.75 + 'px ' + font;
-      fillText(ctx, nte, xl, yl, clearrect);
+      fillText(ctx, nte, xn, yn, clearrect);
     }
     ctx.beginPath();
 
@@ -1131,9 +1133,9 @@ function pitchwheel({
 }
 
 /**
+ * Renders a pitch circle to visualize frequencies within one octave
  * @name pitchwheel
  * @tags visualization
- * Renders a pitch circle to visualize frequencies within one octave
  *
  * @param {number} root: frequency (in Hz) of root note (if edoScale() is set, this is automatically set to the root note)
  * @param {string} root: string value of root note (e.g 'C2'/'G'/'F4', defaults to 'C')
@@ -1146,7 +1148,7 @@ function pitchwheel({
  * @param {number} textsize: controls the size factor of the text, in em (default 1.07)
  * @param {number/bool} circle: circumference radius (defaults to 0 or false)
  * @param {string} linejoin: `'round'` (line corners and caps are rounded) or 'miter' or 'bevel' (default 'round'; alias lineJoin)
- * @param {string} mode: `'polygon'` (lines rendered to join dots) or defaults to `'flake'` (lines connected from center origin)
+ * @param {string} mode: `'polygon'` (lines rendered to join dots) or to `'flake'` (default, lines connected from center origin) or `'both'`
  * @param {number} thickness/lineweight: adjust line stroke width (in px; defaults to 3)
  * @param {number} dotsize/hapRadius: adjusts the size of dots along the circle (in px, defaults to 6; alias hapRadius)
  * @param {number} padding/margin: controls the padding surrouding the wheel, larger values -> smaller wheel (default: 'auto')
@@ -1156,6 +1158,8 @@ function pitchwheel({
  * @param {number} dotalpha: transparency of dots from 0-1 (default 1)
  * @param {number} hapradiusx/activedotrx: adjusts radius multiplier of active hap dots
  * @param {bool} clearrect: set to false to disable labels from clearing rectangle area before drawing (default: true)
+ * @param {number/bool} notelabel: sets the alpha of static notation-based labels in addition to edolabels (default: 0)
+ * @param {number} notelabeldistance: sets the distance of notation-based labels from the origin of circle (default: 0.94, inside circle)
  *
  * @example
  * n("0 .. 12").scale("C:chromatic")
