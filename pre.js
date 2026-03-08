@@ -1092,6 +1092,9 @@ function pitchwheel({
           if (labelnumbers) {
             i < 0 ? (i += 12) : null;
             let txt = i.toFixed(0);
+            if (Array.isArray(customlabels)) {
+              txt = customlabels[Number(txt)];
+            }
             ctx.font = size / 1.8 + 'px ' + font;
             fillText(ctx, txt, xl, yl, false);
           }
