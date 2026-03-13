@@ -242,6 +242,7 @@ class Visualizer {
 
       let [[r0, r1], [th0, th1], [_, flipped]] = this.computePoints(data, i, offsetRadian);
       ctx.moveTo(r0 * Math.cos(th0), r0 * Math.sin(th0));
+      ctx.lineJoin = 'round';
       ctx.lineTo(r1 * Math.cos(th1), r1 * Math.sin(th1));
       currTimeDomainRadians[i] = flipped ? th1 - Math.PI : th1;
     }
