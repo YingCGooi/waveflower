@@ -100,6 +100,10 @@ h4 {
 
 h2 {
     font-size: 3.33rem;
+
+    @media (max-width: 720px) {
+        flex-direction: column;
+    }
 }
 
 h4 {
@@ -189,6 +193,7 @@ img#profile {
     display: block;
     mix-blend-mode: lighten;
     width: 33%;
+    min-width: 200px;
     filter: hue-rotate(-2deg) saturate(84%) brightness(95%);
     border: 6px solid var(--accent);
     border-radius: 1.75rem;
@@ -208,10 +213,6 @@ p {
     font-size: 1.33rem;
     letter-spacing: -0.02rem;
     line-height: 1.7em;
-
-    @media (max-width: 720px) {
-        font-size: 1.2rem;
-    }
 }
 
 section.bullets p::first-letter {
