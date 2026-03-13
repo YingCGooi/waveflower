@@ -22,10 +22,11 @@
     --trans-subtitle: oklch(0.77 0.07 240/0.4);
     --muted-accent: oklch(0.42 0.15 240);
     --trans-muted-accent: oklch(0.4 0.15 240/.7);
-    --accent: oklch(0.77 0.17 240);
+    --accent: oklch(0.77 0.19 240);
     --highlight-accent: oklch(0.9 0.17 240);
     --strong: oklch(0.63 0.23 250);
     --links: oklch(0.63 0.23 250);
+    --new: oklch(0.8 0.2 85);
     --background: oklch(0.3 0.02 240 / 0.7);
 }
 
@@ -43,7 +44,8 @@
 }
 
 body {
-    background: oklch(0.1 0.02 255);
+    background-image: url('./assets/images/sunrisen.jpg');
+    background-size: contain;
     color: var(--text-color);
     display: flex;
     flex-direction: column;
@@ -51,14 +53,14 @@ body {
     align-items: center;
     font-family: 'Google Sans Code', monospace;
     letter-spacing: -0.1rem;
-    row-gap: 36px;
+    row-gap: 24px;
 }
 
 header,
 section {
     border-left: 0.4rem solid var(--muted-accent);
     border-radius: 0.7rem;
-    background: oklch(from var(--muted-accent) 0.3 0.02 h / 0.5);
+    background: oklch(0 0 0 / .7);
     width: 800px;
     max-width: 900px;
 
@@ -68,7 +70,7 @@ section {
 }
 
 .divider {
-    height: 3.5rem;
+    height: 3rem;
     border-right: 0.42rem dotted var(--trans-muted-accent);
     border-radius: 0;
 }
@@ -100,10 +102,16 @@ h4 {
 
 h2 {
     font-size: 3.33rem;
+    line-height: 3.33rem;
+    font-weight: 500;
 
     @media (max-width: 720px) {
         flex-direction: column;
     }
+}
+
+h3 {
+    margin-bottom: .5rem;
 }
 
 h4 {
@@ -200,11 +208,58 @@ img#profile {
 }
 
 img#waveflower-icon {
-    width: 5rem;
-    height: 5rem;
+    width: 5.5rem;
+    height: 5.5rem;
     display: inline-block;
     margin-right: 6px;
     mix-blend-mode: lighten;
+    filter: brightness(112%);
+}
+
+h3>img#waveflower-icon {
+    width: 3rem;
+    height: 3rem;
+}
+
+.new {
+    color: var(--new);
+}
+
+.image>img,
+section>img {
+    display: block;
+    width: 100%;
+    border: 6px solid oklch(0.81 0.19 210);
+    border-radius: 1rem;
+}
+
+@keyframes lightup {
+    from {
+        filter: brightness(100%);
+    }
+
+    to {
+        filter: brightness(112%);
+    }
+}
+
+a.image {
+    display: flex;
+
+    &:hover {
+        animation-name: lightup;
+        animation-duration: .33s;
+        animation-timing-function: ease-in-out;
+        animation-fill-mode: forwards;
+    }
+}
+
+small {
+    font-size: 1.5rem;
+    letter-spacing: 0px;
+    font-weight: 100;
+    text-transform: uppercase;
+    display: block;
 }
 
 p {
