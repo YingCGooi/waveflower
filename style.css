@@ -44,7 +44,7 @@
 }
 
 body {
-    background-image: url('./assets/images/sunrisen.jpg');
+    background-image: url('./assets/images/sunrisen_background_portrait.jpg');
     background-size: contain;
     color: var(--text-color);
     display: flex;
