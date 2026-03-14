@@ -2,7 +2,7 @@
 // use custom icon
 document.head.querySelectorAll('[rel=icon]').forEach((n) => {
   n.type = 'image/png';
-  n.href = 'https://waveflower.org/assets/r=sin2t.png';
+  n.href = 'https://waveflower.org/assets/icons/waveflower_icon_sine_tri.png';
 });
 
 // prevents auto scroll in mobile such that cursor ends up *behind* the virtual keyboard
