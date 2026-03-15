@@ -10,13 +10,14 @@
 //    / / / / __ \/ __ \/  _/__   / __ \/ | / / 
 //   / /_/ / / / / /_/ // /   ╱ ╱/ / / /  |/ / (╲ __
 //  / __  / /_/ / _  _// /_ ╱ ╱_/ /_/ / /|  / _╲|/_/
-// /_/ /_/\____/_/ |_/___ /_____\____/_/ |_/ /_/|╲ 
-//                                              ╲) 
+// /_/ /_/\____/_/ |_/___ /_____\____/_/ |_/ /_/|╲
+//                                              ╲)
 
 await import('https://waveflower.org/pre.js')
 samples({
   tick: 'cactus/dyad/CACTUS_DYAD_ONESHOT.mp3',
   short: 'cactus/perc/CACTUS_PERC_14_ONESHOT.mp3',
+  uplifter: 'fl/uplifter0.wav'
 }, 'https://waveflower.org/samples/');
 
 useWet(2, -5)
@@ -80,6 +81,8 @@ const DOWNLIFT = s("brown").seg(6)
 .superimpose(x=>x.late(1/32).pan(1))
 .gain(at(2,.1,8))
 .hpf(at(8000,100,4))
+
+const UPLIFT = s("uplifter").slow(1.25).fit().slice(1, "0").gain(1.7)
 
 const SWEEP_UP = s("pink,brown").seg(4)
 .lpf(at(100,16000,16)).lfo({s:1/16}).pan(0.1)
@@ -507,6 +510,7 @@ const PIANO = (melody) => melody.add(note("12"))
   .hpf(700).vel(1).room(1/2).size(3)
 
 $:arrange(
+  [1, stack(UPLIFT, DOWNLIFT.stretch(-1))],
   [8, stack(SOFT_CR, CLOCK4, DOWNLIFT, INTRO_SQ, INTRO_BASS, INTRO_PAD, SWEEP_UP)],
   [8, stack(CLOCK8, INTRO_PAD.early(8), INTRO_BASS.early(8), INTRO_SQ.early(8), SWEEP_UP.early(8), OH, SNUP)],
   [8, stack(SWEEP_DOWN, PAD, BASS, CRASH, SQ)],
