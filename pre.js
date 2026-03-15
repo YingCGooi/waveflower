@@ -50,11 +50,11 @@ window.removePrebakeCSS = function () {
  * @param {Number} saturation amount (default 3)
  * @param {Number} hue shift (default -15)
  * @param {Number} letterSpacing
- * @param {Number} lineHeight, in rem (default 1.6)
+ * @param {Number} lineHeight, in rem (default 1.7)
  * @example
  * useWet(3, -15, -0.5, )
  */
-window.wetEditor = function (amount = 3, hueShift = -12, letterSpacing = -0.5, lineHeight = 1.6) {
+window.wetEditor = function (amount = 3, hueShift = -12, letterSpacing = -0.5, lineHeight = 1.7) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');

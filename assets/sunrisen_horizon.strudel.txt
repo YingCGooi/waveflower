@@ -1,5 +1,17 @@
 // @title Sunrisen Horizon 2026
-// @by Waveflower
+// @by Waveflower Gooi
+// @license CC BY-NC-SA
+
+//    _____ __  ___   ______  _________ _______   __
+//   / ___// / / / | / / __ \/  _/ ___// ____/ | / /
+//   \__ \/ / / /  |/ / /_/ // / \__ \/ __/ /  |/ /
+//  ___/ / /_/ / / | / _  _// / ___/ / /___/ /|  /
+// /_____\______/  |__/ |___________________/ __/
+//    / / / / __ \/ __ \/  _/__   / __ \/ | / / 
+//   / /_/ / / / / /_/ // /   ╱ ╱/ / / /  |/ / (╲ __
+//  / __  / /_/ / _  _// /_ ╱ ╱_/ /_/ / /|  / _╲|/_/
+// /_/ /_/\____/_/ |_/___ /_____\____/_/ |_/ /_/|╲ 
+//                                              ╲) 
 
 await import('https://waveflower.org/pre.js')
 samples({
@@ -7,8 +19,9 @@ samples({
   short: 'cactus/perc/CACTUS_PERC_14_ONESHOT.mp3',
 }, 'https://waveflower.org/samples/');
 
-useWet(2)
-setcpm(128/4)
+useWet(2, -5)
+addCSS('line-height:1.33rem;letter-spacing:0px')
+setcpm(132/4)
 
 const at = (min,max,c=16)=> min < max ? saw.rangex(min,max).slow(c) : saw.rev().rangex(max,min).slow(c)
 register('ov', (c, p) => p.slow(c))
@@ -183,7 +196,7 @@ const OHH = s("akaixr10_oh").up(`<
 ~ x ~ x
 ~ x ~ x
 >`.as("struct:vel")).fast(8).pan(7/8)
-  .gain(1/4).att(1/32).sus(1).rel(1/4).hpf(4800)
+  .gain(.4).att(1/32).sus(1).rel(1/4).hpf(6700)
 
 const OH = s("oh:6").up(`<
 x [x:.7 x] x [x  x:.7      ]
@@ -318,8 +331,8 @@ const FATBASS = (p) => p.as("note:vel").fast(8)
 .fm(2.7).hpf(100).color('oklch(.45 .24 160)')
 ._scope({height:100,width:800,scale:2/3})
 const FATFAT = (p) => FATBASS(p).pan(1/4).dec(0.25).sus(0)
-  .off(1/60, x=>x.add(note(12)).pan(1)).FX(diode("4:0.3"))
-  .hpf(300).lpf(at(40,2400,8)).postgain(1.2).color('oklch(.4 .17 200)')
+  .off(1/60, x=>x.add(note(12)).pan(1)).FX(diode(5).lpf(12800).lfo({s:1/16,depth:2.1}))
+  .hpf(300).lpf(at(40,2400,8)).color('oklch(.4 .17 200)')
 
 
 const kickpat = `<
@@ -440,7 +453,7 @@ const PIZZMEL = (melody) => melody
   .att(0).dec(1/2).sus(1/2)
   .add(note("0,12")).pan(0)
   .off(1/128, x=>x.add(note(12)).postgain(1.2).pan(1))
-  .hpf(500).delay(1/3).delaysync(1/8)
+  .hpf(700).delay(1/3).delaysync(1/8)
   .color('oklch(.77 .2 80)')
 
 const PIZZ = (submelody) => 
@@ -451,103 +464,115 @@ submelody.s("gm_pizzicato_strings:4").add(note("0,12"))
   .orbit(5)
 
 const SQMEL = (melody) => melody.add(note(24))
-.rel(1/4).gain(2/3).delay(1/2).delaysync(1/8).sus(1/2)
+.att(1/64).rel(1/4).gain(2/3).delay(1/2).delaysync(1/8).sus(1/2)
 .hpf(440)
 .off(0, x=>x.s("sawtooth").transpose(1/5).pan(0))
 .off(0, x=>x.s("square").transpose(-1/4).pan(1))
 .off(0, x=>x.s("square").transpose(1/6).vel(3/4).pan(1))
 .color('oklch(.7 .2 210)')._scope()  
 const piano1 = cat(`<
-A C4 F4 [~ E4]
-E G  B  [C4]
-G B  G4 [E4]
-F C4 F4 [G4]
-~  A  C4 [~ E4]
-F  A  C4 [F4]
-G  B  D4 [B]
-C  G  C4 [B]
+A C4 F4@1.5 E4@0.5
+E G  B  C4
+G B  G4 E4
+F C4 F4 G4
+~  A  C4@1.5 E4@0.5
+F  A  C4 F4
+G  B  D4 B
+C  G  C4@1.5 B@0.5
 
-A C4 F4 [~ E4]
-E G  B  [C4]
-G B  G4 [E4]
-F C4 F4 [G4]
-A C4 E4 [~ A4]
-F A  C4 [F4]
-C _  F4 [~ C4]
-G B  D4 [C4]
+A C4  F4@1.5 E4@0.5
+E G   B  C4
+G B   G4@1.5 E4@0.5
+F C4  F4 G4
+A C4  E4@1.5 A4@0.5
+F A   C4 F4
+G C4  F4 C4
+G4 _ D5 C5
 >`).fast(8).note()
-.pan(`.1 .8 .9 1`.fast(2))
+.pan(`.3 .8 1 .8`.fast(2))
 
-const PIANO = (melody) => melody.add(note("0,12"))
-  .s("gm_piano:31:.33,gm_piano:8").rel(1/4)
-  .hpf(700).vel(1).room(2/3).size(5)
+const pianoEnd = cat(
+"A C  A@2 A@2 A E2",
+"F _  F@2 E F@2 C2",
+"G B2 G@2 G@2 G G2",
+"C G1 C@2 C4 G C B2",
+"A C  A@2 A@2 A E2",
+"F _  F@2 E F@2 C2",
+"G@4 G@2 G G2",
+"C@4 C2@4"
+).note()
+
+const PIANO = (melody) => melody.add(note("12"))
+  .s("gm_piano:31:.33,gm_piano:8").rel(1/8)
+  .hpf(700).vel(1).room(1/2).size(3)
 
 $:arrange(
-  // [8, stack(SOFT_CR, CLOCK4, DOWNLIFT, INTRO_SQ, INTRO_BASS, INTRO_PAD, SWEEP_UP)],
-  // [8, stack(CLOCK8, INTRO_PAD.early(8), INTRO_BASS.early(8), INTRO_SQ.early(8), SWEEP_UP.early(8), OH, SNUP)],
-  // [8, stack(SWEEP_DOWN, PAD, BASS, CRASH, SQ)],
-  // [8, stack(RIDE, PAD.early(8), BASS.lpf(400), SQ, SNARE.coarse(rundown), OH)],
-  // [8, stack(
-  //   PAD.lpf(at(9000,4000,8)), 
-  //   BASS.lpf(400), SQ.lpf(at(8000,200,8)), 
-  //   SNARE.room(1/4).postgain(3/4).coarse(run8),
-  //   OH.lpf(at(8000,200,8)),
-  //   SWEEP_UP.early(4),
-  //   CLOCK4,
-  // )],
-  // [4, stack(PADBREAK.lpf(at(200,120,4)), BASSBREAK.lpf(at(400,100,4)), SWEEP_UP.early(12), CLOCK4.early(4))],
-  // [8, stack(KICK, RIDE, FATBASS(lineC),
-  //           SOFT_CR.postgain(2/3),
-  //           CLOCK4,
-  //           SNARE.coarse(5).postgain(2/3).delayBy(4).lpf(12800).hpf(3200)
-  //          )],
-  // [8, stack(KICK, RIDE, HH,
-  //           SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200), 
-  //           FATBASS(lineC).early(8),
-  //           SYNTHLINE)],
-  // [8, stack(KICK, RIDE, HH, SWEEP_UP.late(4),
-  //           SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
-  //           FATBASS(lineC).lpf(6400),
-  //           SYNTHLINE.lpf(12800),
-  //           INTRO_SQ.lpf(at(200,6000,8)))],
-  // [8, stack(KICK, RIDE, OH, HH, SWEEP_UP.early(8), CLOCK8,
-  //           SNARE.coarse(run8).postgain(2/3).lpf(12800).hpf(6400), SNUP,
-  //           FATBASS(lineC).lpf(6400),
-  //           SYNTHLINE.lpf(at(12800,400,8)),
-  //           INTRO_SQ.lpf(6000)
-  // )],
-  // [8, stack(SWEEP_DOWN.phaser(1/128).lpf(at(16000,1,4)).first4(), 
-  //           HARD_CR.first4(),
-  //           RIDE.lpf(at(8400,100,4)).first4(), 
-  //           OH.lpf(at(4800,400,4)).first4(), 
-  //           SYNTHLINE.lpf(at(800,10,4)).first2(),
-  //           FATFAT(line0).hpf(320).lpf(at(40,4800,8)).postgain(1).delayBy(4), 
-  //           PIZZ(submel0).lpf(at(420,14400,8)), PIZZMEL(melody0).lpf(at(100,14400,8))
-  // )],
-  // [8, stack(KICK.lpf(900), SWEEP_UP.hpf(at(550,8000,8)).lpf(at(800,14000,8)).postgain(1/3),
-  //           FATFAT(line0).hpf(330).lpf(3200).postgain(1), 
-  //           HH.delayBy(4), 
-  //           SNARE2.delayBy(4).coarse(4).crush(3).room(1/4).rel(1/4)
-  //           .postgain(2/3).lpf(8400).hpf(2400),
-  //           PIZZ(submel0).lpf(at(12800,16000,8)), 
-  //           PIZZMEL(melody0).hpf(500).lpf(14400), 
-  //           SQMEL(melody0).hpf(550).lpf(at(200,12800,8))
-  // )],
-  [8, stack(SOFT_CR, KICK.lpf(900), RIDE, SNUP.lpf(at(20000,1800,8)).delayBy(4),
-            FATFAT(line1).hpf(330).lpf(3200).postgain(1),
+  [8, stack(SOFT_CR, CLOCK4, DOWNLIFT, INTRO_SQ, INTRO_BASS, INTRO_PAD, SWEEP_UP)],
+  [8, stack(CLOCK8, INTRO_PAD.early(8), INTRO_BASS.early(8), INTRO_SQ.early(8), SWEEP_UP.early(8), OH, SNUP)],
+  [8, stack(SWEEP_DOWN, PAD, BASS, CRASH, SQ)],
+  [8, stack(RIDE, PAD.early(8), BASS.lpf(400), SQ, SNARE.coarse(rundown), OH)],
+  [8, stack(
+    PAD.lpf(at(9000,4000,8)), 
+    BASS.lpf(400), SQ.lpf(at(8000,200,8)), 
+    SNARE.room(1/4).postgain(3/4).coarse(run8),
+    OH.lpf(at(8000,200,8)),
+    SWEEP_UP.early(4),
+    CLOCK4,
+  )],
+  [4, stack(PADBREAK.lpf(at(200,120,4)), BASSBREAK.lpf(at(400,100,4)), SWEEP_UP.early(12), CLOCK4.early(4))],
+  [8, stack(KICK, RIDE, FATBASS(lineC),
+            SOFT_CR.postgain(2/3),
+            CLOCK4,
+            SNARE.coarse(5).postgain(2/3).delayBy(4).lpf(12800).hpf(3200)
+           )],
+  [8, stack(KICK, RIDE, HH,
+            SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200), 
+            FATBASS(lineC).early(8),
+            SYNTHLINE)],
+  [8, stack(KICK, RIDE, HH, SWEEP_UP.late(4),
+            SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
+            FATBASS(lineC).lpf(6400),
+            SYNTHLINE.lpf(12800),
+            INTRO_SQ.lpf(at(200,6000,8)))],
+  [8, stack(KICK, RIDE, OH, HH, SWEEP_UP.early(8), CLOCK8,
+            SNARE.coarse(run8).postgain(2/3).lpf(12800).hpf(6400), SNUP,
+            FATBASS(lineC).lpf(6400),
+            SYNTHLINE.lpf(at(12800,400,8)),
+            INTRO_SQ.lpf(6000)
+  )],
+  [8, stack(SWEEP_DOWN.phaser(1/128).lpf(at(16000,1,4)).first4(), 
+            HARD_CR.first4(),
+            RIDE.lpf(at(8400,100,4)).first4(), 
+            OH.lpf(at(4800,400,4)).first4(), 
+            SYNTHLINE.lpf(at(800,10,4)).first2(),
+            PIZZ(submel0).lpf(at(12800,16000,8)), 
+            PIZZMEL(melody0).lpf(at(400,14400,8)).gain(at(1.25,1,8)),
+            FATFAT(line0).hpf(320).lpf(at(40,4800,8)).postgain(at(1/2,1/3,8)).delayBy(4),            
+  )],
+  [8, stack(KICK.lpf(900), SWEEP_UP.hpf(at(550,8000,8)).lpf(at(800,14000,8)).postgain(1/3),
+            FATFAT(line0).hpf(330).lpf(3300).postgain(1/3), 
+            HH.delayBy(4), 
+            SNARE2.delayBy(4).coarse(4).crush(3).room(1/4).rel(1/4)
+            .postgain(2/3).lpf(8400).hpf(2400),
+            PIZZ(submel0).lpf(16000),
+            PIZZMEL(melody0).hpf(500).lpf(14400), 
+            SQMEL(melody0).hpf(550).lpf(at(200,12800,8)).gain(at(1/2,2/3,8)),
+  )],
+  [8, stack(SOFT_CR, KICK.lpf(2200), RIDE, SNUP.lpf(at(20000,400,8)).postgain(1.33).delayBy(4),
+            FATFAT(line1).hpf(330).lpf(3300).postgain(1/3),
             HH, OHH, OH.lpf(9600).pan(1/9),
             SNARE2.coarse(3).crush(3).postgain(2/3).lpf(12800).hpf(3200),
             PIANO(piano1).lpf(at(110,880,8)).delayBy(4),            
-            PIZZ(submel1).lpf(1200), 
+            PIZZ(submel1).lpf(1200).postgain(1.2), 
             PIZZMEL(melody1).hpf(500).lpf(14400),
             SQMEL(melody1).hpf(550).lpf(12800)
   )],
   [8, stack(RIDE.lpf(at(8400,100,4)).first4(), CLOCK4.lpf(6400).postgain(7/8),
             SWEEP_DOWN.postgain(2/3), OH.lpf(at(9600,6400,8)).pan(1/9), 
-            FATFAT(line1).hpf(330).lpf(at(2400, 200, 8)).postgain(1), 
+            FATFAT(line1).hpf(330).lpf(at(2400, 200, 8)).postgain(1/3), 
             SNARE2.coarse("<3 3.5 4 5 5@4>").crush(4).postgain(1/2).lpf(at(4800,400,8)).hpf(800),
-            PIANO(piano1).lpf(at(770,1600,8)),
-            PIZZ(submel1).lpf(14400),
+            PIANO(piano1).lpf(at(880,4800,8)),
+            PIZZ(submel1).lpf(14400).postgain(1.2),
             PIZZMEL(melody2).hpf(500).lpf(14400),
             SQMEL(melody2).lpe(1).hpf(700).lpf(at(9600,700,8))
   )],
@@ -556,8 +581,9 @@ $:arrange(
             SNARE2.coarse(5).crush(4).postgain(1/2).lpf(at(800,80,8)).hpf(800).first2(),
             CLOCK8.lpf(at(12800, 6400, 8)).postgain(6/7)
             .n("<0 1 2 3 4 5 6 7 8 9 10 11>".revv().add(20).fast(4)),
-            PIZZMEL(melodyEnd).hpf(400).lpf(at(16000,12800,8)).postgain(1.33),
-            PIZZ(submelEnd).lpf(12800).postgain(1.33),
+            PIZZMEL(melodyEnd).hpf(400).lpf(at(16000,12800,8)).postgain(1.6),
+            PIZZ(submelEnd).lpf(12800).postgain(1.4),
+            PIANO(pianoEnd),
   )],
   [4, "~"]
 )
@@ -573,6 +599,6 @@ $:arrange(
   edolabel: 3/4,
   dotsize: 12,
   dotalpha: 1/32,
-  circle: 12,
+  circle: 0,
   linejoin: 'miter',
 })
