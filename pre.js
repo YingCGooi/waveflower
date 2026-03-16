@@ -1214,6 +1214,10 @@ register('gainAt', (min, max, c, p) => p.gain(at(min, max, c)));
 register('velat', (min, max, c, p) => p.vel(at(min, max, c)));
 register('velAt', (min, max, c, p) => p.vel(at(min, max, c)));
 
+register('last4', (p) => p.mask('<0@4 1@4>'));
+register('first4', (p) => p.mask('<1@4 0@4>'));
+register('first2', (p) => p.mask('<1@2 0@6>'));
+
 document.addEventListener('keydown', function (event) {
   // Check if the user presses the "Enter" key
   if (event.metaKey && event.key === 'Enter') {
