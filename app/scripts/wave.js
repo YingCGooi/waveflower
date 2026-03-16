@@ -15,6 +15,7 @@ var ENV = {
   smoothingTimeConstant: 1,
   analyzerWaitDelayMs: 400,
   hueOffsets: -40,
+  scaleRadius: 2,
 };
 
 class AudioSourceManager {
