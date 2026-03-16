@@ -17,11 +17,569 @@ await import('https://waveflower.org/pre.js')
 samples({
   tick: 'cactus/dyad/CACTUS_DYAD_ONESHOT.mp3',
   short: 'cactus/perc/CACTUS_PERC_14_ONESHOT.mp3',
-  uplifter: 'fl/uplifter0.wav'
+  uplifter: 'fl/uplifter1.wav'
 }, 'https://waveflower.org/samples/');
 
 useWet(2, -5)
 addCSS('line-height:1.33rem;letter-spacing:0px')
+
+const circlePos = (cx, cy, radius, angle) => {
+  angle = angle * Math.PI * 2;
+  const x = Math.sin(angle) * radius + cx;
+  const y = Math.cos(angle) * radius + cy;
+  return [x, y];
+};
+
+// centsTo12Note maps cents to note in 12TET
+// including sharps and flats
+const centsTo12Note = {
+  0: 'A',
+  77: 'A♯',
+  116: 'B♭',
+  194: 'B',
+  271: 'B♯',
+  310: 'C',
+  387: 'C♯',
+  426: 'D♭',
+  503: 'D',
+  581: 'D♯',
+  619: 'E♭',
+  697: 'E',
+  813: 'F',
+  890: 'F♯',
+  929: 'G♭',
+  1006: 'G',
+  1084: 'G♯',
+  1123: 'A♭',
+};
+
+// construct reversed {note: cents} object from above
+const revCentsTo12Note = Object.keys(centsTo12Note).map((key) => [centsTo12Note[key], key]);
+const twelveNoteToCents = Object.fromEntries(revCentsTo12Note);
+
+const noteSymbolMap = {
+  b: '♭',
+  '#': '♯',
+};
+// centsToANoteMap is based on 31edo, which also contains all 12edo notes
+// as this is an approximation, please only use this for visualization/closest match only
+// ⦉ = half-flat; ‡ = half-sharp
+const centsToANoteMap = {
+  0: 'A',
+  39: 'A‡', // or Bbb
+  77: 'A♯',
+  116: 'B♭',
+  155: 'B⦉', // or A##
+  194: 'B',
+  232: 'B‡', // or Cb
+  271: 'B♯', // or C<
+  310: 'C',
+  348: 'C‡', // or B## or Dbb
+  387: 'C♯',
+  426: 'D♭',
+  465: 'D⦉', // or C##
+  503: 'D',
+  542: 'D‡', // or Ebb
+  581: 'D♯',
+  619: 'E♭',
+  658: 'E⦉', // or D## or Fbb
+  697: 'E',
+  735: 'E‡', // or Fb
+  774: 'F⦉', // or E#
+  813: 'F',
+  852: 'F‡', // or E## or Gbb
+  890: 'F♯',
+  929: 'G♭',
+  968: 'G⦉', // or F##
+  1006: 'G',
+  1045: 'G‡', // or Abb
+  1084: 'G♯',
+  1123: 'A♭',
+  1162: 'A⦉', // or G##
+};
+// construct reversed {note: cents} object from above
+const reverseNoteArray = Object.keys(centsToANoteMap).map((key) => [centsToANoteMap[key], key]);
+const noteToCentsMap = Object.fromEntries(reverseNoteArray);
+
+const midiOffsetFromC = {
+  auto: 0,
+  C: 0,
+  'C#': 1,
+  Db: 1,
+  D: 2,
+  'D#': 3,
+  Eb: 3,
+  E: 4,
+  Fb: 4,
+  'E#': 5,
+  F: 5,
+  'F#': 6,
+  Gb: 6,
+  G: 7,
+  'G#': 8,
+  Ab: 8,
+  A: 9,
+  'A#': 10,
+  Bb: 10,
+  B: 11,
+}
+
+// make these global variables so they can be easily referenced
+const midiNoteToFreq = {
+  C2: midiToFreq(36),
+  D2: midiToFreq(38),
+  E2: midiToFreq(40),
+  F2: midiToFreq(41),
+  G2: midiToFreq(43),
+  A2: midiToFreq(45),
+  B2: midiToFreq(47),
+  c: midiToFreq(36 + 12),
+  d: midiToFreq(38 + 12),
+  e: midiToFreq(40 + 12),
+  f: midiToFreq(41 + 12),
+  g: midiToFreq(43 + 12),
+  a: midiToFreq(45 + 12),
+  b: midiToFreq(47 + 12),
+  auto: midiToFreq(36 + 12), // default auto to C if not found in scale or xen baseFreq
+  C: midiToFreq(36 + 12),
+  'C#': midiToFreq(37 + 12),
+  Db: midiToFreq(37 + 12),
+  D: midiToFreq(38 + 12),
+  'D#': midiToFreq(39 + 12),
+  Eb: midiToFreq(39 + 12),
+  E: midiToFreq(40 + 12),
+  Fb: midiToFreq(40 + 12),
+  'E#': midiToFreq(41 + 12),
+  F: midiToFreq(41 + 12),
+  'F#': midiToFreq(42 + 12),
+  Gb: midiToFreq(42 + 12),
+  G: midiToFreq(43 + 12),
+  'G#': midiToFreq(44 + 12),
+  Ab: midiToFreq(44 + 12),
+  A: midiToFreq(45 + 12),
+  'A#': midiToFreq(46 + 12),
+  Bb: midiToFreq(46 + 12),
+  B: midiToFreq(47 + 12),
+  Cb: midiToFreq(47 + 12),
+  C3: midiToFreq(36 + 24),
+  D3: midiToFreq(38 + 24),
+  E3: midiToFreq(40 + 24),
+  F3: midiToFreq(41 + 24),
+  G3: midiToFreq(43 + 24),
+  A3: midiToFreq(45 + 24),
+  B3: midiToFreq(47 + 24),
+};
+
+const freq2Note = {
+  [Math.round(midiToFreq(36))]: 'C',
+  [Math.round(midiToFreq(38))]: 'D',
+  [Math.round(midiToFreq(40))]: 'E',
+  [Math.round(midiToFreq(41))]: 'F',
+  [Math.round(midiToFreq(43))]: 'G',
+  [Math.round(midiToFreq(45))]: 'A',
+  [Math.round(midiToFreq(47))]: 'B',
+  [Math.round(midiToFreq(36 + 12))]: 'C',
+  [Math.round(midiToFreq(38 + 12))]: 'D',
+  [Math.round(midiToFreq(40 + 12))]: 'E',
+  [Math.round(midiToFreq(41 + 12))]: 'F',
+  [Math.round(midiToFreq(43 + 12))]: 'G',
+  [Math.round(midiToFreq(45 + 12))]: 'A',
+  [Math.round(midiToFreq(47 + 12))]: 'B',
+  [Math.round(midiToFreq(36 + 24))]: 'C',
+  [Math.round(midiToFreq(38 + 24))]: 'D',
+  [Math.round(midiToFreq(40 + 24))]: 'E',
+  [Math.round(midiToFreq(41 + 24))]: 'F',
+  [Math.round(midiToFreq(43 + 24))]: 'G',
+  [Math.round(midiToFreq(45 + 24))]: 'A',
+  [Math.round(midiToFreq(47 + 24))]: 'B',
+};
+
+const findRootCents = (root = 'C', twelveTET = false) => {
+  let rootFreq = root; // if root is a lettered string, lookup its freq
+  if (Number(root) != root) {
+    rootFreq = midiNoteToFreq[root];
+  }
+  rootFreq = Math.round(rootFreq);
+  const nt = freq2Note[rootFreq];
+  return twelveTET ? Number(twelveNoteToCents[nt]) : Number(noteToCentsMap[nt]);
+};
+
+// centsToNote copies the centsToANoteMap, and offsets its cents based on root cents
+// then seek note based on nearest cetns
+function centsToNote(cents = 0, root = 'C', twelveTET = false) {
+  let rootFreq = root; // if root is a lettered string, lookup its freq
+  if (Number(root) != root) {
+    rootFreq = midiNoteToFreq[root];
+  }
+  rootFreq = Math.round(rootFreq);
+  cents = Math.round(cents + findRootCents(rootFreq, twelveTET));
+  // if rootNote='C', rootCents=310, cents=400,then (+310) = 710 => 'E'
+  while (cents > 1200) {
+    cents -= 1200;
+  }
+  let lookup = {};
+  twelveTET ? (lookup = centsTo12Note) : (lookup = centsToANoteMap);
+  // round cents to nearest integer,
+  // then seek 0, +1, seek -1
+  // if not found, then seek 0, +2, -2... continue until found
+  for (let seek = 0; seek < 100; seek++) {
+    if (lookup[cents]) {
+      return lookup[cents];
+    }
+    if (lookup[cents + seek]) {
+      return lookup[cents + seek];
+    }
+    if (lookup[cents - seek]) {
+      return lookup[cents - seek];
+    }
+  }
+  return 'noteNotFoundError';
+}
+
+const freq2angle = (freq, root, equalDivisionOfAngle = true) => {
+  if (equalDivisionOfAngle) {
+    return 0.5 - (Math.log2(freq / root) % 1);
+  } else {
+    let normalizer = 1;
+    if (freq < root) {
+      normalizer = 0.5;
+    } else if (freq > root * 2) {
+      normalizer = 2;
+    } else if (freq > root * 4) {
+      normalizer = 4;
+    } else if (freq > root * 8) {
+      normalizer = 8;
+    } else if (freq > root * 16) {
+      normalizer = 16;
+    } else if (freq > root * 32) {
+      normalizer = 32;
+    } else if (freq > root * 64) {
+      normalizer = 64;
+    }
+    freq = freq / normalizer;
+    return 0.5 - ((freq / root) % 1);
+  }
+};
+
+const offText = (ctx, text = '0') => ctx.measureText(text).width;
+const fillText = (ctx, text = '0', x, y, clear = true) => {
+  clear
+    ? ctx.clearRect(
+        x - offText(ctx, text) / 1.5,
+        y - offText(ctx, text) / 4,
+        offText(ctx, text) * 1.25,
+        offText(ctx, text) * 0.75,
+      )
+    : null;
+  ctx.fillText(text, x - offText(ctx, text) / 2, y + offText(ctx, text) / 3);
+};
+
+function pitchwheel({
+  haps,
+  ctx,
+  id,
+  hapcircles = 1,
+  circle = 0,
+  root = 'auto',
+  edo = 12,
+  divisions = false, // alias to edo
+  div = false, // alias to edo
+  mode = 'flake', // polygon, flake or flakygon (both)
+  labels = false, // numbers or letters
+  label = false, // alias of labels
+  edolabel = 0, // controls the alpha of the edo index label
+  edolabels = false, // alias to edolabel
+  customlabels = false, // false or must be an array
+  degreelabel = true, // controls the alpha of the degree index label
+  distance = 1.1,
+  font = 'monocraft',
+  textsize = 1.06,
+  thickness = 4,
+  lineweight = false, // alias to thickness
+  lineJoin = 'round',
+  linejoin = '', // alias to lineJoin
+  hapradius = 7,
+  dotsize = 7, // alias to hapradius
+  margin = 'auto',
+  padding = 0,
+  exponential = false,
+  glow = 0,
+  autonote = true,
+  dotalpha = 1,
+  hapradiusx = 1,
+  activedotrx = 1,
+  clearrect = false,
+  notelabel = false,
+  notelabeldistance = 0.94,
+  lineoctavex = 1,
+} = {}) {
+  const connectdots = mode === 'polygon' || mode === 'both' || mode === 'flakygon';
+  const centerlines = mode === 'flake' || mode === 'both' || mode === 'flakygon';
+  const labelnumbers = label === 'numbers' || labels === 'numbers';
+  const labelletters = label === 'letters' || labels === 'letters';
+  edolabel = Number(edolabel);
+  const w = ctx.canvas.width;
+  if (dotsize || dotsize === 0) {
+    hapradius = dotsize;
+  }
+  if (lineweight) {
+    thickness = lineweight;
+  }
+  if (linejoin) {
+    lineJoin = linejoin;
+  }
+  if (padding) {
+    margin = padding;
+  }
+  if (margin === 'auto') {
+    margin = ctx.canvas.width / 12;
+  }
+  if (divisions || div) {
+    edo = divisions || div;
+  }
+  if (edolabels) {
+    edolabel = edolabels;
+  }
+  if (activedotrx !== 1) {
+    hapradiusx = activedotrx;
+  }
+  const h = ctx.canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  const color = getTheme().foreground;
+
+  const size = Math.min(w, h);
+  const radius = size / 2 - thickness / 2 - hapradius - margin;
+  const centerX = w / 2;
+  const centerY = h / 2;
+
+  if (id) {
+    haps = haps.filter((hap) => hap.hasTag(id));
+  }
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineJoin = lineJoin;
+  lineJoin === 'round' ? (ctx.lineCap = 'round') : (ctx.lineCap = 'butt'); // shrink caps
+  ctx.lineWidth = 1;
+
+  edo = haps.length >= 1 && haps[0].value && haps[0].value.edo ? haps[0].value.edo : edo;
+  root = haps.length >= 1 && haps[0].value && haps[0].value.root ? haps[0].value.root : root;
+  // if root is auto look up root from scale
+  if (root === 'auto') {
+    root = haps.length >= 1 && haps[0].context && haps[0].context.scale ? haps[0].context.scale.split(' ')[0] : root;
+    root = haps.length >= 1 && haps[0].context && haps[0].context.baseFreq ? haps[0].context.baseFreq : root;
+  }
+  // if root is a lettered string, lookup its freq value
+  if (Number(root) != root) {
+    root = midiNoteToFreq[root];
+  }
+  const degreeIndexes =
+    haps.length >= 1 && haps[0].value && haps[0].value.degreeIndexes ? haps[0].value.degreeIndexes : null;
+  const intLabels = haps.length >= 1 && haps[0].value && haps[0].value.intLabels ? haps[0].value.intLabels : null;
+  const fontsize = String(radius ** (textsize * 0.6));
+  ctx.font = fontsize + 'px ' + font;
+
+  Array.from({ length: edo }, (_, i) => {
+    const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
+    const [x, y] = circlePos(centerX, centerY, radius, angle);
+    let [xl, yl] = circlePos(centerX, centerY, radius * distance, angle);
+    if (edolabel) {
+      ctx.globalAlpha = edolabel;
+      ctx.font = fontsize * 0.85 + 'px ' + font;
+      if (Array.isArray(customlabels)) {
+        i = customlabels[i];
+      }
+      fillText(ctx, i, xl, yl, clearrect);
+    }
+    if (notelabel) {
+      let [xn, yn] = circlePos(centerX, centerY, radius * notelabeldistance, angle);
+      const cents = Math.round((i * 1200) / edo);
+      const nte = centsToNote(cents, root, edo === 12);
+      ctx.globalAlpha = notelabel;
+      ctx.font = fontsize * 0.8 + 'px ' + font;
+      fillText(ctx, nte, xn, yn, clearrect);
+    }
+    ctx.beginPath();
+
+    // Draw interval label for degree i when it exists:
+    if (degreeIndexes === null || degreeIndexes.includes(i)) {
+      ctx.globalAlpha = dotalpha;
+      hapradius ? ctx.arc(x, y, hapradius, 0, 2 * Math.PI) : null;
+      if (intLabels !== null) {
+        const degree = degreeIndexes.indexOf(i);
+        let intDegLabel = intLabels[degree];
+        if (intDegLabel && degreelabel) {
+          ctx.globalAlpha = dotalpha;
+          ctx.font = fontsize * 0.8 + 'px ' + font;
+          fillText(ctx, intDegLabel, xl, yl, clearrect);
+        }
+      }
+    } else {
+      ctx.globalAlpha = dotalpha;
+      ctx.arc(x, y, hapradius, 0, 2 * Math.PI);
+    }
+    ctx.fill();
+  });
+  ctx.stroke();
+
+  let shape = [];
+  ctx.lineWidth = thickness;
+  haps.forEach((hap) => {
+    let freq;
+    try {
+      freq = getFrequency(hap);
+    } catch (err) {
+      return;
+    }
+    let noteName;
+    if (edo === 12 && autonote) {
+      try {
+        noteName = getPlayableNoteValue(hap);
+      } catch (err) {
+        return;
+      }
+    }
+    const angle = freq2angle(freq, root, !exponential);
+    const [x, y] = circlePos(centerX, centerY, radius, angle);
+    const hapColor = hap.value.color || color;
+    ctx.strokeStyle = hapColor;
+    ctx.fillStyle = hapColor;
+    const { velocity = 1, gain = 1 } = hap.value || {};
+    const alpha = velocity * gain;
+    ctx.globalAlpha = alpha;
+    shape.push([x, y, angle, hapColor, alpha, freq, noteName]);
+console.log({freq, noteName})
+    ctx.beginPath();
+    if (dotsize > 0) {
+      ctx.globalAlpha = dotalpha;
+      ctx.color = hapColor;
+      ctx.arc(x, y, hapradius * hapradiusx, 0, 3 * Math.PI);
+      ctx.fill();
+      ctx.globalAlpha = alpha;
+    }
+    if (centerlines) {
+      if (glow) {
+        ctx.shadowColor = hapColor;
+        ctx.shadowBlur = glow;
+      }
+      ctx.lineWidth = thickness;      
+      if (lineoctavex !== 1 && edo === 12) {
+        const midi = freq ? valueToMidi(freq) : valueToMidi(noteName)
+        const offFromC = midiOffsetFromC[root] || 0
+        const octave = (midi - offFromC) / 12
+        ctx.lineWidth / (octave * lineoctavex)
+      }
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  });
+
+  ctx.strokeStyle = color;
+
+  if (shape.length) {
+    shape = shape.sort((a, b) => a[2] - b[2]);
+    ctx.beginPath();
+    ctx.moveTo(shape[0][0], shape[0][1]);
+    const shapeNoteMap = {};
+    // make a map of {'A#':0...}
+    shape.forEach(([x, y, angle, color, alpha, freq, noteName]) => {
+      if (noteName && noteName.length > 0) {
+        const noteLetter = noteName.split(/\d/g)[0];
+        if (shapeNoteMap[noteLetter] === undefined) {
+          shapeNoteMap[noteLetter] = 1;
+        } else {
+          shapeNoteMap[noteLetter] += 1;
+        }
+      }
+    });
+    shape
+      .toReversed()
+      .map(([x, y, angle, color, alpha, freq, noteName]) => {
+        if (!noteName) {
+          return [x, y, angle, color, alpha, freq, noteName];
+        }
+        const letter = noteName.split(/\d/g)[0];
+        if (shapeNoteMap[letter] && shapeNoteMap[letter] > 1) {
+          shapeNoteMap[letter] -= 1;
+          return [x, y, angle, color, 0, freq, ' ']; // draw blank
+        }
+        return [x, y, angle, color, alpha, freq, noteName];
+      })
+      .forEach(([x, y, angle, color, alpha, freq, noteName]) => {
+        if (glow) {
+          ctx.shadowColor = color;
+          ctx.shadowBlur = glow;
+        }
+
+        if (labels) {
+          let [xl, yl] = circlePos(centerX, centerY, radius * distance + thickness / 4, angle);
+          const size = String(radius ** ((textsize * 2) / 3));
+          ctx.fillStyle = color;
+          ctx.font = size + 'px ' + font;
+          let i = (Math.log2(freq / root) * edo) % edo;
+          if (labelnumbers) {
+            i < 0 ? (i += 12) : null;
+            let txt = i.toFixed(0);
+            if (Array.isArray(customlabels)) {
+              txt = customlabels[Number(txt)];
+            }
+            ctx.font = size / 1.8 + 'px ' + font;
+            fillText(ctx, txt, xl, yl, false);
+          }
+          if (labelletters) {
+            if (edolabels) {
+              [xl, yl] = circlePos(centerX, centerY, radius * distance * 1.1 + thickness / 4, angle);
+            } else {
+              [xl, yl] = circlePos(centerX, centerY, radius * distance * 1.03 + thickness / 4, angle);
+            }
+            let cents = Math.round((i * 1200) / edo);
+            while (cents < 0) {
+              cents = cents + 1200;
+            }
+            if (noteName) {
+              ctx.font = (size * 3) / 4 + 'px ' + font;
+              for (let s in noteSymbolMap) {
+                noteName = noteName.replaceAll(s, noteSymbolMap[s]);
+              }
+              fillText(ctx, noteName, xl, yl, false);
+            } else {
+              const nte = centsToNote(cents, root, edo === 12);
+              fillText(ctx, nte, xl, yl, false);
+            }
+          }
+        }
+        if (connectdots) {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = thickness;
+          ctx.globalAlpha = alpha;
+          ctx.lineTo(x, y);
+        }
+      });
+    ctx.lineTo(shape[0][0], shape[0][1]);
+    ctx.stroke();
+  }
+  if (circle) {
+    ctx.lineWidth = circle;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius + thickness / 2, 0, 2 * Math.PI);
+    ctx.stroke();
+  }
+  return;
+}
+
+Pattern.prototype.pitchwheel = function (options = {}) {
+  let { ctx = getDrawContext(), id = 1 } = options;
+  return this.tag(id).onPaint((_, time, haps) =>
+    pitchwheel({
+      ...options,
+      time,
+      ctx,
+      haps: haps.filter((hap) => hap.isActive(time)),
+      id,
+    }),
+  );
+};
+
 setcpm(132/4)
 
 const at = (min,max,c=16)=> min < max ? saw.rangex(min,max).slow(c) : saw.rev().rangex(max,min).slow(c)
@@ -32,6 +590,22 @@ register('olive', (alpha, p) => p.color('oklch(.6 .2 110) /'+alpha+')'))
 register('delayBy', (n, p) => p.mask("<0@4 1@4>"))
 register('first4', (p) => p.mask("<1@4 0@4>"))
 register('first2', (p) => p.mask("<1@2 0@6>"))
+register('lpfat', (min,max,c,p)=>p.lpf(at(min,max,c)))
+register('lpfAt', (min,max,c,p)=>p.lpf(at(min,max,c)))
+register('lpeat', (min,max,c,p)=>p.lpe(at(min,max,c)))
+register('lpeAt', (min,max,c,p)=>p.lpe(at(min,max,c)))
+register('hpfat', (min,max,c,p)=>p.hpf(at(min,max,c)))
+register('hpfAt', (min,max,c,p)=>p.hpf(at(min,max,c)))
+register('gainat', (min,max,c,p)=>p.gain(at(min,max,c)))
+register('gainAt', (min,max,c,p)=>p.gain(at(min,max,c)))
+register('velat', (min,max,c,p)=>p.vel(at(min,max,c)))
+register('velAt', (min,max,c,p)=>p.vel(at(min,max,c)))
+
+
+const UP_SQ = `<C4>`.slow(2).as("note").s("square").att(1).room(1/2).size(6)
+.delay(2/3).delaysync(1/8)
+.lpe(-4).lpq(0.1).lpa(4).lpd(2).hpf(400).lpf(100)
+.gain(2/3).teal(2/3)
 
 const INTRO_SQ = `<
 C4:.33 C5:1 C4:.33 [C5:1 C4:.33:.8]
@@ -42,9 +616,9 @@ C4:.33 C5:1 C4:.33 [C5:.5 C3:.33:.7]
 .s("square")
 .decay(1/4).att(0).sus(1/8).room(1/2).size(6)
 .delay(2/3).delaysync(1/8)
-.lpf(at(200,6000,16)).lpe(2).lpq(0.1).hpf(400)
+.lpe(2).lpq(0.1).hpf(400)
 .gain(3/4).teal(2/3)
-._scope()
+
 
 const INTRO_BASS = `<
 C2:2 C2:2 C2:1.5 C2:2.5
@@ -52,7 +626,6 @@ C2:2 C2:2 C2:1.5 C2:2.5
 >`.as("note:vel").fast(8)
 .s("sawtooth")
 .postgain(1/2).hpf(97)
-.lpf(at(40,200,16))
 
 const INTRO_PAD = `<
 C2:2 C2:2 C2:1.5 C2:2.5
@@ -61,8 +634,7 @@ C2:2 C2:2 C:1.5 C2:2.5
 .anchor("<E4>")
 .voicing()
 .postgain(1/2)
-.s("supersaw").detune(1/8).spread(at(1,.7,16))
-.gain(at(1,0.75,16)).cyan(2/3)
+.s("supersaw").detune(1/8).spread(at(1,.75,16)).cyan(2/3)
 .superimpose(
   x=>x.diode("2:0.5").gain(at(.1,.6,16))
 )
@@ -82,14 +654,14 @@ const DOWNLIFT = s("brown").seg(6)
 .gain(at(2,.1,8))
 .hpf(at(8000,100,4))
 
-const UPLIFT = s("uplifter").slow(1.25).fit().slice(1, "0").gain(1.7)
+const UPLIFT = s("uplifter").slice(1, "0").hpf(4800).slow(3).fit().gain(3/2)
 
 const SWEEP_UP = s("pink,brown").seg(4)
 .lpf(at(100,16000,16)).lfo({s:1/16}).pan(0.1)
 .gain(1.6).att(1/32).rel(1)
 .superimpose(x=>x.late(1/16).pan(1))
 .gain(at(1.1,1.2,16))
-.hpf(at(100,8000,16))._spectrum()
+.hpf(at(100,8000,16))
 const BASS = `<
 C2 G1 F1 _ A1 G1 F1 _
 C2 G1 F1 _ A1 G1 F2 _
@@ -98,8 +670,7 @@ C2 G1 F2 _ A1 B1 F1 _
 >`.as("note:vel").fast(2).up("~ x ~ x ~ x ~ x".as("struct"))
 .s("sawtooth").hpf(97)
 .att(1/100).rel(1/32).ftype(0)
-.postgain(1.75).orbit(4).color('oklch(.25 .15 30)')
-.lpf(at(70,400,16))._spectrum({width:450,speed:4})  
+.postgain(1.75).orbit(4).color('oklch(.25 .15 30)')  
 const BASSBREAK = `<
 C2 C2 G2 G2 
 F2 F2 F2 F2
@@ -125,10 +696,8 @@ G4@2 F4@2 C4 G4 C5@2
 .voicing()
 .clip(1)
 .s("supersaw").detune(1/9).spread(.8).unison(5)
-.lpf(at(800,12000,16))
 .lpe(1).lpq(0)
-.hpf(275)
-.gain(at(1.1,1,16)).color('gold')
+.hpf(275).color('gold')
 const PADBREAK = chord(`<
 C _ G _ F2 _ _ _
 >`).n(`<
@@ -142,7 +711,7 @@ E4@2 C4@2 E4 C4@3
 .s("supersaw").detune(1/9).spread(.8).unison(5)
 .lpe(4).lpq(-4).lpd(2)
 .hpf(275)
-.gain(at(1.2,1.1,16)).color('gold')
+.color('gold')
 
 const SQ = `<
 C4:.4 C5:.9 B3:.4 B4:.9
@@ -285,7 +854,6 @@ C3 C3 C3 C2
 .detune(1/2).color('oklch(.5 .2 240)')
 .unison(5).spread(1).hpf(97)
 .dec(1/4).sus(1/4).rel(0).orbit(4)
-.lpf(at(300,6400,8))
 .hpf(400)
 
 const lineC = `<
@@ -327,7 +895,7 @@ const line1 = `<
 
 const FATBASS = (p) => p.as("note:vel").fast(8)
 .s("sawtooth:0:1.1")
-.vel(at(5/4,1,16)).orbit(4).FX(
+.orbit(4).FX(
   diode("3.33:0.33")
 )
 .lpf(at(170,6400,16))
@@ -335,7 +903,7 @@ const FATBASS = (p) => p.as("note:vel").fast(8)
 ._scope({height:100,width:800,scale:2/3})
 const FATFAT = (p) => FATBASS(p).pan(1/4).dec(0.25).sus(0)
   .off(1/60, x=>x.add(note(12)).pan(1)).FX(diode(5).lpf(12800).lfo({s:1/16,depth:2.1}))
-  .hpf(300).lpf(at(40,2400,8)).color('oklch(.4 .17 200)')
+  .hpf(300).color('oklch(.4 .17 200)')
 
 
 const kickpat = `<
@@ -510,7 +1078,9 @@ const PIANO = (melody) => melody.add(note("12"))
   .hpf(700).vel(1).room(1/2).size(3)
 
 $:arrange(
-  [1, stack(UPLIFT, DOWNLIFT.stretch(-1))],
+  [2, stack(UPLIFT, UP_SQ, DOWNLIFT.hpfAt(700,8000,2).lpfAt(800,14400,2).att(1.2))
+   ._spectrum({width:440,speed:3})
+  ],
   [8, stack(SOFT_CR, CLOCK4, DOWNLIFT, INTRO_SQ, INTRO_BASS, INTRO_PAD, SWEEP_UP)],
   [8, stack(CLOCK8, INTRO_PAD.early(8), INTRO_BASS.early(8), INTRO_SQ.early(8), SWEEP_UP.early(8), OH, SNUP)],
   [8, stack(SWEEP_DOWN, PAD, BASS, CRASH, SQ)],
@@ -606,3 +1176,31 @@ $:arrange(
   circle: 0,
   linejoin: 'miter',
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
