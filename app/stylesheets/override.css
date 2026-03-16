@@ -32,3 +32,7 @@ span.ͼ16 {
 #test-canvas:hover {
     filter: opacity(100%) !important;
 }
+
+#repl+div {
+    background: #0000 !important;
+}
