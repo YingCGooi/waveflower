@@ -29,6 +29,7 @@
     --new: oklch(0.8 0.2 85);
     --new-shadow: oklch(0.7 0.2 70);
     --background: oklch(0.19 0.046 270);
+    --pink: oklch(.7 .2 0);
 }
 
 .default-color {
@@ -81,9 +82,13 @@ section {
 }
 
 .divider {
+    background-image: url('./assets/images/sine_deco.png');
+    background-repeat: repeat-x;
+    width: 80%;
+    background-size: contain;
     height: 2rem;
-    border-right: 0.42rem dotted var(--trans-muted-accent);
     border-radius: 0;
+    filter: drop-shadow(2px 2px 4px #0004);
 }
 
 section+.divider {
@@ -92,6 +97,7 @@ section+.divider {
     height: 2rem;
     display: inline-block;
     text-align: center;
+    border-style: dotted;
     border-color: var(--background);
 }
 
@@ -128,6 +134,7 @@ h2 {
 
 h3 {
     margin: 1rem 0;
+    line-height: 2.7rem;
 }
 
 h4 {
@@ -253,6 +260,7 @@ h2>img#waveflower-icon {
 h3>img#waveflower-icon {
     width: 3rem;
     height: 3rem;
+    margin-right: 1rem;
 }
 
 .new {
