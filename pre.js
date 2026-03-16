@@ -1200,8 +1200,19 @@ Pattern.prototype.pitchwheel = function (options = {}) {
   );
 };
 
-register('lpp', (min, max, x) => x.lpf(perlin.rangex(min, max)));
-register('lep', (min, max, x) => x.lpe(perlin.rangex(min, max)));
+// convenience functions for lpf/hpf/vel filter automations
+register('lpp', (min, max, p) => p.lpf(perlin.rangex(min, max)));
+register('lep', (min, max, p) => p.lpe(perlin.rangex(min, max)));
+register('lpfat', (min, max, c, p) => p.lpf(at(min, max, c)));
+register('lpfAt', (min, max, c, p) => p.lpf(at(min, max, c)));
+register('lpeat', (min, max, c, p) => p.lpe(at(min, max, c)));
+register('lpeAt', (min, max, c, p) => p.lpe(at(min, max, c)));
+register('hpfat', (min, max, c, p) => p.hpf(at(min, max, c)));
+register('hpfAt', (min, max, c, p) => p.hpf(at(min, max, c)));
+register('gainat', (min, max, c, p) => p.gain(at(min, max, c)));
+register('gainAt', (min, max, c, p) => p.gain(at(min, max, c)));
+register('velat', (min, max, c, p) => p.vel(at(min, max, c)));
+register('velAt', (min, max, c, p) => p.vel(at(min, max, c)));
 
 document.addEventListener('keydown', function (event) {
   // Check if the user presses the "Enter" key
