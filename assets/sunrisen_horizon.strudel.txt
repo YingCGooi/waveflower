@@ -311,7 +311,7 @@ function pitchwheel({
   clearrect = false,
   notelabel = false,
   notelabeldistance = 0.94,
-  lineoctavex = 1,
+  lineoctavediv = 0,
 } = {}) {
   const connectdots = mode === 'polygon' || mode === 'both' || mode === 'flakygon';
   const centerlines = mode === 'flake' || mode === 'both' || mode === 'flakygon';
@@ -462,11 +462,11 @@ console.log({freq, noteName})
         ctx.shadowBlur = glow;
       }
       ctx.lineWidth = thickness;      
-      if (lineoctavex !== 1 && edo === 12) {
-        const midi = freq ? valueToMidi(freq) : valueToMidi(noteName)
+      if (lineoctavediv !== 0 && edo === 12) {
+        const midi = valueToMidi({freq, noteName})
         const offFromC = midiOffsetFromC[root] || 0
         const octave = (midi - offFromC) / 12
-        ctx.lineWidth / (octave * lineoctavex)
+        ctx.lineWidth = thickness / (octave * lineoctavediv)
       }
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(x, y);
@@ -1175,6 +1175,7 @@ $:arrange(
   dotalpha: 1/32,
   circle: 0,
   linejoin: 'miter',
+  lineoctavediv: 1,
 })
 
 
