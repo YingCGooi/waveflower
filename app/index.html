@@ -15,7 +15,7 @@
     <!-- use "/color.global.min.js" for production -->
     <script>
       var params = new URLSearchParams(window.location.search);
-      if (params.get('repl')) {
+      if (params.get('repl') !== 'false') {
         const strudel = document.createElement('script');
         strudel.src = 'https://unpkg.com/@strudel/repl@latest';
         document.body.appendChild(strudel);
