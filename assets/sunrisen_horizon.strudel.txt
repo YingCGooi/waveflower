@@ -447,7 +447,6 @@ function pitchwheel({
     const alpha = velocity * gain;
     ctx.globalAlpha = alpha;
     shape.push([x, y, angle, hapColor, alpha, freq, noteName]);
-console.log({freq, noteName})
     ctx.beginPath();
     if (dotsize > 0) {
       ctx.globalAlpha = dotalpha;
@@ -602,10 +601,11 @@ register('velat', (min,max,c,p)=>p.vel(at(min,max,c)))
 register('velAt', (min,max,c,p)=>p.vel(at(min,max,c)))
 
 
-const UP_SQ = `<C4>`.slow(2).as("note").s("square").att(1).room(1/2).size(6)
+const UP_SQ = `<[C3,C4]>`.slow(2).as("note").s("square")
+.room(1/2).size(6)
 .delay(2/3).delaysync(1/8)
-.lpe(-4).lpq(0.1).lpa(4).lpd(2).hpf(400).lpf(100)
-.gain(2/3).teal(2/3)
+.teal(2/3)
+
 
 const INTRO_SQ = `<
 C4:.33 C5:1 C4:.33 [C5:1 C4:.33:.8]
@@ -654,7 +654,9 @@ const DOWNLIFT = s("brown").seg(6)
 .gain(at(2,.1,8))
 .hpf(at(8000,100,4))
 
-const UPLIFT = s("uplifter").slice(1, "0").hpf(4800).slow(3).fit().gain(3/2)
+const UPLIFT = s("uplifter").slice(1, "0")
+  .sus(1).rel(1).lpf(12000)
+  .hpf(1200).slow(2.2).fit().gain(4)
 
 const SWEEP_UP = s("pink,brown").seg(4)
 .lpf(at(100,16000,16)).lfo({s:1/16}).pan(0.1)
@@ -1078,10 +1080,15 @@ const PIANO = (melody) => melody.add(note("12"))
   .hpf(700).vel(1).room(1/2).size(3)
 
 $:arrange(
-  [2, stack(UPLIFT, UP_SQ, DOWNLIFT.hpfAt(700,8000,2).lpfAt(800,14400,2).att(1.2))
+  [2, stack(UPLIFT, 
+            UP_SQ.att(1).lpe(-4).lpq(4).lpa(8).lpd(2).hpf(400).lpf(30).gain(1/2), 
+            SWEEP_UP.lpfAt(3000,16000,2).hpfAt(2000,10000,2).att(1))
    ._spectrum({width:440,speed:3})
   ],
-  [8, stack(SOFT_CR, CLOCK4, DOWNLIFT, INTRO_SQ, INTRO_BASS, INTRO_PAD, SWEEP_UP)],
+  [8, stack(HARD_CR.first4(), SOFT_CR, CLOCK4, DOWNLIFT, 
+            INTRO_SQ.lpfAt(200,6000,16), INTRO_BASS.lpfAt(40,200,16), INTRO_PAD.lpfAt(40,1000,16), SWEEP_UP)
+  ._spectrum({width:440,speed:3})
+  ],
   [8, stack(CLOCK8, INTRO_PAD.early(8), INTRO_BASS.early(8), INTRO_SQ.early(8), SWEEP_UP.early(8), OH, SNUP)],
   [8, stack(SWEEP_DOWN, PAD, BASS, CRASH, SQ)],
   [8, stack(RIDE, PAD.early(8), BASS.lpf(400), SQ, SNARE.coarse(rundown), OH)],
@@ -1166,7 +1173,7 @@ $:arrange(
   root: 'C',
   exponential: false,
   mode:'flakygon',
-  thickness: 16,
+  thickness: 24,
   glow: 64,
   labels: 'numbers',
   textsize: 1.1,
@@ -1175,7 +1182,7 @@ $:arrange(
   dotalpha: 1/32,
   circle: 0,
   linejoin: 'miter',
-  lineoctavediv: 1,
+  lineoctavediv: .5,
 })
 
 
