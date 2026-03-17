@@ -586,7 +586,9 @@ const at = (min,max,c=16)=> min < max ? saw.rangex(min,max).slow(c) : saw.rev().
 register('ov', (c, p) => p.slow(c))
 register('cyan', (alpha, p) => p.color('oklch(.7 .2 240 /'+alpha+')'))
 register('teal', (alpha, p) => p.color('oklch(.7 .2 190 /'+alpha+')'))
-register('olive', (alpha, p) => p.color('oklch(.6 .2 110) /'+alpha+')'))
+register('olive', (alpha, p) => p.color('oklch(.6 .2 110 /'+alpha+')'))
+register('maroon', (alpha,p) => p.color('oklch(.4 .2 0 /'+alpha+')'))
+         
 register('delayBy', (n, p) => p.mask("<0@4 1@4>"))
 register('first4', (p) => p.mask("<1@4 0@4>"))
 register('first2', (p) => p.mask("<1@2 0@6>"))
@@ -619,7 +621,6 @@ C4:.33 C5:1 C4:.33 [C5:.5 C3:.33:.7]
 .delay(2/3).delaysync(1/8)
 .lpe(2).lpq(0.1).hpf(400)
 .gain(3/4).teal(2/3)
-
 
 const INTRO_BASS = `<
 C2:2 C2:2 C2:1.5 C2:2.5
@@ -668,6 +669,7 @@ const SWEEP_UP = s("pink,brown").seg(4)
 .superimpose(x=>x.late(1/16).pan(1))
 .gain(at(1.1,1.2,16))
 .hpf(at(100,8000,16))
+
 const BASS = `<
 C2 G1 F1 _ A1 G1 F1 _
 C2 G1 F1 _ A1 G1 F2 _
@@ -683,7 +685,7 @@ F2 F2 F2 F2
 >`.as("note:vel").fast(2).up("~ x ~ x ~ x ~ x".as("struct"))
 .s("sawtooth")
 .att(1/100).rel(1/32).ftype(0).hpf(97)
-.postgain(1.75).orbit(4).color('oklch(.25 .15 30)')
+.postgain(1.75).orbit(4).maroon(1)
 
 const PAD = chord(`<
 C Em7 F2 _ Am G F2 _
@@ -784,8 +786,8 @@ x  x:.8    x [x [x:.5 x:.7]]
   .dec(1/9)
   .sus(1/16)
   .hpf(8000)
-  .rel(1/4).coarse(12).crush(6)
-  .fast(2).gain(1.22).olive(.7)
+  .rel(1/4).coarse(12).crush(8)
+  .fast(2).gain(1.25).olive(.7)
 
 const CRASH = s("alesissr16_cr")
 .struct(`<x _ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~>`).room(1).size(9).gain(4/5).pan(.7)
@@ -1083,28 +1085,29 @@ const PIANO = (melody) => melody.add(note("12"))
   .hpf(700).vel(1).room(1/2).size(3)
 
 $:arrange(
-  [2, stack(UPLIFT,
-            UP_SQ.att(6).lpe(-4).lpq(4).lpa(6).lpd(6).hpf(200).lpf(30).gain(1/2), 
-            SWEEP_UP.lpfAt(4000,9000,2).hpfAt(3000,4000,2).room(1).size(4).gainAt(1,1/2,2)
-            .att(1/2))
+  // [2, stack(UPLIFT,
+  //           UP_SQ.att(6).lpe(-4).lpq(4).lpa(6).lpd(6).hpf(200).lpf(30).gain(1/2), 
+  //           SWEEP_UP.lpfAt(4000,9000,2).hpfAt(3000,4000,2).room(1).size(4).gainAt(1,1/2,2)
+  //           .att(1/2))
   
-  ],
-  [8, stack(DNLIFT.first2(),
-            SOFT_CR.att(1/2).first4(), 
-            DOWNLIFT.first4(), 
-            CLOCK4, 
-            INTRO_SQ.lpfAt(200,6000,16),
-            INTRO_PAD.lpfAt(40,1000,16),            
-            INTRO_BASS.lpfAt(40,200,16),
-            SWEEP_UP)
+  // ],
+  // [8, stack(DNLIFT.first2(),
+  //           SOFT_CR.att(1/2).first4(), 
+  //           DOWNLIFT.first4(), 
+  //           CLOCK4, 
+  //           INTRO_SQ.lpfAt(200,6000,16),
+  //           INTRO_PAD.lpfAt(40,1000,16),            
+  //           INTRO_BASS.lpfAt(40,300,16),
+  //           SWEEP_UP)
   
-  ],
-  [8, stack(CLOCK8,
+  // ],
+  [8, stack(CLOCK8, OH, SNUP,
             INTRO_SQ.lpfAt(200,6000,16).early(8),            
             INTRO_PAD.lpfAt(40,1000,16).early(8), 
-            INTRO_BASS.lpfAt(40,200,16).early(8), 
-            SWEEP_UP.early(8), OH, SNUP)],
-  [8, stack(SWEEP_DOWN, PAD, BASS, CRASH, SQ)],
+            INTRO_BASS.lpfAt(40,300,16).early(8), 
+            SWEEP_UP.early(8))
+  ],
+  [8, stack(SWEEP_DOWN, PAD.lpfAt(800,12000,16), BASS.lpfAt(70,400,8), CRASH, SQ)],
   [8, stack(RIDE, PAD.early(8), BASS.lpf(400), SQ, SNARE.coarse(rundown), OH)],
   [8, stack(
     PAD.lpf(at(9000,4000,8)), 
