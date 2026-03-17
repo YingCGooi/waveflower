@@ -465,7 +465,8 @@ function pitchwheel({
       if (lineoctavediv !== 0 && edo === 12) {
         const midi = valueToMidi({freq, noteName})
         const offFromC = midiOffsetFromC[root] || 0
-        const octave = (midi - offFromC) / 12
+        let octave = (midi - offFromC) / 12
+        octave = (octave < 1) ? 1 : octave
         ctx.lineWidth = thickness / (octave * lineoctavediv)
       }
       ctx.moveTo(centerX, centerY);
@@ -551,6 +552,14 @@ function pitchwheel({
         if (connectdots) {
           ctx.strokeStyle = color;
           ctx.lineWidth = thickness;
+
+          if (lineoctavediv !== 0 && edo === 12) {
+            const midi = valueToMidi({freq, noteName})
+            const offFromC = midiOffsetFromC[root] || 0
+            let octave = (midi - offFromC) / 12
+            octave = (octave < 1) ? 1 : octave
+            ctx.lineWidth = thickness / (octave * lineoctavediv)
+          }
           ctx.globalAlpha = alpha;
           ctx.lineTo(x, y);
         }
@@ -1101,14 +1110,14 @@ $:arrange(
   //           SWEEP_UP)
   
   // ],
-  [8, stack(CLOCK8, OH, SNUP,
-            INTRO_SQ.lpfAt(200,6000,16).early(8),            
-            INTRO_PAD.lpfAt(40,1000,16).early(8), 
-            INTRO_BASS.lpfAt(40,300,16).early(8), 
-            SWEEP_UP.early(8))
-  ],
-  [8, stack(SWEEP_DOWN, PAD.lpfAt(800,12000,16), BASS.lpfAt(70,400,8), CRASH, SQ)],
-  [8, stack(RIDE, PAD.early(8), BASS.lpf(400), SQ, SNARE.coarse(rundown), OH)],
+  // [8, stack(CLOCK8, OH, SNUP,
+  //           INTRO_SQ.lpfAt(200,6000,16).early(8),            
+  //           INTRO_PAD.lpfAt(40,1000,16).early(8), 
+  //           INTRO_BASS.lpfAt(40,300,16).early(8), 
+  //           SWEEP_UP.early(8))
+  // ],
+  // [8, stack(SWEEP_DOWN, PAD.lpfAt(800,12000,16), BASS.lpfAt(70,400,16), CRASH, SQ)],
+  [8, stack(RIDE, PAD.early(8), BASS.lpf(400), SQ, SNARE.lpf(200,2400,8), OH)],
   [8, stack(
     PAD.lpf(at(9000,4000,8)), 
     BASS.lpf(400), SQ.lpf(at(8000,200,8)), 
@@ -1199,7 +1208,7 @@ $:arrange(
   dotalpha: 1/32,
   circle: 0,
   linejoin: 'miter',
-  lineoctavediv: .7,
+  lineoctavediv: .5,
 })
 
 
