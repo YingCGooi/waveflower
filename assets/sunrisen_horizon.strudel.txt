@@ -17,7 +17,8 @@ await import('https://waveflower.org/pre.js')
 samples({
   tick: 'cactus/dyad/CACTUS_DYAD_ONESHOT.mp3',
   short: 'cactus/perc/CACTUS_PERC_14_ONESHOT.mp3',
-  uplifter: 'fl/uplifter1.wav'
+  uplifter: 'fl/uplifter1.wav',
+  downlifter: 'fl/dnlifter1.wav'
 }, 'https://waveflower.org/samples/');
 
 useWet(2, -5)
@@ -601,7 +602,7 @@ register('velat', (min,max,c,p)=>p.vel(at(min,max,c)))
 register('velAt', (min,max,c,p)=>p.vel(at(min,max,c)))
 
 
-const UP_SQ = `<[C3,C4]>`.slow(2).as("note").s("square")
+const UP_SQ = `<[C3:.4,C4]>`.slow(2).as("note:vel").s("square")
 .room(1/2).size(6)
 .delay(2/3).delaysync(1/8)
 .teal(2/3)
@@ -648,15 +649,18 @@ const SWEEP_DOWN = s("pink,brown").seg(6)
 .hpf(at(8000,100,8)).color('#0000')
 
 const DOWNLIFT = s("brown").seg(6)
-.lpf(at(12000,100,4)).pan(0)
+.lpf(at(9000,100,4)).pan(0)
 .gain(1.6).att(1/4).rel(1)
 .superimpose(x=>x.late(1/32).pan(1))
 .gain(at(2,.1,8))
-.hpf(at(8000,100,4))
+.hpf(at(7000,400,4))
 
 const UPLIFT = s("uplifter").slice(1, "0")
-  .sus(1).rel(1).lpf(12000)
+  .sus(1).rel(1).lpf(9600)
   .hpf(1200).slow(2.2).fit().gain(4)
+
+const DNLIFT = s("downlifter").slice(1, "0").slow(2.2).fit().clip(1)
+  .gain(3).hpf(900).lpf(9600).room(1).size(7)
 
 const SWEEP_UP = s("pink,brown").seg(4)
 .lpf(at(100,16000,16)).lfo({s:1/16}).pan(0.1)
@@ -733,7 +737,7 @@ C4:.4 C5:.7 F4:.4 [C5:.9 C4:.4]
 .decay(1/8).att(1/256).sus(1/4)
 .FX(
   lpf(9000).lpe(2).lpq(1).hpf(400)
-)._pianoroll()
+)
 
 const SNARE = s("akaimpc60_sd:1,akaimpc60_sd:1,akaixr10_sd:7,d70_cp:0").struct(`<
 ~ x ~ x
@@ -930,7 +934,6 @@ const KICK = stack(
   s("compurhythm78_bd*4"),
 ).struct(kickpat).gain(1).ftype(0).duck("4:5").duckatt("0.25:0").duckdepth("0.67:0.33")
 .color('oklch(.2 .2 340)')
-._spectrum()
 const melody0 = cat(
 "G@2 C@2 G@2 F@2 E@2 F@2 E@2 C@2",
 "B2@2 C B2@3 G2@2 C@2 G2@2 C@2 D@2",
@@ -1042,7 +1045,7 @@ const SQMEL = (melody) => melody.add(note(24))
 .off(0, x=>x.s("sawtooth").transpose(1/5).pan(0))
 .off(0, x=>x.s("square").transpose(-1/4).pan(1))
 .off(0, x=>x.s("square").transpose(1/6).vel(3/4).pan(1))
-.color('oklch(.7 .2 210)')._scope()  
+.color('oklch(.7 .2 210)')  
 const piano1 = cat(`<
 A C4 F4@1.5 E4@0.5
 E G  B  C4
@@ -1080,16 +1083,27 @@ const PIANO = (melody) => melody.add(note("12"))
   .hpf(700).vel(1).room(1/2).size(3)
 
 $:arrange(
-  [2, stack(UPLIFT, 
-            UP_SQ.att(1).lpe(-4).lpq(4).lpa(8).lpd(2).hpf(400).lpf(30).gain(1/2), 
-            SWEEP_UP.lpfAt(3000,16000,2).hpfAt(2000,10000,2).att(1))
-   ._spectrum({width:440,speed:3})
+  [2, stack(UPLIFT,
+            UP_SQ.att(6).lpe(-4).lpq(4).lpa(6).lpd(6).hpf(200).lpf(30).gain(1/2), 
+            SWEEP_UP.lpfAt(4000,9000,2).hpfAt(3000,4000,2).room(1).size(4).gainAt(1,1/2,2)
+            .att(1/2))
+  
   ],
-  [8, stack(HARD_CR.first4(), SOFT_CR, CLOCK4, DOWNLIFT, 
-            INTRO_SQ.lpfAt(200,6000,16), INTRO_BASS.lpfAt(40,200,16), INTRO_PAD.lpfAt(40,1000,16), SWEEP_UP)
-  ._spectrum({width:440,speed:3})
+  [8, stack(DNLIFT.first2(),
+            SOFT_CR.att(1/2).first4(), 
+            DOWNLIFT.first4(), 
+            CLOCK4, 
+            INTRO_SQ.lpfAt(200,6000,16),
+            INTRO_PAD.lpfAt(40,1000,16),            
+            INTRO_BASS.lpfAt(40,200,16),
+            SWEEP_UP)
+  
   ],
-  [8, stack(CLOCK8, INTRO_PAD.early(8), INTRO_BASS.early(8), INTRO_SQ.early(8), SWEEP_UP.early(8), OH, SNUP)],
+  [8, stack(CLOCK8,
+            INTRO_SQ.lpfAt(200,6000,16).early(8),            
+            INTRO_PAD.lpfAt(40,1000,16).early(8), 
+            INTRO_BASS.lpfAt(40,200,16).early(8), 
+            SWEEP_UP.early(8), OH, SNUP)],
   [8, stack(SWEEP_DOWN, PAD, BASS, CRASH, SQ)],
   [8, stack(RIDE, PAD.early(8), BASS.lpf(400), SQ, SNARE.coarse(rundown), OH)],
   [8, stack(
@@ -1182,7 +1196,7 @@ $:arrange(
   dotalpha: 1/32,
   circle: 0,
   linejoin: 'miter',
-  lineoctavediv: .5,
+  lineoctavediv: .7,
 })
 
 
