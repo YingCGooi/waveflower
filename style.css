@@ -84,21 +84,27 @@ section {
 .divider {
     background-image: url('./assets/images/sine_deco.png');
     background-repeat: repeat-x;
-    width: 80%;
+    width: 75%;
     background-size: contain;
     height: 2rem;
     border-radius: 0;
-    filter: drop-shadow(2px 2px 4px #0004);
+    filter: drop-shadow(2px 2px 5px var(--trans-muted-accent));
+}
+
+section>.divider {
+    background-image: url('./assets/images/sine_deco_cyan.png');
+    background-repeat: no-repeat;
+    width: 67%;
+    margin-bottom: 1rem;
 }
 
 section+.divider {
     width: 1rem;
     margin: .5rem 0;
-    height: 2rem;
+    height: 1rem;
     display: inline-block;
     text-align: center;
-    border-style: dotted;
-    border-color: var(--background);
+    border: none;
 }
 
 h2,
@@ -236,7 +242,8 @@ img#profile {
     }
 }
 
-h2>img#waveflower-icon {
+h2>img#waveflower-icon,
+.icons {
     width: 5.5rem;
     height: 5.5rem;
     display: inline-block;
@@ -257,7 +264,12 @@ h2>img#waveflower-icon {
     }
 }
 
-h3>img#waveflower-icon {
+.icons {
+    filter: brightness(100%);
+}
+
+h3>img#waveflower-icon,
+.icons {
     width: 3rem;
     height: 3rem;
     margin-right: 1rem;
@@ -378,4 +390,12 @@ audio {
         flex-direction: column;
         row-gap: 30px;
     }
+}
+
+.pretitle {
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--pink);
+    margin-bottom: 1rem;
 }
