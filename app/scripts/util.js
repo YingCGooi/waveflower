@@ -8,11 +8,10 @@ This program is free software: you can redistribute it and/or modify it under th
 const isNoteWithOctave = (name) => /^[a-gA-G][#bsf]*[0-9]*$/.test(name);
 const isNote = (name) => /^[a-gA-G][#bsf]*-?[0-9]*$/.test(name);
 const tokenizeNote = (note) => {
-  if (typeof note !== "string") {
+  if (typeof note !== 'string') {
     return [];
   }
-  const [pc, acc = "", oct] =
-    note.match(/^([a-gA-G])([#bsf]*)(-?[0-9]*)$/)?.slice(1) || [];
+  const [pc, acc = '', oct] = note.match(/^([a-gA-G])([#bsf]*)(-?[0-9]*)$/)?.slice(1) || [];
   if (!pc) {
     return [];
   }
@@ -20,10 +19,10 @@ const tokenizeNote = (note) => {
 };
 
 const chromas = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
-const accs = { "#": 1, b: -1, s: 1, f: -1 };
+const accs = { '#': 1, b: -1, s: 1, f: -1 };
 
 const getAccidentalsOffset = (accidentals) => {
-  return accidentals?.split("").reduce((o, char) => o + accs[char], 0) || 0;
+  return accidentals?.split('').reduce((o, char) => o + accs[char], 0) || 0;
 };
 
 // turns the given note into its midi number representation
@@ -45,26 +44,26 @@ const freqToMidi = (freq) => {
 };
 
 const valueToMidi = (value, fallbackValue) => {
-  if (typeof value !== "object") {
-    throw new Error("valueToMidi: expected object value");
+  if (typeof value !== 'object') {
+    throw new Error('valueToMidi: expected object value');
   }
   let { freq, note } = value;
-  if (typeof freq === "number") {
+  if (typeof freq === 'number') {
     return freqToMidi(freq);
   }
-  if (typeof note === "string") {
+  if (typeof note === 'string') {
     return noteToMidi(note);
   }
-  if (typeof note === "number") {
+  if (typeof note === 'number') {
     return note;
   }
   if (!fallbackValue) {
-    throw new Error("valueToMidi: expected freq or note to be set");
+    throw new Error('valueToMidi: expected freq or note to be set');
   }
   return fallbackValue;
 };
 
-const pcs = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B"];
+const pcs = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
 /**
  * @deprecated only used in workshop (first-notes)
  * @noAutocomplete
@@ -85,8 +84,8 @@ function unicodeToBase64(text) {
 function base64ToUnicode(base64String) {
   const utf8Bytes = new Uint8Array(
     atob(base64String)
-      .split("")
-      .map((char) => char.charCodeAt(0))
+      .split('')
+      .map((char) => char.charCodeAt(0)),
   );
   const decodedText = new TextDecoder().decode(utf8Bytes);
   return decodedText;
@@ -103,14 +102,14 @@ function hashTocode(hash) {
 }
 
 // other functions for helping waveflower
-function infoLog(msg = "") {
-  console.info("[waveflower] " + msg);
+function infoLog(msg = '') {
+  console.info('[waveflower] ' + msg);
 }
 
-function $(selector = "") {
+function $(selector = '') {
   return document.querySelector(selector);
 }
-function $all(selector = "") {
+function $all(selector = '') {
   return document.querySelectorAll(selector);
 }
 
