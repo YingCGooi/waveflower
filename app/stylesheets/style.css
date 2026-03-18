@@ -224,7 +224,7 @@ section#canvases {
 i {
     font-size: 1.4em;
     font-style: normal;
-    letter-spacing: -3px;
+    letter-spacing: -4.2px;
 }
 
 i[aria-label="sine"] {
@@ -286,4 +286,46 @@ nav a {
 nav a:hover {
     text-decoration: underline;
     color: oklch(0.8 0.2 230);
+}
+
+.icons {
+    align-self: center;
+    padding: .33rem;
+    width: 3rem;
+    height: auto;
+
+    @media (max-width: 700px) {
+        display: none;
+    }
+}
+
+nav.icon {
+    @media (max-width: 700px) {
+        display: none;
+    }
+}
+
+.mobile-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: .2rem;
+    border: 1px solid oklch(.4 .2 220);
+    border-radius: 9px;
+    box-sizing: content-box;
+}
+
+.mobile-icon,
+.mobile-icon>img {
+    vertical-align: center;
+    display: none;
+
+    @media (max-width: 700px) {
+        width: 1.4rem;
+        height: 1.4rem;
+        display: inline-block;
+
+        &:hover {
+            filter: brightness(110%);
+        }
+    }
 }
