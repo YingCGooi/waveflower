@@ -423,7 +423,6 @@ function pitchwheel({
   ctx.stroke();
 
   let shape = [];
-  ctx.lineWidth = thickness;
   haps.forEach((hap) => {
     let freq;
     try {
