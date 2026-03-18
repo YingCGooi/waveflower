@@ -144,7 +144,14 @@ select {
 }
 
 input[name="freq"] {
-    width: 4rem;
+    width: 3.33rem;
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 }
 
 #base-select {
@@ -156,7 +163,7 @@ select {
     appearance: base-select;
 
     &::picker-icon {
-        margin-left: -1rem;
+        margin-left: -.8rem;
         width: 1rem;
     }
 }
