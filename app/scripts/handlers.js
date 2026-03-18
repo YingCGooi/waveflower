@@ -5,7 +5,7 @@ let lastAnimationID = 0;
 
 window.onload = () => {
   let urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('repl')) {
+  if (urlParams.get('repl') !== 'false') {
     manager.setREPL($('#repl').editor);
   }
   let u = window.location.href;
