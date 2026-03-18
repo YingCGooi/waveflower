@@ -419,6 +419,7 @@ audio {
 
 nav {
     padding: .6rem 3rem;
+    padding-top: .5rem;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -428,11 +429,16 @@ nav {
     @media (max-width: 570px) {
         padding: .6rem 1rem;
     }
+
+    @media (max-width: 720px) {
+        padding: .6rem 0;
+        justify-content: space-between;
+    }
 }
 
 nav ol {
     width: 100%;
-    max-width: 800px;
+    max-width: 640px;
     font-size: 2rem;
     font-weight: 600;
     display: flex;
@@ -441,7 +447,15 @@ nav ol {
     gap: 1rem;
 
     &>li {
+        display: flex;
+        align-items: center;
         list-style: none;
+    }
+
+    @media (max-width: 720px) {
+        letter-spacing: -.1rem;
+        font-size: 1.7rem;
+        justify-content: space-between;
     }
 
     @media (max-width: 570px) {
@@ -460,12 +474,16 @@ nav a {
 }
 
 nav .icons {
-    cursor: not-allowed;
+    margin-right: 0;
     height: 3rem;
     width: 3rem;
     filter: brightness(140%);
 
     &:hover {
         filter: hue-rotate(120deg);
+    }
+
+    @media (max-width: 720px) {
+        padding: .4rem;
     }
 }
