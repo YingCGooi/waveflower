@@ -74,6 +74,11 @@ form#waveform {
     &:hover {
         border-color: oklch(0.7 0 0);
     }
+
+    display: flex;
+    justify-content: space-between;
+    align-items: anchor-center;
+    flex-wrap: wrap;
 }
 
 @media (max-width: 700px) {
@@ -138,8 +143,22 @@ select {
     letter-spacing: -.7px;
 }
 
+input[name="freq"] {
+    width: 4rem;
+}
+
+#base-select {
+    letter-spacing: -.1rem;
+    overflow: hidden;
+}
+
 select {
     appearance: base-select;
+
+    &::picker-icon {
+        margin-left: -1rem;
+        width: 1rem;
+    }
 }
 
 select::picker(select) {
@@ -201,7 +220,13 @@ label>strong {
 }
 
 label>small {
+    font-size: 1rem;
+    vertical-align: center;
     cursor: pointer;
+
+    &:hover {
+        color: white;
+    }
 }
 
 strong.cyan {
@@ -225,11 +250,11 @@ i {
     font-size: 1.4em;
     font-style: normal;
     letter-spacing: -4.2px;
+    line-height: .7rem;
 }
 
 i[aria-label="sine"] {
-    font-size: 2.4em;
-    line-height: 1px;
+    font-size: 2.2rem;
 }
 
 .cm-editor {
