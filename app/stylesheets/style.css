@@ -265,7 +265,7 @@ i[aria-label="sine"] {
 }
 
 .cm-editor {
-    --placeholder: "🌀 @strudel/repl loaded - click to edit 🌀";
+    --placeholder: "🌀 @strudel/repl loaded -- please append ._scope() at the end of a pattern and then press play! 🌀";
 }
 
 .cm-editor::before {
