@@ -1261,3 +1261,7 @@ window.w = function (ptrn) {
 Pattern.prototype.w = function () {
   return this.pick(wcords).n().sub(n(1));
 };
+
+// tone function mimics the tone(freq, gain) function in Desmos
+// plays a sine tone by default
+window.tone = (frq = 110, gn = 1, shape = 'sine') => freq(frq).s(shape).gain(gn);

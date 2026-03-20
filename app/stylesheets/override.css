@@ -1,38 +1,38 @@
 :root {
-    --background: oklch(0.5 0.1 220 / 0.3) !important;
-    --selection: oklch(0.5 0.24 240 / 0.3) !important;
+  --background: oklch(0.5 0.1 220 / 0.3) !important;
+  --selection: oklch(0.5 0.24 240 / 0.3) !important;
 }
 
 span.ͼ14 {
-    color: oklch(0.75 0.23 320);
+  color: oklch(0.75 0.23 320);
 }
 
 span.ͼt {
-    color: oklch(0.67 0.2 220);
+  color: oklch(0.67 0.2 220);
 }
 
 span.ͼ11 {
-    color: oklch(0.75 0.2 129);
+  color: oklch(0.75 0.2 129);
 }
 
 span.ͼ19 {
-    color: oklch(0.75 0.23 320);
+  color: oklch(0.75 0.23 320);
 }
 
 span.ͼ16 {
-    color: oklch(0.7 0.01 70) !important;
+  color: oklch(0.7 0.01 70) !important;
 }
 
 #test-canvas {
-    top: 33% !important;
-    filter: opacity(25%);
-    transform: scaleY(0.4);
+  top: 33% !important;
+  filter: opacity(25%);
+  transform: scaleY(0.4);
 }
 
 #test-canvas:hover {
-    filter: opacity(100%) !important;
+  filter: opacity(100%) !important;
 }
 
-#repl+div {
-    background: #0000 !important;
+#repl + div {
+  background: #0000 !important;
 }
