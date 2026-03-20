@@ -273,22 +273,52 @@ div.cm-scroller {
     letter-spacing: -0.5px;
 }
 
+@keyframes rainbow-rotate {
+    0% {
+        color: oklch(.7 .2 0 /.77);
+    }
+
+    20% {
+        color: oklch(.7 .2 70 /.77);
+    }
+
+    30% {
+        color: oklch(.7 .2 110 /.88);
+    }
+
+    40% {
+        color: oklch(.7 .2 140/.8);
+    }
+
+    60% {
+        color: oklch(.7 .2 225/.77);
+    }
+
+    80% {
+        color: oklch(.7 .2 300/.77);
+    }
+
+    100% {
+        color: oklch(.7 .2 359/.77);
+    }
+}
+
 .cm-editor {
-    --placeholder: '🌀 @strudel/repl loaded -- CLICK HERE TO EDIT 🌀 Remember to append ._scope() at end of each pattern!';
+    --placeholder: '🌀 @strudel/repl loaded! CLICK HERE TO EDIT 🌀 🌀 Remember to append ._scope()! 🌀';
 }
 
 .cm-editor::before {
     position: absolute;
     top: 50%;
     transform: translate(0%, -50%);
-    width: 25rem;
+    width: 21rem;
     right: 1rem;
     text-align: end;
-    line-height: 1.7rem;
+    line-height: 1.25rem;
     font-size: 0.75rem;
     font-style: italic;
     content: var(--placeholder);
-    color: var(--placeholder-color);
+    animation: rainbow-rotate 6s linear infinite;
 }
 
 .cm-editor.cm-focused::before {
