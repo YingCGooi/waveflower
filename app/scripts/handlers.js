@@ -35,6 +35,7 @@ base.onchange = (e) => {
   }
   if (ENV.baseFrequency <= 110 && ENV.fftSize < 4096) {
     ENV.fftSize = ENV.fftSize * 2;
+    ENV.blurFactor = ENV.blurFactor / 2;
   }
   let v = visualizer;
   v.resetCanvasElements();
@@ -84,6 +85,9 @@ $all('input[name=osc]').forEach((radio) => {
 
 $('#play').addEventListener('click', (e) => {
   visualizer.calculateColorSteps(new Color(ENV.lineColorStart), new Color(ENV.lineColorEnd));
+  if (manager.isFileplaying || manager.isOSCplaying) {
+    return
+  }
   if (manager.replHasCode()) {
     manager.playREPL(() => {});
     let u = window.location.href;

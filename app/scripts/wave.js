@@ -4,7 +4,7 @@ var ENV = {
   sampleRate: 48000,
   baseFrequency: 110.0,
   alphaExponent: 0,
-  blurFactor: 0.5,
+  blurFactor: 0.33,
   dpr: window.devicePixelRatio,
   lineWidthStart: 9, // start = tail of spiral
   lineWidthEnd: 4, // end = head of spiral
