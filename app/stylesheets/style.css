@@ -264,20 +264,28 @@ i[aria-label="sine"] {
     font-size: 2.2rem;
 }
 
+div.cm-scroller {
+    font-family: 'Google Sans Code', monospace !important;
+    letter-spacing: -.5px;
+}
+
 .cm-editor {
-    --placeholder: "🌀 @strudel/repl loaded -- please append ._scope() at the end of a pattern and then press play! 🌀";
+    font-family: monospace;
+    --placeholder: "🌀 @strudel/repl loaded -- click here to edit 🌀 Remember to append ._scope() at end of each pattern!";
 }
 
 .cm-editor::before {
     position: absolute;
     top: 50%;
     transform: translate(0%, -50%);
+    width: 29rem;
     right: 1rem;
     text-align: end;
-    font-size: 0.8rem;
+    line-height: 1rem;
+    font-size: .88rem;
     font-style: italic;
     content: var(--placeholder);
-    color: oklch(0.7 0 0 / 0.7);
+    color: oklch(1 0 0 / 0.5);
 }
 
 .cm-editor.cm-focused::before {
@@ -360,4 +368,9 @@ nav.icon {
             filter: brightness(110%);
         }
     }
+}
+
+#repl {
+    display: block;
+    height: .33rem;
 }
