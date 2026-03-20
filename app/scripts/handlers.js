@@ -86,6 +86,10 @@ $('#play').addEventListener('click', (e) => {
   visualizer.calculateColorSteps(new Color(ENV.lineColorStart), new Color(ENV.lineColorEnd));
   if (manager.replHasCode()) {
     manager.playREPL(() => {});
+    let u = window.location.href;
+    const hsh = codeTohash($('.cm-content').textContent);
+    window.location.href = u + '#' + hsh;
+
     replVisualizers = []; // reset temp array
     intervalID = setInterval(() => {
       for (k in analysers) {
