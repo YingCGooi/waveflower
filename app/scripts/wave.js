@@ -4,12 +4,12 @@ var ENV = {
   sampleRate: 48000,
   baseFrequency: 110.0,
   alphaExponent: 0,
-  blurFactor: 0.33,
+  blurFactor: 0.5,
   dpr: window.devicePixelRatio,
-  lineWidthStart: 9, // start = tail of spiral
+  lineWidthStart: 4, // start = tail of spiral
   lineWidthEnd: 4, // end = head of spiral
   lineColorStart: 'oklch(0.5 0.3 290)',
-  lineColorEnd: 'oklch(0.8 0.24 240)',
+  lineColorEnd: 'oklch(0.8 0.24 220)',
   interpolationSpace: 'oklch',
   syncPeriodPhase: true,
   smoothingTimeConstant: 1,
