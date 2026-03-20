@@ -1,7 +1,7 @@
 var ENV = {
   fftSize: 2048,
   colorSpace: 'display-p3',
-  sampleRate: 44100,
+  sampleRate: 48000,
   baseFrequency: 110.0,
   alphaExponent: 0,
   blurFactor: 0.5,
