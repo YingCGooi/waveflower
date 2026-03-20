@@ -271,7 +271,7 @@ div.cm-scroller {
 
 .cm-editor {
     font-family: monospace;
-    --placeholder: "🌀 @strudel/repl loaded -- click here to edit 🌀 Remember to append ._scope() at end of each pattern!";
+    --placeholder: "🌀 @strudel/repl loaded -- CLICK HERE TO EDIT 🌀 Remember to append ._scope() at end of each pattern!";
 }
 
 .cm-editor::before {
