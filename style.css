@@ -87,6 +87,7 @@ section {
     background-image: url('./assets/images/sine_deco.png');
     background-repeat: repeat-x;
     width: 75%;
+    max-width: 800px;
     background-size: contain;
     height: 2rem;
     border-radius: 0;
@@ -101,12 +102,14 @@ section>.divider {
 }
 
 section+.divider {
-    width: 1rem;
+    width: 100%;
+    max-width: 800px;
     margin: .5rem 0;
     height: 1rem;
     display: inline-block;
     text-align: center;
     border: none;
+    filter: hue-rotate(220deg);
 }
 
 h2,
