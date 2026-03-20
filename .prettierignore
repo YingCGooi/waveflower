@@ -1,0 +1,10 @@
+*.md
+*.json
+*.yml
+*.
+**/out
+**/dist
+./samples/*
+./assets/*
+./examples/*
+.pnpm-store
