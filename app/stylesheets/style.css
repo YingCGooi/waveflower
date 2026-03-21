@@ -4,6 +4,7 @@
 
 :root {
     --placeholder-color: oklch(.8 .1 90);
+    --background: #0000 !important;
 }
 
 body {
@@ -275,31 +276,31 @@ div.cm-scroller {
 
 @keyframes rainbow-rotate {
     0% {
-        color: oklch(.7 .2 0 /.77);
+        color: oklch(.7 .2 20 /.77);
     }
 
     20% {
-        color: oklch(.7 .2 70 /.77);
+        color: oklch(.7 .2 90 /.77);
     }
 
     30% {
-        color: oklch(.7 .2 110 /.88);
+        color: oklch(.7 .2 130 /.88);
     }
 
     40% {
-        color: oklch(.7 .2 140/.8);
+        color: oklch(.7 .2 160/.8);
     }
 
     60% {
-        color: oklch(.7 .2 225/.77);
+        color: oklch(.7 .24 225/.77);
     }
 
     80% {
-        color: oklch(.7 .2 300/.77);
+        color: oklch(.67 .24 300 / 0.77);
     }
 
     100% {
-        color: oklch(.7 .2 359/.77);
+        color: oklch(.7 .2 340/.77);
     }
 }
 
