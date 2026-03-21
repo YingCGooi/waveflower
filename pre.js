@@ -1,21 +1,23 @@
 // CSS overrides
 // use custom icon
-document.head.querySelectorAll('[rel=icon]').forEach((n) => {
-  n.type = 'image/png';
-  n.href = 'https://waveflower.org/assets/icons/waveflower_icon_sine_tri.png';
-});
+window.addEventListener('DOMContentLoaded', e => {
+  document.head.querySelectorAll('[rel=icon]').forEach((n) => {
+    n.type = 'image/png';
+    n.href = 'https://waveflower.org/assets/icons/waveflower_icon_sine_tri.png';
+  });
 
-// prevents auto scroll in mobile such that cursor ends up *behind* the virtual keyboard
-document.querySelectorAll('.cm-line').forEach((n) => {
-  n.onfocus = (e) => {
+  // prevents auto scroll in mobile such that cursor ends up *behind* the virtual keyboard
+  document.querySelectorAll('.cm-line').forEach((n) => {
+    n.onfocus = (e) => {
+      e.preventDefault();
+      e.focus({ preventScroll: true });
+    };
+  });
+  document.querySelector('.cm-editor').onfocus = (e) => {
     e.preventDefault();
     e.focus({ preventScroll: true });
   };
-});
-document.querySelector('.cm-editor').onfocus = (e) => {
-  e.preventDefault();
-  e.focus({ preventScroll: true });
-};
+})
 
 /**
  * @name addCSS
@@ -389,8 +391,6 @@ Pattern.prototype.pg = function (amt) {
   return this.postgain(amt);
 };
 
-// URL to current prebake for JSDoc processing
-const URL = 'https://waveflower.org/scripts/prebake.js';
 const sTagBorder = 'style="display:inline-block;border-color:var(--foreground);margin: 0px 1rem';
 const sParamType =
   ' style="border-color:oklch(from var(--caret) .67 .2 h);color:oklch(from var(--caret) .67 .2 h) !important;font-weight:300;padding: 2px 4px;" ';
@@ -462,7 +462,7 @@ function codify(text = '', delimiter = '`') {
  * @example
  * useJSDoc('https://waveflower.org/scripts/prebake.js')
  */
-window.useJSDoc = async function (url = URL) {
+window.useJSDoc = async function (url) {
   function nav() {
     return document.querySelector('nav[aria-label="Menu Panel"]');
   }
@@ -477,7 +477,7 @@ window.useJSDoc = async function (url = URL) {
       .split(/(\/\*\*)|(\*\/)/)
       .filter((p) => p && p.substring(0, 512).includes('@' + 'name'))
       .map((p) => p.split('\n'));
-    console.info('JSdocs parsed from ' + URL, docs);
+    console.info('JSdocs parsed from ' + url, docs);
   } catch (error) {
     console.error(error.message);
   }
