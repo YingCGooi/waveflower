@@ -1,5 +1,5 @@
 :root {
-  --background: oklch(0.5 0.1 220 / 0.3) !important;
+  --background: #0000 !important;
   --selection: oklch(0.5 0.24 240 / 0.3) !important;
 }
 
@@ -33,6 +33,6 @@ span.ͼ16 {
   filter: opacity(100%) !important;
 }
 
-#repl + div {
+#repl+div {
   background: #0000 !important;
 }
