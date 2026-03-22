@@ -51,19 +51,20 @@ window.removePrebakeCSS = function () {
  * @tags prebake
  * @param {Number} saturation amount (default 3)
  * @param {Number} hue shift (default -15)
+ * @param {Number} glow (default 0)
  * @param {Number} letterSpacing
  * @param {Number} lineHeight, in rem (default 1.7)
  * @example
  * useWet(3, -15, -0.5, )
  */
-window.wetEditor = function (amount = 3, hueShift = -12, letterSpacing = -0.5, lineHeight = 1.7) {
+window.wetEditor = function (amount = 3, hueShift = -12, glow=0,letterSpacing = -0.5, lineHeight = 1.7) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
     n.append('#pre,:root { --background: #0017 !important; --lineBackground: #0000 !important;} ');
     n.append('#pre,canvas {filter:saturate(' + amount + ');}');
     n.append('#pre,#code .cm-line>*{background: #0000;}');
-    n.append('#pre,.cm-line{filter:hue-rotate(' + String(hueShift) + 'deg) saturate(' + amount + ');}');
+    n.append('#pre,.cm-line{filter:hue-rotate(' + String(hueShift) + 'deg) saturate(' + amount + ') drop-shadow(0 0 '+glow+'px);}');
     n.append('#pre,#header,.bg-lineHighlight,.cm-gutter,.cm-lineNumbers,.cm-gutters{background: #0015;}');
     n.append('#pre,.cm-line{letter-spacing:' + letterSpacing + 'px;line-height:' + lineHeight + 'rem;}');
   });
