@@ -36,3 +36,7 @@ span.ͼ16 {
 #repl+div {
   background: #0000 !important;
 }
+
+.cm-content {
+  filter: saturate(2) !important;
+}
