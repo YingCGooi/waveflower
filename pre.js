@@ -392,13 +392,13 @@ Pattern.prototype.pg = function (amt) {
   return this.postgain(amt);
 };
 
-const sTagBorder = 'style="display:inline-block;border-color:var(--foreground);margin: 0px 1rem';
-const sParamType =
+var sTagBorder = 'style="display:inline-block;border-color:var(--foreground);margin: 0px 1rem';
+var sParamType =
   ' style="border-color:oklch(from var(--caret) .67 .2 h);color:oklch(from var(--caret) .67 .2 h) !important;font-weight:300;padding: 2px 4px;" ';
-const sParamName =
+var sParamName =
   ' style="margin-right:2px;border-color:oklch(from var(--caret) l .15 h);color: oklch(from var(--caret) l .15 h) !important;font-family: inherit;padding: 1px 4px;font-weight: 400;filter: contrast(1.1);" ';
 
-const TAGS = {
+var TAGS = {
   name: (name, tags = '') =>
     '<h3 class="font-mono my-0 pt-4" style="font-family:inherit;font-weight:700;display:inline-block;padding-right:1rem;filter:brightness(120%)">' +
     name +
