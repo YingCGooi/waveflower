@@ -148,7 +148,23 @@
         <h3>
           <img id="waveflower-icon" src="./assets/icons/waveflower_icon_sine_tri.png" />
           Waveflower App
+          <a
+            href="https://waveflowerapp.notion.site/Waveflower-A-Radial-flower-Oscilloscope-3299a153df8b80c58e98e8f393566edf?pvs=74"
+            ><strong>Read the Whitepaper</strong></a
+          >
         </h3>
+      </section>
+      <div class="divider"></div>
+      <section>
+        <h4>Active Projects</h4>
+        <h3>Strudel Pitchwheel Improvements</h3>
+        <p>Click the image below to view source code in Codeberg</p>
+        <a class="image" href="https://codeberg.org/uzu/strudel/pulls/1969">
+          <img src="./assets/images/pitchwheel_clock.png" />
+        </a>
+        <caption>
+          example use of the pitchwheel as a clock using customized labels
+        </caption>
       </section>
       <div class="divider"></div>
       <section>
@@ -192,45 +208,6 @@
         <p>
           Link to workshop:
           <a href="https://www.youtube.com/watch?v=ftiY_vRUNvA">Watch on YouTube</a>
-        </p>
-      </section>
-      <div class="divider"></div>
-      <section>
-        <h4>Active Projects</h4>
-        <h3>Strudel Pitchwheel Improvements</h3>
-        <h4>Update as of March 5th, 2026</h4>
-        <p>
-          Add customlabels setting to allow user to remap edo / numbered labels to custom string value of their choice
-        </p>
-        <p>Example Usage</p>
-        <pre>
-.pitchwheel({
-  labels: 'numbers',
-  edolabels: 3/4,
-  customlabels: ['I', 'I#', 'II', 'II#', 'III', 'VI', 'VI#', 'V', 'V#', 'VI', 'VI#', 'VII'],
-})</pre
-        >
-        <h4>Update as of 2/28/2026</h4>
-        <p>Add mode 'flakygon' which allows both flake and polygon modes to render at the same time</p>
-        <h4>Update as of 2/26/2026</h4>
-        <p>Add note labels in addition to edo labels</p>
-        <h4>Update as of 2/20/2026</h4>
-        <p>Fix dots not showing when edolabels are disabled</p>
-        <p>Allow for adjusting dotsize, dotalpha and active dotsize multiplier</p>
-        <p>
-          Allow clearrect bool option to disable clearing rectangle area behind labels Update as of 2/19/2026 Add
-          sharp/flat notes to the note to freq lookup table / map Add ability to detect root note automatically if
-          scale() or withBase() or edoScale() exists in the pattern circle should not be rendered by default Update as
-          of 2/15/2026 I've made even more improvements and made it compatible with the new edo scale changes merged
-          recently. Allow for alpha adjustment for BOTH regular edo index labels AND degree index labels from custom edo
-          scales Label text alignment fixes and refactoring, mostly extracting logic out from
-          ctx.fillText()/ctx.clearRect() Place the edo name 16 edo or 31 edo at the center of the pitchwheel Renamed
-          some options for better user-experience Replaced the half flat symbol with a more narrow left pointing
-          triangle Major Changes Allow for circle to control circumference thickness, separate from line thickness Add
-          lineJoin (alias linejoin) option to round line corners Add alias padding for margin Add alias dotsize for
-          hapRadius Edit jsdoc to include proper description More options added for labelling, such as note label
-          display or note index display More options added to adjust text sizes, label distance, circle/line thickness
-          multiplier
         </p>
       </section>
       <div class="divider"></div>
