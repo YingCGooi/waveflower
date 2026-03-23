@@ -6,8 +6,8 @@ var ENV = {
   alphaExponent: 0,
   blurFactor: 0.5,
   dpr: window.devicePixelRatio,
-  lineWidthStart: 4, // start = tail of spiral
-  lineWidthEnd: 4, // end = head of spiral
+  lineWidthStart: 7, // start = tail of spiral
+  lineWidthEnd: 7, // end = head of spiral
   lineColorStart: 'oklch(0.5 0.3 290)',
   lineColorEnd: 'oklch(0.8 0.24 220)',
   interpolationSpace: 'oklch',
