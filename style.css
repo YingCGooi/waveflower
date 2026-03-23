@@ -295,7 +295,7 @@ h3>img#waveflower-icon,
 section>img {
   display: block;
   width: 100%;
-  border: 6px solid oklch(0.81 0.19 210);
+  border: 6px solid oklch(0.7 0.2 210);
   border-radius: 1rem;
 }
 
@@ -305,7 +305,7 @@ section>img {
   }
 
   to {
-    filter: brightness(112%);
+    filter: brightness(120%);
   }
 }
 
@@ -314,7 +314,7 @@ a.image {
 
   &:hover {
     animation-name: lightup;
-    animation-duration: 0.33s;
+    animation-duration: 0.2s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: forwards;
   }
@@ -326,6 +326,14 @@ small {
   font-weight: 100;
   text-transform: uppercase;
   display: block;
+}
+
+small.captions {
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: -.07rem;
+  font-size: 1.2rem;
+  padding: .7rem 0;
 }
 
 p {
@@ -350,6 +358,11 @@ p.highlight {
     color: var(--accent);
     font-weight: 500;
   }
+}
+
+section>a.pink-border,
+a>img.pink-border {
+  border-color: var(--pink);
 }
 
 section.bullets p {
