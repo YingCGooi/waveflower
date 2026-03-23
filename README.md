@@ -1,6 +1,6 @@
-## Live Prototype
+## Live App
 
-https://waveflower.org
+https://app.waveflower.org
 
 ## Licensing
 
