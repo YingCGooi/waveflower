@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/app/stylesheets/style.css" />
     <!-- for production use -->
     <script defer>
-      document.querySelector('#strudel-theme-vars').innerHTML = ':root { background: #0000 }'
+      document.querySelector('#strudel-theme-vars').innerHTML = ':root { background: #0000 }';
     </script>
     <!-- hard override background -->
   </head>
@@ -83,9 +83,10 @@
   <script src="./scripts/wave.js"></script>
   <script src="./scripts/handlers.js"></script>
   <script src="../pre.js" defer></script>
-  <!-- absolute URL for production use only -->
+  <link rel="stylesheet" href="./stylesheets/override.css" />
+  <!-- absolute URL for production use only; TODO: use environmental variables -->
   <script src="/app/scripts/wave.js"></script>
   <script src="/app/scripts/handlers.js"></script>
   <script src="/pre.js" defer></script>
-  <link rel="stylesheet" href="./stylesheets/override.css" />
+  <link rel="stylesheet" href="/app/stylesheets/override.css" />
 </html>

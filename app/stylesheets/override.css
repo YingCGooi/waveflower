@@ -33,7 +33,7 @@ span.ͼ16 {
   filter: opacity(100%) !important;
 }
 
-#repl+div {
+#repl + div {
   background: #0000 !important;
 }
 

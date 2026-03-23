@@ -1,6 +1,6 @@
 // CSS overrides
 // use custom icon
-window.addEventListener('DOMContentLoaded', e => {
+window.addEventListener('DOMContentLoaded', (e) => {
   document.head.querySelectorAll('[rel=icon]').forEach((n) => {
     n.type = 'image/png';
     n.href = 'https://waveflower.org/assets/icons/waveflower_icon_sine_tri.png';
@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', e => {
     e.preventDefault();
     e.focus({ preventScroll: true });
   };
-})
+});
 
 /**
  * @name addCSS
@@ -57,14 +57,22 @@ window.removePrebakeCSS = function () {
  * @example
  * useWet(3, -15, -0.5, )
  */
-window.wetEditor = function (amount = 3, hueShift = -12, glow=0,letterSpacing = -0.5, lineHeight = 1.7) {
+window.wetEditor = function (amount = 3, hueShift = -12, glow = 0, letterSpacing = -0.5, lineHeight = 1.7) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
     n.append('#pre,:root { --background: #0017 !important; --lineBackground: #0000 !important;} ');
     n.append('#pre,canvas {filter:saturate(' + amount + ');}');
     n.append('#pre,#code .cm-line>*{background: #0000;}');
-    n.append('#pre,.cm-line{filter:hue-rotate(' + String(hueShift) + 'deg) saturate(' + amount + ') drop-shadow(0 0 '+glow+'px);}');
+    n.append(
+      '#pre,.cm-line{filter:hue-rotate(' +
+        String(hueShift) +
+        'deg) saturate(' +
+        amount +
+        ') drop-shadow(0 0 ' +
+        glow +
+        'px);}',
+    );
     n.append('#pre,#header,.bg-lineHighlight,.cm-gutter,.cm-lineNumbers,.cm-gutters{background: #0015;}');
     n.append('#pre,.cm-line{letter-spacing:' + letterSpacing + 'px;line-height:' + lineHeight + 'rem;}');
   });
