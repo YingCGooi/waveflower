@@ -446,13 +446,15 @@ nav {
 }
 
 nav ol {
+  text-transform: capitalize;
   width: 100%;
   max-width: 800px;
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 400;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  letter-spacing: -0.07rem;
   gap: 4rem;
 
   & > li {
@@ -462,7 +464,6 @@ nav ol {
   }
 
   @media (max-width: 800px) {
-    letter-spacing: -0.1rem;
     justify-content: space-between;
     gap: 1rem;
   }
