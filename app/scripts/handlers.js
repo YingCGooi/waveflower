@@ -86,7 +86,7 @@ $all('input[name=osc]').forEach((radio) => {
 $('#play').addEventListener('click', (e) => {
   visualizer.calculateColorSteps(new Color(ENV.lineColorStart), new Color(ENV.lineColorEnd));
   if (manager.isFileplaying || manager.isOSCplaying) {
-    return
+    return;
   }
   if (manager.replHasCode()) {
     manager.playREPL(() => {});
