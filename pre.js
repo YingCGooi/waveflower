@@ -1274,3 +1274,39 @@ Pattern.prototype.w = function () {
 // tone function mimics the tone(freq, gain) function in Desmos
 // plays a sine tone by default
 window.tone = (frq = 110, gn = 1, shape = 'sine') => freq(frq).s(shape).gain(gn);
+
+const JI = {
+  C2: 0,
+  D2: +0.039,
+  E2: -0.137,
+  F2: -0.02,
+  G2: +0.02,
+  A2: -0.156,
+  B2: -0.117,
+  C: 0,
+  D: +0.039,
+  E: -0.137,
+  F: -0.02,
+  G: +0.02,
+  A: -0.156,
+  B: -0.117,
+  C3: 0,
+  D3: +0.039,
+  E3: -0.137,
+  F3: -0.02,
+  G3: +0.02,
+  A3: -0.156,
+  B3: -0.117,
+  C4: 0,
+  D4: +0.039,
+  E4: -0.137,
+  F4: -0.02,
+  G4: +0.02,
+  A4: -0.156,
+  B4: -0.117,
+  C5: 0,
+};
+// jitrans is a C-major just intonation transpose
+Pattern.prototype.jitrans = function (seq) {
+  return this.add(note(0)).transpose(seq.pick(JI));
+};
