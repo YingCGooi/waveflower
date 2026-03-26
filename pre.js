@@ -55,7 +55,7 @@ window.removePrebakeCSS = function () {
  * @param {Number} letterSpacing
  * @param {Number} lineHeight, in rem (default 1.7)
  * @example
- * useWet(3, -15, -0.5, )
+ * useWet(3, -15, 0, 0, 1.2)
  */
 window.wetEditor = function (amount = 3, hueShift = -12, glow = 0, letterSpacing = -0.5, lineHeight = 1.7) {
   document.querySelectorAll('style').forEach((n) => {
@@ -77,7 +77,7 @@ window.wetEditor = function (amount = 3, hueShift = -12, glow = 0, letterSpacing
     n.append('#pre,.cm-line{letter-spacing:' + letterSpacing + 'px;line-height:' + lineHeight + 'rem;}');
   });
 };
-window.useWet = (a, h) => window.wetEditor(a, h);
+window.useWet = (a, h, g, s, h) => window.wetEditor(a, h, g, s, h);
 
 // CSS helper function
 function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, wmul = 0.1, mode = 'to bottom') {
