@@ -14,7 +14,7 @@ var ENV = {
   syncPeriodPhase: true,
   smoothingTimeConstant: 1,
   analyzerWaitDelayMs: 400,
-  hueOffsets: -40,
+  hueOffsets: 90,
   scaleRadius: 2,
 };
 

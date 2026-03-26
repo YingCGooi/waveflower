@@ -714,6 +714,29 @@ const centsToANoteMap = {
 const reverseNoteArray = Object.keys(centsToANoteMap).map((key) => [centsToANoteMap[key], key]);
 const noteToCentsMap = Object.fromEntries(reverseNoteArray);
 
+const midiOffsetFromC = {
+  auto: 0,
+  C: 0,
+  'C#': 1,
+  Db: 1,
+  D: 2,
+  'D#': 3,
+  Eb: 3,
+  E: 4,
+  Fb: 4,
+  'E#': 5,
+  F: 5,
+  'F#': 6,
+  Gb: 6,
+  G: 7,
+  'G#': 8,
+  Ab: 8,
+  A: 9,
+  'A#': 10,
+  Bb: 10,
+  B: 11,
+}
+
 // make these global variables so they can be easily referenced
 const midiNoteToFreq = {
   C2: midiToFreq(36),
@@ -901,6 +924,7 @@ function pitchwheel({
   clearrect = false,
   notelabel = false,
   notelabeldistance = 0.94,
+  lineoctavediv = 0,
 } = {}) {
   const connectdots = mode === 'polygon' || mode === 'both' || mode === 'flakygon';
   const centerlines = mode === 'flake' || mode === 'both' || mode === 'flakygon';
@@ -1011,7 +1035,6 @@ function pitchwheel({
   ctx.stroke();
 
   let shape = [];
-  ctx.lineWidth = thickness;
   haps.forEach((hap) => {
     let freq;
     try {
@@ -1049,7 +1072,14 @@ function pitchwheel({
         ctx.shadowColor = hapColor;
         ctx.shadowBlur = glow;
       }
-      ctx.lineWidth = thickness;
+      ctx.lineWidth = thickness;      
+      if (lineoctavediv !== 0 && edo === 12) {
+        const midi = valueToMidi({freq, noteName})
+        const offFromC = midiOffsetFromC[root] || 0
+        let octave = (midi - offFromC) / 12
+        octave = (octave < 1) ? 1 : octave
+        ctx.lineWidth = thickness / (octave * lineoctavediv)
+      }
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(x, y);
     }
@@ -1133,6 +1163,14 @@ function pitchwheel({
         if (connectdots) {
           ctx.strokeStyle = color;
           ctx.lineWidth = thickness;
+
+          if (lineoctavediv !== 0 && edo === 12) {
+            const midi = valueToMidi({freq, noteName})
+            const offFromC = midiOffsetFromC[root] || 0
+            let octave = (midi - offFromC) / 12
+            octave = (octave < 1) ? 1 : octave
+            ctx.lineWidth = thickness / (octave * lineoctavediv)
+          }
           ctx.globalAlpha = alpha;
           ctx.lineTo(x, y);
         }
@@ -1177,7 +1215,8 @@ function pitchwheel({
  * @param {bool} clearrect: set to false to disable labels from clearing rectangle area before drawing (default: true)
  * @param {number/bool} notelabel: sets the alpha of static notation-based labels in addition to edolabels (default: 0)
  * @param {number} notelabeldistance: sets the distance of notation-based labels from the origin of circle (default: 0.94, inside circle)
- *
+ * @param {lineoctavediv}: allow for dynamic line thickness based on octave (higher octave => thinner, lower octave => thicker)
+ * 
  * @example
  * n("0 .. 12").scale("C:chromatic")
  * .s('sawtooth')
