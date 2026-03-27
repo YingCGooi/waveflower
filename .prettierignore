@@ -4,6 +4,9 @@
 *.
 **/out
 **/dist
+./samples
+./assets
+./examples
 ./samples/*
 ./assets/*
 ./examples/*

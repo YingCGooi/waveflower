@@ -92,7 +92,7 @@ $('#play').addEventListener('click', (e) => {
     manager.playREPL(() => {});
     let u = window.location.href;
     const hsh = codeTohash($('.cm-content').textContent);
-    window.location.href = u + '#' + hsh;
+    window.location.href = u.split('#')[0] + '#' + hsh;
 
     replVisualizers = []; // reset temp array
     intervalID = setInterval(() => {

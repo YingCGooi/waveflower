@@ -55,7 +55,7 @@ window.removePrebakeCSS = function () {
  * @param {Number} letterSpacing
  * @param {Number} lineHeight, in rem (default 1.7)
  * @example
- * useWet(3, -15, -0.5, )
+ * useWet(3, -15, 0, 0, 1.2)
  */
 window.wetEditor = function (amount = 3, hueShift = -12, glow = 0, letterSpacing = -0.5, lineHeight = 1.7) {
   document.querySelectorAll('style').forEach((n) => {
@@ -77,7 +77,7 @@ window.wetEditor = function (amount = 3, hueShift = -12, glow = 0, letterSpacing
     n.append('#pre,.cm-line{letter-spacing:' + letterSpacing + 'px;line-height:' + lineHeight + 'rem;}');
   });
 };
-window.useWet = (a, h) => window.wetEditor(a, h);
+window.useWet = (a, b, c, d, e) => window.wetEditor(a, b, c, d, e);
 
 // CSS helper function
 function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, wmul = 0.1, mode = 'to bottom') {
@@ -714,6 +714,29 @@ const centsToANoteMap = {
 const reverseNoteArray = Object.keys(centsToANoteMap).map((key) => [centsToANoteMap[key], key]);
 const noteToCentsMap = Object.fromEntries(reverseNoteArray);
 
+const midiOffsetFromC = {
+  auto: 0,
+  C: 0,
+  'C#': 1,
+  Db: 1,
+  D: 2,
+  'D#': 3,
+  Eb: 3,
+  E: 4,
+  Fb: 4,
+  'E#': 5,
+  F: 5,
+  'F#': 6,
+  Gb: 6,
+  G: 7,
+  'G#': 8,
+  Ab: 8,
+  A: 9,
+  'A#': 10,
+  Bb: 10,
+  B: 11,
+}
+
 // make these global variables so they can be easily referenced
 const midiNoteToFreq = {
   C2: midiToFreq(36),
@@ -901,6 +924,7 @@ function pitchwheel({
   clearrect = false,
   notelabel = false,
   notelabeldistance = 0.94,
+  lineoctavediv = 0,
 } = {}) {
   const connectdots = mode === 'polygon' || mode === 'both' || mode === 'flakygon';
   const centerlines = mode === 'flake' || mode === 'both' || mode === 'flakygon';
@@ -1011,7 +1035,6 @@ function pitchwheel({
   ctx.stroke();
 
   let shape = [];
-  ctx.lineWidth = thickness;
   haps.forEach((hap) => {
     let freq;
     try {
@@ -1049,7 +1072,14 @@ function pitchwheel({
         ctx.shadowColor = hapColor;
         ctx.shadowBlur = glow;
       }
-      ctx.lineWidth = thickness;
+      ctx.lineWidth = thickness;      
+      if (lineoctavediv !== 0 && edo === 12) {
+        const midi = valueToMidi({freq, noteName})
+        const offFromC = midiOffsetFromC[root] || 0
+        let octave = (midi - offFromC) / 12
+        octave = (octave < 1) ? 1 : octave
+        ctx.lineWidth = thickness / (octave * lineoctavediv)
+      }
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(x, y);
     }
@@ -1133,6 +1163,14 @@ function pitchwheel({
         if (connectdots) {
           ctx.strokeStyle = color;
           ctx.lineWidth = thickness;
+
+          if (lineoctavediv !== 0 && edo === 12) {
+            const midi = valueToMidi({freq, noteName})
+            const offFromC = midiOffsetFromC[root] || 0
+            let octave = (midi - offFromC) / 12
+            octave = (octave < 1) ? 1 : octave
+            ctx.lineWidth = thickness / (octave * lineoctavediv)
+          }
           ctx.globalAlpha = alpha;
           ctx.lineTo(x, y);
         }
@@ -1177,7 +1215,8 @@ function pitchwheel({
  * @param {bool} clearrect: set to false to disable labels from clearing rectangle area before drawing (default: true)
  * @param {number/bool} notelabel: sets the alpha of static notation-based labels in addition to edolabels (default: 0)
  * @param {number} notelabeldistance: sets the distance of notation-based labels from the origin of circle (default: 0.94, inside circle)
- *
+ * @param {lineoctavediv}: allow for dynamic line thickness based on octave (higher octave => thinner, lower octave => thicker)
+ * 
  * @example
  * n("0 .. 12").scale("C:chromatic")
  * .s('sawtooth')
@@ -1274,3 +1313,50 @@ Pattern.prototype.w = function () {
 // tone function mimics the tone(freq, gain) function in Desmos
 // plays a sine tone by default
 window.tone = (frq = 110, gn = 1, shape = 'sine') => freq(frq).s(shape).gain(gn);
+
+const C_MAJOR_JI_MAP = {
+  C2: 0,
+  D2: +0.039,
+  E2: -0.137,
+  F2: -0.02,
+  G2: +0.02,
+  A2: -0.156,
+  B2: -0.117,
+  C: 0,
+  D: +0.039,
+  E: -0.137,
+  F: -0.02,
+  G: +0.02,
+  A: -0.156,
+  B: -0.117,
+  C3: 0,
+  D3: +0.039,
+  E3: -0.137,
+  F3: -0.02,
+  G3: +0.02,
+  A3: -0.156,
+  B3: -0.117,
+  C4: 0,
+  D4: +0.039,
+  E4: -0.137,
+  F4: -0.02,
+  G4: +0.02,
+  A4: -0.156,
+  B4: -0.117,
+  C5: 0,
+};
+// jitrans is a just intonation transpose
+Pattern.prototype.jitrans = function (seq) {
+  return this.add(note(0)).transpose(seq.pick(C_MAJOR_JI_MAP));
+};
+
+// just is a top-level function that transform a seq into justly intonated scale
+window.just = function(seq) {
+  return this.note().add(note(0)).transpose(seq.pick(C_MAJOR_JI_MAP));
+}
+
+Pattern.prototype.supersaw = function() { return this.s("supersaw") }
+Pattern.prototype.sine = function() { return this.s("sine") }
+Pattern.prototype.triangle = function() { return this.s("triangle") }
+Pattern.prototype.square = function() { return this.s("square") }
+Pattern.prototype.sawtooth = function() { return this.s("sawtooth") }
