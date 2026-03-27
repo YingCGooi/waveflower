@@ -1354,3 +1354,9 @@ Pattern.prototype.jitrans = function (seq) {
 window.just = function(seq) {
   return this.note().add(note(0)).transpose(seq.pick(C_MAJOR_JI_MAP));
 }
+
+Pattern.prototype.supersaw = function() { return this.s("supersaw") }
+Pattern.prototype.sine = function() { return this.s("sine") }
+Pattern.prototype.triangle = function() { return this.s("triangle") }
+Pattern.prototype.square = function() { return this.s("square") }
+Pattern.prototype.sawtooth = function() { return this.s("sawtooth") }
