@@ -1314,7 +1314,7 @@ Pattern.prototype.w = function () {
 // plays a sine tone by default
 window.tone = (frq = 110, gn = 1, shape = 'sine') => freq(frq).s(shape).gain(gn);
 
-const JI = {
+const C_MAJOR_JI_MAP = {
   C2: 0,
   D2: +0.039,
   E2: -0.137,
@@ -1345,7 +1345,12 @@ const JI = {
   B4: -0.117,
   C5: 0,
 };
-// jitrans is a C-major just intonation transpose
+// jitrans is a just intonation transpose
 Pattern.prototype.jitrans = function (seq) {
-  return this.add(note(0)).transpose(seq.pick(JI));
+  return this.add(note(0)).transpose(seq.pick(C_MAJOR_JI_MAP));
 };
+
+// just is a top-level function that transform a seq into justly intonated scale
+window.just = function(seq) {
+  return this.note().add(note(0)).transpose(seq.pick(C_MAJOR_JI_MAP));
+}
