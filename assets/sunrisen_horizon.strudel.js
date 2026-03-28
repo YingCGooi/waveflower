@@ -1,5 +1,7 @@
-// @title Sunrisen Horizon 2026
+// @title Sunrisen Horizon 2026 
+// @details "A song about reminiscene of happy childhood moments; turning new beginnings and endeavors of hope"
 // @by Waveflower Gooi
+// @url https://music.waveflower.org
 // @license CC BY-NC-SA
 
 //    _____ __  ___   ______  _________ _______   __
@@ -13,18 +15,18 @@
 // /_/ /_/\____/_/ |_/___ /_____\____/_/ |_/ /_/|╲
 //                                              ╲)
 
-await import('https://waveflower.org/pre.js')
+// await import('https://waveflower.org/pre.js')
 samples({
   tick: 'cactus/dyad/CACTUS_DYAD_ONESHOT.mp3',
   short: 'cactus/perc/CACTUS_PERC_14_ONESHOT.mp3',
   uplifter: 'fl/uplifter1.wav',
   downlifter: 'fl/dnlifter1.wav'
-}, 'https://waveflower.org/samples/');
+}, 'http://localhost:5432/');
 
 useWet(2, -5)
 addCSS('line-height:1.33rem;letter-spacing:0px')
 
-setcpm(132/4)
+setcpm(400/4)
 
 const at = (min,max,c=16)=> min < max ? saw.rangex(min,max).slow(c) : saw.rev().rangex(max,min).slow(c)
 register('ov', (c, p) => p.slow(c))
@@ -150,7 +152,7 @@ G4@2 F4@2 C4 G4 C5@2
 const VIOLIN = (chrds) => stack(
   chrds.hpf(880).transpose("12").lpf(1400).s("gm_violin:6").vel(1).pan(.4),
   chrds.hpf(1200).transpose("0,12").lpf(3300).s("gm_violin:7:.3,gm_string_ensemble_1:4").vel(3/4).pan(1)
-).dec(1/4).sus(1).rel(1/3).env({dec:1/4,sus:1/2,rel:1,sc:-1,rc:-1})
+).dec(1/4).sus(1).rel(1/3).gain(1/4).env({dec:1/4,sus:1/2,rel:1,sc:-1,rc:-1})
 .color('oklch(.77 .2 100)')
 
 const PAD = chord(`<
@@ -680,7 +682,7 @@ $:arrange(
   [4, "~"]
 )
 .pitchwheel({
-  customlabels: ['I', 'I#', 'II', 'II#', 'III', 'VI', 'VI#', 'V', 'V#', 'VI', 'VI#', 'VII'],
+  customlabels: ['I', 'I#', 'II', 'II#', 'III', 'VI', 'VI#', 'V', 'VI♭', 'VI', 'VII♭', 'VII'],
   root: 'C',
   exponential: false,
   mode:'flakygon',
