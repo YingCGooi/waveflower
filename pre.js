@@ -1249,6 +1249,7 @@ Pattern.prototype.pitchwheel = function (options = {}) {
 };
 
 // convenience functions for lpf/hpf/vel filter automations
+const at = (min,max,c=16)=> min < max ? saw.rangex(min,max).slow(c) : saw.rev().rangex(max,min).slow(c)
 register('lpp', (min, max, p) => p.lpf(perlin.rangex(min, max)));
 register('lep', (min, max, p) => p.lpe(perlin.rangex(min, max)));
 register('lpfat', (min, max, c, p) => p.lpf(at(min, max, c)));
@@ -1315,35 +1316,13 @@ Pattern.prototype.w = function () {
 window.tone = (frq = 110, gn = 1, shape = 'sine') => freq(frq).s(shape).gain(gn);
 
 const C_MAJOR_JI_MAP = {
-  C2: 0,
-  D2: +0.039,
-  E2: -0.137,
-  F2: -0.02,
-  G2: +0.02,
-  A2: -0.156,
-  B2: -0.117,
-  C: 0,
-  D: +0.039,
-  E: -0.137,
-  F: -0.02,
-  G: +0.02,
-  A: -0.156,
-  B: -0.117,
-  C3: 0,
-  D3: +0.039,
-  E3: -0.137,
-  F3: -0.02,
-  G3: +0.02,
-  A3: -0.156,
-  B3: -0.117,
-  C4: 0,
-  D4: +0.039,
-  E4: -0.137,
-  F4: -0.02,
-  G4: +0.02,
-  A4: -0.156,
-  B4: -0.117,
-  C5: 0,
+  C2: 0,      C: 0,      C3: 0,      C4: 0,
+  D2: +0.039, D: +0.039, D3: +0.039, D4: +0.039,
+  E1: -0.137, E2: -0.137, E: -0.137, E3: -0.069, E4: -0.137,
+  F1: -0.02, F2: -0.02,  F: -0.02,  F3: -0.02,  F4: -0.02,
+  G1: +0.02, G2: +0.02,  G: +0.02,  G3: +0.02,  G4: +0.02,
+  A1: -0.156, A2: -0.156, A: -0.156, A3: -0.156, A4: -0.156,
+  B1: -0.117, B2: -0.117, B: -0.117, B3: -0.117, B4: -0.117,
 };
 // jitrans is a just intonation transpose
 Pattern.prototype.jitrans = function (seq) {
