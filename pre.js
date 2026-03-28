@@ -1352,7 +1352,7 @@ Pattern.prototype.jitrans = function (seq) {
 
 // just is a top-level function that transform a seq into justly intonated scale
 window.just = function(seq) {
-  return this.note().add(note(0)).transpose(seq.pick(C_MAJOR_JI_MAP));
+  return seq.note().add(note(0)).transpose(seq.pick(C_MAJOR_JI_MAP));
 }
 
 Pattern.prototype.supersaw = function() { return this.s("supersaw") }
