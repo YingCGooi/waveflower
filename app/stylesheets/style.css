@@ -250,10 +250,9 @@ section#canvases {
 
 #canvases>canvas {
   z-index: -1;
-  position: absolute;
-  top: 0;
+  position: fixed;
   left: 50%;
-  transform: translate(-50%, 0%);
+  transform: translate(-33%, 0%);
   background-color: rgba(0, 0, 0, 0);
 }
 
