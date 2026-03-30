@@ -58,12 +58,13 @@ window.removePrebakeCSS = function () {
  * useWet(3, -15, 0, 0, 1.2)
  */
 window.wetEditor = function ({
-  amount = 3,
-  hueShift = -12,
+  amount = 2,
+  hueShift = -5,
   commentColor = '#222',
+  commentStyle = 'italic',
   glow = 0,
-  letterSpacing = -0.5,
-  lineHeight = 1.7
+  letterSpacing = 0,
+  lineHeight = 1.55
 } = {}) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
@@ -82,7 +83,7 @@ window.wetEditor = function ({
     );
     n.append('#pre,#header,.bg-lineHighlight,.cm-gutter,.cm-lineNumbers,.cm-gutters{background: #0015;}');
     n.append('#pre,.cm-line{letter-spacing:' + letterSpacing + 'px;line-height:' + lineHeight + 'rem;}');
-    n.append('#pre,.ͼbi { color:'+ commentColor +'!important }')
+    n.append('#pre,.ͼbi { font-style:'+ commentStyle +'; color:'+ commentColor +'!important }')
   });
 };
 window.useWet = (opts) => window.wetEditor(opts);
