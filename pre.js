@@ -3,17 +3,17 @@
 window.addEventListener('DOMContentLoaded', (e) => {
   document.head.querySelectorAll('[rel=icon]').forEach((n) => {
     n.type = 'image/png';
-    n.href = 'https://waveflower.org/assets/icons/waveflower_icon_sine_tri.png';
+    n.href = 'https://waveflower.org/assets/icons/waveflower_icon_aligned.png';
   });
 
   // prevents auto scroll in mobile such that cursor ends up *behind* the virtual keyboard
-  document.querySelectorAll('.cm-line')?.forEach((n) => {
+  document.querySelectorAll('.cm-line').forEach((n) => {
     n.onfocus = (e) => {
       e.preventDefault();
       e.focus({ preventScroll: true });
     };
   });
-  document.querySelector('.cm-editor')?.onfocus = (e) => {
+  document.querySelector('.cm-editor').onfocus = (e) => {
     e.preventDefault();
     e.focus({ preventScroll: true });
   };
