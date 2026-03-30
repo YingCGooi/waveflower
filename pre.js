@@ -58,8 +58,8 @@ window.removePrebakeCSS = function () {
  * useWet(3, -15, 0, 0, 1.2)
  */
 window.wetEditor = function ({
-  amount = 2,
-  hueShift = -5,
+  amount = 1,
+  hueShift = 0,
   commentColor = '#222',
   commentStyle = 'italic',
   gutterColor = '#444',
