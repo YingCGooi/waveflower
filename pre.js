@@ -49,13 +49,17 @@ window.removePrebakeCSS = function () {
  * @name wetEditor
  * @synonyms useWet
  * @tags prebake
- * @param {Number} saturation amount (default 3)
- * @param {Number} hue shift (default -15)
+ * @param {Number} saturation amount (default 1)
+ * @param {Number} hue shift (default 0)
+ * @param {String} commentColor (default '#222')
+ * @param {String} commentStyle (default 'italic')
+ * @param {String} gutterColor (default '#444')
+ * @param {String} lineHighlightColor (default '#2222')
  * @param {Number} glow (default 0)
- * @param {Number} letterSpacing
- * @param {Number} lineHeight, in rem (default 1.7)
+ * @param {Number} letterSpacing, in px (default 0)
+ * @param {Number} lineHeight, in rem (default 1.55)
  * @example
- * useWet(3, -15, 0, 0, 1.2)
+ * useWet({amount: 1.4, commentColor: '#111', gutterColor: '#000', commentStyle: 'normal', letterSpacing: -0.1})
  */
 window.wetEditor = function ({
   amount = 1,
@@ -63,6 +67,7 @@ window.wetEditor = function ({
   commentColor = '#222',
   commentStyle = 'italic',
   gutterColor = '#444',
+  lineHighlightColor = '#2222',
   glow = 0,
   letterSpacing = 0,
   lineHeight = 1.55
@@ -86,6 +91,7 @@ window.wetEditor = function ({
     n.append('#pre,.cm-line{letter-spacing:' + letterSpacing + 'px;line-height:' + lineHeight + 'rem;}');
     n.append('#pre,.ͼbi { font-style:'+ commentStyle +'; color:'+ commentColor +'!important }')
     n.append('#pre,.cm-gutters{ color: '+ gutterColor +' !important}')
+    n.append('#pre,.cm-activeLine{ background-color:'+ lineHighlightColor +'!important}')
   });
 };
 window.useWet = (opts) => window.wetEditor(opts);
