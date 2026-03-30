@@ -55,6 +55,7 @@ window.removePrebakeCSS = function () {
  * @param {String} commentStyle (default 'italic')
  * @param {String} gutterColor (default '#444')
  * @param {String} lineHighlightColor (default '#2222')
+ * @param {String} selectionBackground (default '#FFFFFF07')
  * @param {Number} glow (default 0)
  * @param {Number} letterSpacing, in px (default 0)
  * @param {Number} lineHeight, in rem (default 1.55)
@@ -68,6 +69,7 @@ window.wetEditor = function ({
   commentStyle = 'italic',
   gutterColor = '#444',
   lineHighlightColor = '#2222',
+  selectionBackground = '#FFFFFF07',
   glow = 0,
   letterSpacing = 0,
   lineHeight = 1.55
@@ -92,6 +94,7 @@ window.wetEditor = function ({
     n.append('#pre,.ͼbi { font-style:'+ commentStyle +'; color:'+ commentColor +'!important }')
     n.append('#pre,.cm-gutters{ color: '+ gutterColor +' !important}')
     n.append('#pre,.cm-activeLine{ background-color:'+ lineHighlightColor +'!important}')
+    n.append('#pre,.ͼau.cm-focused .cm-selectionBackground,.ͼau .cm-line::selection,.ͼau .cm-selectionLayer .cm-selectionBackground,.ͼau .cm-content ::selection{background:'+selectionBackground+' !important}')
   });
 };
 window.useWet = (opts) => window.wetEditor(opts);
