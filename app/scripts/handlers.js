@@ -91,7 +91,7 @@ $('#play').addEventListener('click', (e) => {
   if (manager.replHasCode()) {
     manager.playREPL(() => {});
     let u = window.location.href;
-    const hsh = codeTohash($('.cm-content').textContent);
+    const hsh = codeTohash($('.cm-content').textContent.replaceAll('  ', "\n"));
     window.location.href = u.split('#')[0] + '#' + hsh;
 
     replVisualizers = []; // reset temp array

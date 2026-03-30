@@ -7,13 +7,13 @@ window.addEventListener('DOMContentLoaded', (e) => {
   });
 
   // prevents auto scroll in mobile such that cursor ends up *behind* the virtual keyboard
-  document.querySelectorAll('.cm-line').forEach((n) => {
+  document.querySelectorAll('.cm-line')?.forEach((n) => {
     n.onfocus = (e) => {
       e.preventDefault();
       e.focus({ preventScroll: true });
     };
   });
-  document.querySelector('.cm-editor').onfocus = (e) => {
+  document.querySelector('.cm-editor')?.onfocus = (e) => {
     e.preventDefault();
     e.focus({ preventScroll: true });
   };
@@ -57,7 +57,7 @@ window.removePrebakeCSS = function () {
  * @example
  * useWet(3, -15, 0, 0, 1.2)
  */
-window.wetEditor = function (amount = 3, hueShift = -12, glow = 0, letterSpacing = -0.5, lineHeight = 1.7) {
+window.wetEditor = function (amount = 3, hueShift = -12, commentColor = '#222', glow = 0,  letterSpacing = -0.5, lineHeight = 1.7) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
@@ -75,9 +75,10 @@ window.wetEditor = function (amount = 3, hueShift = -12, glow = 0, letterSpacing
     );
     n.append('#pre,#header,.bg-lineHighlight,.cm-gutter,.cm-lineNumbers,.cm-gutters{background: #0015;}');
     n.append('#pre,.cm-line{letter-spacing:' + letterSpacing + 'px;line-height:' + lineHeight + 'rem;}');
+    n.append('#pre,.ͼbi { color:'+ commentColor +'!important }')
   });
 };
-window.useWet = (a, b, c, d, e) => window.wetEditor(a, b, c, d, e);
+window.useWet = (a, b, c, d, e, f) => window.wetEditor(a, b, c, d, e, f);
 
 // CSS helper function
 function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, wmul = 0.1, mode = 'to bottom') {
