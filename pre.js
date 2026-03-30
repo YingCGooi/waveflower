@@ -57,7 +57,14 @@ window.removePrebakeCSS = function () {
  * @example
  * useWet(3, -15, 0, 0, 1.2)
  */
-window.wetEditor = function (amount = 3, hueShift = -12, commentColor = '#222', glow = 0,  letterSpacing = -0.5, lineHeight = 1.7) {
+window.wetEditor = function ({
+  amount = 3,
+  hueShift = -12,
+  commentColor = '#222',
+  glow = 0,
+  letterSpacing = -0.5,
+  lineHeight = 1.7
+} = {}) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
@@ -78,7 +85,7 @@ window.wetEditor = function (amount = 3, hueShift = -12, commentColor = '#222', 
     n.append('#pre,.ͼbi { color:'+ commentColor +'!important }')
   });
 };
-window.useWet = (a, b, c, d, e, f) => window.wetEditor(a, b, c, d, e, f);
+window.useWet = (opts) => window.wetEditor(opts);
 
 // CSS helper function
 function lineargradient(stops = [], steps, freq, next, alpha, hue, hueStep, w, wmul = 0.1, mode = 'to bottom') {
