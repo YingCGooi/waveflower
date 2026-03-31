@@ -1097,7 +1097,7 @@ function pitchwheel({
         const midi = valueToMidi({freq, noteName})
         const offFromC = midiOffsetFromC[root] || 0
         let octave = (midi - offFromC) / 12
-        octave = (octave < 1) ? 1 : octave
+        octave = (octave < 1) ? 4 : octave
         ctx.lineWidth = thickness / (octave * lineoctavediv)
       }
       ctx.moveTo(centerX, centerY);
