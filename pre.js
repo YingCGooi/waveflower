@@ -6,14 +6,22 @@ window.addEventListener('DOMContentLoaded', (e) => {
     n.href = 'https://waveflower.org/assets/icons/waveflower_icon_aligned.png';
   });
 
+  const cmLines = document.querySelectorAll('.cm-line');
+  if (!cmLines) {
+    return;
+  }
+  const cmEditor = document.querySelectorAll('.cm-line');
+  if (!cmEditor) {
+    return;
+  }
   // prevents auto scroll in mobile such that cursor ends up *behind* the virtual keyboard
-  document.querySelectorAll('.cm-line').forEach((n) => {
+  cmLines.forEach((n) => {
     n.onfocus = (e) => {
       e.preventDefault();
       e.focus({ preventScroll: true });
     };
   });
-  document.querySelector('.cm-editor').onfocus = (e) => {
+  cmEditor.onfocus = (e) => {
     e.preventDefault();
     e.focus({ preventScroll: true });
   };
@@ -72,7 +80,7 @@ window.wetEditor = function ({
   selectionBackground = '#FFFFFF07',
   glow = 0,
   letterSpacing = 0,
-  lineHeight = 1.55
+  lineHeight = 1.55,
 } = {}) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
@@ -91,10 +99,14 @@ window.wetEditor = function ({
     );
     n.append('#pre,#header,.bg-lineHighlight,.cm-gutter,.cm-lineNumbers,.cm-gutters{background: #0015;}');
     n.append('#pre,.cm-line{letter-spacing:' + letterSpacing + 'px;line-height:' + lineHeight + 'rem;}');
-    n.append('#pre,.ͼbi { font-style:'+ commentStyle +'; color:'+ commentColor +'!important }')
-    n.append('#pre,.cm-gutters{ color: '+ gutterColor +' !important}')
-    n.append('#pre,.cm-activeLine{ background-color:'+ lineHighlightColor +'!important}')
-    n.append('#pre,.ͼau.cm-focused .cm-selectionBackground,.ͼau .cm-line::selection,.ͼau .cm-selectionLayer .cm-selectionBackground,.ͼau .cm-content ::selection{background:'+selectionBackground+' !important}')
+    n.append('#pre,.ͼbi { font-style:' + commentStyle + '; color:' + commentColor + '!important }');
+    n.append('#pre,.cm-gutters{ color: ' + gutterColor + ' !important}');
+    n.append('#pre,.cm-activeLine{ background-color:' + lineHighlightColor + '!important}');
+    n.append(
+      '#pre,.ͼau.cm-focused .cm-selectionBackground,.ͼau .cm-line::selection,.ͼau .cm-selectionLayer .cm-selectionBackground,.ͼau .cm-content ::selection{background:' +
+        selectionBackground +
+        ' !important}',
+    );
   });
 };
 window.useWet = (opts) => window.wetEditor(opts);
@@ -755,7 +767,7 @@ const midiOffsetFromC = {
   'A#': 10,
   Bb: 10,
   B: 11,
-}
+};
 
 // make these global variables so they can be easily referenced
 const midiNoteToFreq = {
@@ -1092,13 +1104,13 @@ function pitchwheel({
         ctx.shadowColor = hapColor;
         ctx.shadowBlur = glow;
       }
-      ctx.lineWidth = thickness;      
+      ctx.lineWidth = thickness;
       if (lineoctavediv !== 0 && edo === 12) {
-        const midi = valueToMidi({freq, noteName})
-        const offFromC = midiOffsetFromC[root] || 0
-        let octave = (midi - offFromC) / 12
-        octave = (octave < 1) ? 4 : octave
-        ctx.lineWidth = thickness / (octave * lineoctavediv)
+        const midi = valueToMidi({ freq, noteName });
+        const offFromC = midiOffsetFromC[root] || 0;
+        let octave = (midi - offFromC) / 12;
+        octave = octave < 1 ? 4 : octave;
+        ctx.lineWidth = thickness / (octave * lineoctavediv);
       }
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(x, y);
@@ -1185,11 +1197,11 @@ function pitchwheel({
           ctx.lineWidth = thickness;
 
           if (lineoctavediv !== 0 && edo === 12) {
-            const midi = valueToMidi({freq, noteName})
-            const offFromC = midiOffsetFromC[root] || 0
-            let octave = (midi - offFromC) / 12
-            octave = (octave < 1) ? 1 : octave
-            ctx.lineWidth = thickness / (octave * lineoctavediv)
+            const midi = valueToMidi({ freq, noteName });
+            const offFromC = midiOffsetFromC[root] || 0;
+            let octave = (midi - offFromC) / 12;
+            octave = octave < 1 ? 1 : octave;
+            ctx.lineWidth = thickness / (octave * lineoctavediv);
           }
           ctx.globalAlpha = alpha;
           ctx.lineTo(x, y);
@@ -1236,7 +1248,7 @@ function pitchwheel({
  * @param {number/bool} notelabel: sets the alpha of static notation-based labels in addition to edolabels (default: 0)
  * @param {number} notelabeldistance: sets the distance of notation-based labels from the origin of circle (default: 0.94, inside circle)
  * @param {lineoctavediv}: allow for dynamic line thickness based on octave (higher octave => thinner, lower octave => thicker)
- * 
+ *
  * @example
  * n("0 .. 12").scale("C:chromatic")
  * .s('sawtooth')
@@ -1269,7 +1281,7 @@ Pattern.prototype.pitchwheel = function (options = {}) {
 };
 
 // convenience functions for lpf/hpf/vel filter automations
-const at = (min,max,c=16)=> min < max ? saw.rangex(min,max).slow(c) : saw.rev().rangex(max,min).slow(c)
+const at = (min, max, c = 16) => (min < max ? saw.rangex(min, max).slow(c) : saw.rev().rangex(max, min).slow(c));
 register('lpp', (min, max, p) => p.lpf(perlin.rangex(min, max)));
 register('lep', (min, max, p) => p.lpe(perlin.rangex(min, max)));
 register('lpfat', (min, max, c, p) => p.lpf(at(min, max, c)));
@@ -1336,13 +1348,39 @@ Pattern.prototype.w = function () {
 window.tone = (frq = 110, gn = 1, shape = 'sine') => freq(frq).s(shape).gain(gn);
 
 const C_MAJOR_JI_MAP = {
-  C2: 0,      C: 0,      C3: 0,      C4: 0,
-  D2: +0.039, D: +0.039, D3: +0.039, D4: +0.039,
-  E1: -0.137, E2: -0.137, E: -0.137, E3: -0.069, E4: -0.137,
-  F1: -0.02, F2: -0.02,  F: -0.02,  F3: -0.02,  F4: -0.02,
-  G1: +0.02, G2: +0.02,  G: +0.02,  G3: +0.02,  G4: +0.02,
-  A1: -0.156, A2: -0.156, A: -0.156, A3: -0.156, A4: -0.156,
-  B1: -0.117, B2: -0.117, B: -0.117, B3: -0.117, B4: -0.117,
+  C2: 0,
+  C: 0,
+  C3: 0,
+  C4: 0,
+  D2: +0.039,
+  D: +0.039,
+  D3: +0.039,
+  D4: +0.039,
+  E1: -0.137,
+  E2: -0.137,
+  E: -0.137,
+  E3: -0.069,
+  E4: -0.137,
+  F1: -0.02,
+  F2: -0.02,
+  F: -0.02,
+  F3: -0.02,
+  F4: -0.02,
+  G1: +0.02,
+  G2: +0.02,
+  G: +0.02,
+  G3: +0.02,
+  G4: +0.02,
+  A1: -0.156,
+  A2: -0.156,
+  A: -0.156,
+  A3: -0.156,
+  A4: -0.156,
+  B1: -0.117,
+  B2: -0.117,
+  B: -0.117,
+  B3: -0.117,
+  B4: -0.117,
 };
 // jitrans is a just intonation transpose
 Pattern.prototype.jitrans = function (seq) {
@@ -1350,15 +1388,25 @@ Pattern.prototype.jitrans = function (seq) {
 };
 
 // just is a top-level function that transform a seq into justly intonated scale
-window.just = function(seq) {
+window.just = function (seq) {
   return seq.note().add(note(0)).transpose(seq.pick(C_MAJOR_JI_MAP));
-}
+};
 
-Pattern.prototype.supersaw = function() { return this.s("supersaw") }
-Pattern.prototype.sine = function() { return this.s("sine") }
-Pattern.prototype.triangle = function() { return this.s("triangle") }
-Pattern.prototype.square = function() { return this.s("square") }
-Pattern.prototype.sawtooth = function() { return this.s("sawtooth") }
+Pattern.prototype.supersaw = function () {
+  return this.s('supersaw');
+};
+Pattern.prototype.sine = function () {
+  return this.s('sine');
+};
+Pattern.prototype.triangle = function () {
+  return this.s('triangle');
+};
+Pattern.prototype.square = function () {
+  return this.s('square');
+};
+Pattern.prototype.sawtooth = function () {
+  return this.s('sawtooth');
+};
 
 // @source https://glossing.dev/scripts.js
 /* Polyphonic non-legato glide

@@ -333,9 +333,9 @@ small {
 small.captions {
   font-style: italic;
   text-transform: none;
-  letter-spacing: -.07rem;
+  letter-spacing: -0.07rem;
   font-size: 1.2rem;
-  padding: .7rem 0;
+  padding: 0.7rem 0;
 }
 
 p {
@@ -362,8 +362,8 @@ p.highlight {
   }
 }
 
-section>a.pink-border,
-a>img.pink-border {
+section > a.pink-border,
+a > img.pink-border {
   border-color: var(--pink);
 }
 

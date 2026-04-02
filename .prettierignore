@@ -4,10 +4,10 @@
 *.
 **/out
 **/dist
-./samples
-./assets
-./examples
-./samples/*
-./assets/*
-./examples/*
+samples/
+assets/
+examples
+samples/*
+assets/*
+examples/*
 .pnpm-store

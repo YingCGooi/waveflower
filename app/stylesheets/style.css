@@ -86,7 +86,6 @@ form#waveform {
 }
 
 @media (max-width: 700px) {
-
   form#waveform,
   #play,
   #stop,
@@ -225,12 +224,12 @@ label {
   color: #fffc;
 }
 
-label>strong {
+label > strong {
   font-weight: 500;
   color: oklch(0.9 0.16 80);
 }
 
-label>small {
+label > small {
   font-size: 1rem;
   vertical-align: center;
   cursor: pointer;
@@ -248,7 +247,7 @@ section#canvases {
   position: relative;
 }
 
-#canvases>canvas {
+#canvases > canvas {
   z-index: -1;
   position: fixed;
   left: 50%;
@@ -387,7 +386,7 @@ nav.icon {
 }
 
 .mobile-icon,
-.mobile-icon>img {
+.mobile-icon > img {
   vertical-align: center;
   display: none;
 
