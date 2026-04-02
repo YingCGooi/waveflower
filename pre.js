@@ -1295,6 +1295,12 @@ register('gainAt', (min, max, c, p) => p.gain(at(min, max, c)));
 register('velat', (min, max, c, p) => p.vel(at(min, max, c)));
 register('velAt', (min, max, c, p) => p.vel(at(min, max, c)));
 
+const triAt = (min,max,c=16)=> min < max ? tri.rangex(min,max).slow(c) : tri.rev().rangex(max,min).slow(c)
+register('lpfTri', (min, max, c, p) => p.lpf(triAt(min, max, c)));
+register('hpfTri', (min, max, c, p) => p.hpf(triAt(min, max, c)));
+register('gainTri', (min, max, c, p) => p.gain(triAt(min, max, c)));
+register('velTri', (min, max, c, p) => p.vel(triAt(min, max, c)));
+
 register('last4', (p) => p.mask('<0@4 1@4>'));
 register('first4', (p) => p.mask('<1@4 0@4>'));
 register('first2', (p) => p.mask('<1@2 0@6>'));
@@ -1348,10 +1354,12 @@ Pattern.prototype.w = function () {
 window.tone = (frq = 110, gn = 1, shape = 'sine') => freq(frq).s(shape).gain(gn);
 
 const C_MAJOR_JI_MAP = {
+  C1: 0,
   C2: 0,
   C: 0,
   C3: 0,
   C4: 0,
+  D1: 0,
   D2: +0.039,
   D: +0.039,
   D3: +0.039,
