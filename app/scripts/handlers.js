@@ -89,6 +89,10 @@ $('#play').addEventListener('click', (e) => {
     return;
   }
   if (manager.replHasCode()) {
+    if (manager.isREPLplaying) {
+      visualizer.calculateColorSteps(new Color(ENV.lineColorStart), new Color(ENV.lineColorEnd));
+      return
+    }
     manager.playREPL(() => {});
     let u = window.location.href;
     const hsh = codeTohash($('.cm-content').textContent.replaceAll('  ', '\n'));
