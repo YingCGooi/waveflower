@@ -8,22 +8,20 @@ await import('https://waveflower.org/pre.js')
 useWet({amount:2,letterSpacing:-1,commentColor:'#FFFFFF09',gutterColor:'#FFF1'})
 const C_MAJOR_JI_MAP = {C1:0,C2:0,C:0,C3:0,C4:0,D2:+0.039,D:+0.039,D3:+0.039,D4:+0.039,E1:-0.137,E2:-0.137,E:-0.137,E3:-0.069,E4:-0.137,F1:-0.02,F2:-0.02,F:-0.02,  F3: -0.02,  F4: -0.02,  G1: +0.02, G2: +0.02,  G: +0.02,  G3: +0.02,  G4: +0.02,  A1: -0.156, A2: -0.156, A: -0.156, A3: -0.156, A4: -0.156,  B1: -0.117, B2: -0.117, B: -0.117, B3: -0.117, B4: -0.117,}
 window.just = function(seq) {  return seq.note().add(note(0)).transpose(seq.pick(C_MAJOR_JI_MAP));}
-const triAt = (min,max,c=16)=> min < max ? tri.rangex(min,max).slow(c) : tri.rev().rangex(max,min).slow(c)
-register('lpfTri', (min, max, c, p) => p.lpf(triAt(min, max, c)));
 setcpm(124 / 4)
 ENV.scaleRadius = 1.25
 
-const opt= {height:100,width:750,thickness:7}
+const opt= {height:100,width:750,thickness:7,scale:1/2}
 // all(x=>x.pianoroll({vertical:true}))
 
 S$PADS_END: just(`<
-[C2, C, E4]@4 [C1, C2, E4, G]@4
+[C2, C, E4]@4 [C2, E, G]@4
 [F2, F, A]@4 [G2, G, B]@4
 [C1, C2, C3]@8
+[C1, G1, C2]@8
 >*2`)
-.s("sawtooth").pan(0)
-.superimpose(x=>x.transpose(+1/5).pan(1))
-//.detune(1/5).unison(2).spread(1)
+.s("supersaw")
+.detune(1/7).unison(2).spread(1)
 .seg(2).dec(1).sus(1).att(1/16)
 .gainTri(1,.7,8).lpfTri(240,6400,8)
 .lpe(1).lpq(1/2).compressor(-10).pg(1/4)._scope(opt)

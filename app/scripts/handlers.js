@@ -90,13 +90,17 @@ $('#play').addEventListener('click', (e) => {
   }
   if (manager.replHasCode()) {
     if (manager.isREPLplaying) {
+      // if REPL is already playing, eval repl then return; don't need to reinitialize analysers
+      manager.playREPL(() => {});
       visualizer.calculateColorSteps(new Color(ENV.lineColorStart), new Color(ENV.lineColorEnd));
       return
     }
     manager.playREPL(() => {});
     let u = window.location.href;
-    const hsh = codeTohash($('.cm-content').textContent.replaceAll('  ', '\n'));
-    window.location.href = u.split('#')[0] + '#' + hsh;
+    if (u.includes(ENV.domain)) {
+      const hsh = codeTohash($('.cm-content').textContent.replaceAll('  ', '\n'));
+      window.location.href = u.split('#')[0] + '#' + hsh;
+    }
 
     replVisualizers = []; // reset temp array
     intervalID = setInterval(() => {

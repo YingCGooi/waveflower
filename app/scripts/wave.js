@@ -16,6 +16,7 @@ var ENV = {
   analyzerWaitDelayMs: 400,
   hueOffsets: 90,
   scaleRadius: 2,
+  domain: 'waveflower.org',
 };
 
 class AudioSourceManager {
