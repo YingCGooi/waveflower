@@ -3,7 +3,6 @@
 // @license CC BY-NC-SA
 // @fraggedBy Glossing
 // @re-fraggedBy Waveflower Gooi
-
 await import('https://glossing.dev/scripts.js')
 await import('https://waveflower.org/pre.js')
 useWet({amount:2,letterSpacing:-1,commentColor:'#FFFFFF09',gutterColor:'#FFF1'})
@@ -12,16 +11,22 @@ window.just = function(seq) {  return seq.note().add(note(0)).transpose(seq.pick
 const triAt = (min,max,c=16)=> min < max ? tri.rangex(min,max).slow(c) : tri.rev().rangex(max,min).slow(c)
 register('lpfTri', (min, max, c, p) => p.lpf(triAt(min, max, c)));
 setcpm(124 / 4)
+ENV.scaleRadius = 1.25
 
 const opt= {height:100,width:750,thickness:7}
-all(x=>x.pianoroll({vertical:true}))
+// all(x=>x.pianoroll({vertical:true}))
 
 S$PADS_END: just(`<
 [C2, C, E4]@4 [C1, C2, E4, G]@4
+[F2, F, A]@4 [G2, G, B]@4
 [C1, C2, C3]@8
 >*2`)
-.s("supersaw").seg(4).unison(2).detune(1/7).dec(1).sus(1)
-.lpfTri(160,3200,8).lpe(1).lpq(1/2).compressor(-10).hpf(40).pg(1/2)
+.s("sawtooth").pan(0)
+.superimpose(x=>x.transpose(+1/5).pan(1))
+//.detune(1/5).unison(2).spread(1)
+.seg(2).dec(1).sus(1).att(1/16)
+.gainTri(1,.7,8).lpfTri(240,6400,8)
+.lpe(1).lpq(1/2).compressor(-10).pg(1/4)._scope(opt)
 
 $PADS: just(cat(
   "[G2, C, G]@3  [D2, D3, F4]",
@@ -33,7 +38,8 @@ $PADS: just(cat(
 )
 .dec(1).sus(1).s("supersaw").unison(2).detune(1/7)
 .lpfTri(160,3200,32).lpe(1).lpq(1/2).compressor(-10).hpf(40).pg(1/2)
-.color('oklch(.6 .2 255)').o(7)._scope(opt)
+.color('oklch(.6 .2 255)').o(7)
+
 const melody = cat(
   "E C E C E C F C",   "E C E C E C D G2",
   "E C E C E C F C",   "E C E C E C G B2",
@@ -58,7 +64,7 @@ $MELODY:stack(
   .room(1/4).size(7).delay(1/4)
   .decay(1).sustain(2).dur(1/8).hpf(200)
   .lpfTri(1600,14400,16).pan("[.9 .4]*4").gain("[1 .8]*4").delayfb(0.6)
-  .postgain(1/2)._scope(opt)
+  .postgain(1/2)
 
 $TEETH: s("sawtooth").set.out(`<
  -1@6 4@6 3@4 
