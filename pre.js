@@ -950,7 +950,7 @@ function pitchwheel({
   exponential = false,
   glow = 0,
   autonote = true,
-  dotalpha = 1,
+  dotalpha = 1/3,
   hapradiusx = 1,
   activedotrx = 1,
   clearrect = false,
@@ -977,7 +977,7 @@ function pitchwheel({
     margin = padding;
   }
   if (margin === 'auto') {
-    margin = ctx.canvas.width / 12;
+    margin = ctx.canvas.width / 16;
   }
   if (divisions || div) {
     edo = divisions || div;
@@ -1053,7 +1053,7 @@ function pitchwheel({
         const degree = degreeIndexes.indexOf(i);
         let intDegLabel = intLabels[degree];
         if (intDegLabel && degreelabel) {
-          ctx.globalAlpha = dotalpha;
+          ctx.globalAlpha = dotalpha*3;
           ctx.font = fontsize * 0.8 + 'px ' + font;
           fillText(ctx, intDegLabel, xl, yl, clearrect);
         }
