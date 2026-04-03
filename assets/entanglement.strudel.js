@@ -4,14 +4,14 @@
 // @fraggedBy Glossing
 // @re-fraggedBy Waveflower Gooi
 await import('https://glossing.dev/scripts.js')
-await import('https://waveflower.org/pre.js?q=a')
-useWet({amount:2,letterSpacing:-1,commentColor:'#FFFFFF09',gutterColor:'#FFF1'})
+await import('https://waveflower.org/pre.js')
+useWet({amount:2,letterSpacing:-1,commentColor:'#FFFFFF09',gutterColor:'#FFF9'})
 setcpm(120 / 4)
 ENV.scaleRadius = 1.25; ENV.lineWidthEnd = 4; ENV.lineWidthStart = 4; ENV.blurFactor = 1; ENV.hueOffsets = 45
 const opt= {height:20,width:750,thickness:4,scale:1.5}
 // all(x=>x.pianoroll({vertical:true}))
 
-S$PADS_END: just(`<
+$PADS_END: just(`<
 [C2, C, G]@4
 [G1, G2]@4
 [C1, C2, C3]@4
@@ -22,7 +22,6 @@ S$PADS_END: just(`<
 .sus(4/3).rel(2/3).att(1/3).color('blue')
 .lpf(2200).lfo({s:1/12,depthabs:4000,shape:0})
 .lpe(1).lpq(1/2).compressor(-12).pg(3/8)._scope()
-
 $PADS: just(cat(
   "[C2, C, G]@3  [D2, D3, F3]",
   "[A1, A2, E]@3 [G1, G2, G3]",
@@ -38,42 +37,29 @@ $PADS: just(cat(
 .sus(4/3).rel(1/4).s("supersaw").unison(2).detune(1/77).spread(1)
 .lpfTri(300,4800,32).lpe(1).lpq(0).compressor(-14).hpf(40).pg(1/3)
 .color('oklch(.6 .2 255)').o(7)._scope(opt)
-const melody = cat(
+const melody1 = cat(
   "E C E C E C F C",   "E C E C E C D G2",
   "E C E C E C F C",   "E C E C E C G B2",
   "E C E C E C F C",   "E C E C E C D G2",
-  "G2 C G2 C G2 C G F","C G C G C G C4 B",
-
-  "E C E C E C F C",   "E C E C E C D G2",
-  "E C E C E C F C",   "E C E C E C G B2",
-  "E C E C E C F C",   "E C E C E C D G2",
-  "G2 C G2 C G2 C G F","C G C G C G C4 B",  
-
-  "C4 G C4 G C4 G F G", "C4 G C4 G C4 G C4 B",
-  "C4 G C4 G C4 G B C4","C4 G C4 G C4 [G C4] D4 C4",  
-  "C4 G C4 G C4 G F G", "C4 G C4 G C4 G C4 B",
+  "G2 C G2 C G2 C G F", "C G C G C G C4 B"
+)
+const melody2 = cat(
+  "C4 G C4 G C4 G F G",  "C4 G C4 G C4 G C4 B",
+  "C4 G C4 G C4 G B C4", "C4 G C4 G C4 [G C4] D4 C4",  
+  "C4 G C4 G C4 G F G",  "C4 G C4 G C4 G C4 B",
   "C4 G C4 G C4 G B C4", "C4 E4 C4 G4 F4 E4 G4 C4",
 )
-$MELODY:stack(
-  just(melody).s("square").vel(2/3),
-  just(melody).s("square").vib(4).vibmod(1/5).pan(0).add(note(24)).vel(2/3),
-  just(melody).s("square").vib(4).vibmod(1/4).pan(1).add(note(12)),
+
+S$MELODY:stack(
+  just(melody1).s("square").vel(2/3),
+  just(melody1).s("square").vib(4).vibmod(1/5).pan(0).add(note(24)).vel(2/3),
+  just(melody1).s("square").vib(4).vibmod(1/4).pan(1).add(note(12)),
 ).att(1/32).color('oklch(.7 .2 160)')
   .room(1/4).size(7).delay(1/4)
   .decay(1).sustain(2).dur(1/8)
   .lpfTri(3200,14400,32).pan("[.9 .4]*4").gain("[1 .8]*4").delayfb(0.6)
-  .postgain(5/8)._scope()
-$GLOSSING_HIGHSAW: s("sawtooth").set.out(`<
- -1@6 4@6 3@4 
- -1@6 2@6 -2@4 
-  4@6 5@4 
-  -2@6 2@6 0 ~ 
-  4@2 5@3 -3@3
->*8`.as("note")).scale("A4:minor").add(note("0,0.33")).room(0.8).delay(0.2)
-  .dry(0.6).gain(0).lfo({ da: 1, dc: 0, sh: 'saw', s: 16})
-  .compressor(-10).hpf(800).lpf(saw.slow(8).range(1200, 3600)).lpa(0.1).lpe(2)
-  .mask("<1 1@2 1 1@2>/8").pg(.7).clip(saw.slow(8).range(1, 2)).add(note(rand.mul(0.1)))
-  .pan(perlin.seed(3).slow(4).range(0, 0.8)).pg(.75).o(5).color('oklch(.88 .2 0)')._scope(opt)
+  .postgain(5/8)._scope(opt)
+
 $GLOSSING_FATBASS: just(`<
   G1@3 F1 A1@3 B1 C2@3 F1 A1@3 B1
   C2@3 D2 A1@3 B1 C2@3 D2 C2@3 B1                        
@@ -103,3 +89,15 @@ x  x    x [x [x x]]
 1  .8    1 [1 [.7 .8]]
 >`).clip(1/5).pg(1.25)
   .fast(8).crush(5).pan(.2).lpfTri(1400,3200,32).hpf(1200)
+
+$GLOSSING_HIGHSAW: s("sawtooth").set.out(`<
+ -1@6 4@6 3@4 
+ -1@6 2@6 -2@4 
+  4@6 5@4 
+  -2@6 2@6 0 ~ 
+  4@2 5@3 -3@3
+>*8`.as("note")).scale("A4:minor").add(note("0,0.33")).room(0.8).delay(0.2)
+  .dry(0.6).gain(0).lfo({ da: 1, dc: 0, sh: 'saw', s: 16})
+  .compressor(-10).hpf(800).lpf(saw.slow(8).range(1200, 3600)).lpa(0.1).lpe(2)
+  .mask("<1 1@2 1 1@2>/8").pg(.7).clip(saw.slow(8).range(1, 2)).add(note(rand.mul(0.1)))
+  .pan(perlin.seed(3).slow(4).range(0, 0.8)).pg(.75).o(5).color('oklch(.88 .2 0)')._scope(opt)
