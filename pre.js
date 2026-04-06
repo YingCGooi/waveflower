@@ -72,6 +72,7 @@ window.removePrebakeCSS = function () {
  */
 window.wetEditor = function ({
   amount = 1,
+  brightness = 1,
   hueShift = 0,
   commentColor = '#222',
   commentStyle = 'italic',
@@ -86,7 +87,7 @@ window.wetEditor = function ({
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
     n.append('#pre,:root { --background: #0017 !important; --lineBackground: #0000 !important;} ');
-    n.append('#pre,canvas {filter:saturate(' + amount + ');}');
+    n.append('#pre,canvas {filter:saturate(' + amount + ') brightness('+brightness+');}');
     n.append('#pre,#code .cm-line>*{background: #0000;}');
     n.append(
       '#pre,.cm-line{filter:hue-rotate(' +

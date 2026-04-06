@@ -1,15 +1,19 @@
 // @title Entanglement
 // @by Waveflower Gooi
 // @license CC BY-NC-SA
-// @fraggedBy Glossing
+//  ___ _  _ _____ _   _  _  ___ _    ___ __  __ ___ _  _ _____
+// | __| \| |_   _/_\ | \| |/ __| |  | __|  \/  | __| \| |_   _|
+// | _|| .` | | |/ _ \| .` | (_ | |__| _|| |\/| | _|| .` | | |(╲  __
+// |___|_|\_| |_/_/ \_\_|\_|\___|____|___|_|  |_|___|_|\_| |_|_╲|/_/
+//                                                           /_/|╲                                                              ╲)
+// @fraggedBy Glossing                                           ╲)
 // @re-fraggedBy Waveflower Gooi
 await import('https://glossing.dev/scripts.js')
 await import('https://waveflower.org/pre.js')
 useWet({amount:2,letterSpacing:-1,commentColor:'#FFFFFF09',gutterColor:'#FFF9'})
 setcpm(120 / 4)
-ENV.scaleRadius = 1.25; ENV.lineWidthEnd = 4; ENV.lineWidthStart = 4; ENV.blurFactor = 1; ENV.hueOffsets = 45
+ENV.scaleRadius = 1.25; ENV.lineWidthEnd = 3; ENV.lineWidthStart = 3; ENV.blurFactor = 1; ENV.hueOffsets = 45
 const opt= {height:20,width:750,thickness:4,scale:1.5}
-// all(x=>x.pianoroll({vertical:true}))
 
 $PADS_END: just(`<
 [C2, C, G]@4
@@ -22,7 +26,8 @@ $PADS_END: just(`<
 .sus(4/3).rel(2/3).att(1/3).color('blue')
 .lpf(2200).lfo({s:1/12,depthabs:4000,shape:0})
 .lpe(1).lpq(1/2).compressor(-12).pg(3/8)._scope()
-$PADS: just(cat(
+
+const c = cat(
   "[C2, C, G]@3  [D2, D3, F3]",
   "[A1, A2, E]@3 [G1, G2, G3]",
   "[C2, C, E4, G]@3  [D2, F, D, A]",
@@ -31,33 +36,50 @@ $PADS: just(cat(
   "[A1, A2, C, E4]@3 [G2, D3, B3]",
   "[C2, C, E4, G]@3  [D2, F, D, A]",
   "[A1, A2, C, E]@3 [G1, G2, G, B2]",  
-)).vel(
+)
+const i = cat(
+  "[A1, A2, E]@3 [E2, E3, B3]",
+  "[F1, F2, C]@3 [G1, G2, G3]",
+  "[A2, C, A, E4]@3  [E2, G2, E, G]",
+  "[F1, F2, A, C]@3 [G2, D3, B2, D3]",
+  "[A2, C, E]@3  [E2, E3, G4]",
+  "[F1, F2, A2, C]@3 [G2, D3, B3]",
+  "[A1, A2, C, E4]@3  [C1, E, G, E4]",
+  "[F1, A2, C, F]@3 [G1, G2, G, B2]",
+)
+S$PADS: just(i).vel(
   "<1.2 1 .9 .9>"
 )
 .sus(4/3).rel(1/4).s("supersaw").unison(2).detune(1/77).spread(1)
 .lpfTri(300,4800,32).lpe(1).lpq(0).compressor(-14).hpf(40).pg(1/3)
 .color('oklch(.6 .2 255)').o(7)._scope(opt)
-const melody1 = cat(
+const m1 = cat(
   "E C E C E C F C",   "E C E C E C D G2",
   "E C E C E C F C",   "E C E C E C G B2",
   "E C E C E C F C",   "E C E C E C D G2",
   "G2 C G2 C G2 C G F", "C G C G C G C4 B"
 )
-const melody2 = cat(
+const m2 = cat(
   "C4 G C4 G C4 G F G",  "C4 G C4 G C4 G C4 B",
   "C4 G C4 G C4 G B C4", "C4 G C4 G C4 [G C4] D4 C4",  
   "C4 G C4 G C4 G F G",  "C4 G C4 G C4 G C4 B",
   "C4 G C4 G C4 G B C4", "C4 E4 C4 G4 F4 E4 G4 C4",
 )
+const i1 = cat(
+  "C4 G B C4 C4 [G C4] D4 C4", "C4 G B C4 C4 [C4 D4] C4 B",
+  "C4 G B C4 C4 [G C4] D4 C4", "C4 G B [C4 D4] E4 D4 C4 B",
+  "C4 G B C4 C4 [G C4] D4 C4", "C4 G B C4 C4 [C4 D4] C4 B",
+  "C4 G B C4 C4 [G C4] D4 C4", "C4 G B [C4 D4] E4 F4 E4 D4",  
+)
 
-S$MELODY:stack(
-  just(melody1).s("square").vel(2/3),
-  just(melody1).s("square").vib(4).vibmod(1/5).pan(0).add(note(24)).vel(2/3),
-  just(melody1).s("square").vib(4).vibmod(1/4).pan(1).add(note(12)),
+S$SUPERSQUARE:stack(
+  just(i1).s("square").vel(2/3),
+  just(i1).s("square").vib(2).vibmod(1/12).pan(1).add(note(12)),
+  just(i1).s("square").vib(4).vibmod(1/4).pan(0).add(note(24)).vel(1/2),  
 ).att(1/32).color('oklch(.7 .2 160)')
   .room(1/4).size(7).delay(1/4)
-  .decay(1).sustain(2).dur(1/8)
-  .lpfTri(3200,14400,32).pan("[.9 .4]*4").gain("[1 .8]*4").delayfb(0.6)
+  .decay(1).sustain(2).rel(1/8)
+  .lpfTri(3200,14400,16).pan("[.9 .4]*4").gain("[1 .8]*4").delayfb(0.6)
   .postgain(5/8)._scope(opt)
 
 $GLOSSING_FATBASS: just(`<

@@ -18,12 +18,13 @@ samples({
   short: 'cactus/perc/CACTUS_PERC_14_ONESHOT.mp3',
   uplifter: 'fl/uplifter1.wav',
   downlifter: 'fl/dnlifter1.wav'
-}, 'https://waveflower.org/samples/');
+}, 'http://localhost:5432');
 
-useWet({amount: 1.4, commentColor: '#222', gutterColor: '#000', commentStyle: 'normal', letterSpacing: -0.1})
+useWet({amount: 1.4, commentColor: '#FFF1', gutterColor: '#FFF1', commentStyle: 'normal', letterSpacing: -0.1})
 
 setcpm(132/4)
 
+const t = (p) => dry(p.withValue(x=>0)).color('oklch(.8 .2 90)')
 const at = (min,max,c=16)=> min < max ? saw.rangex(min,max).slow(c) : saw.rev().rangex(max,min).slow(c)
 register('ov', (c, p) => p.slow(c))
 register('cyan', (alpha, p) => p.color('oklch(.7 .2 240 /'+alpha+')'))
@@ -34,17 +35,6 @@ register('maroon', (alpha,p) => p.color('oklch(.4 .2 0 /'+alpha+')'))
 register('delayBy', (n, p) => p.mask("<0@4 1@4>"))
 register('first4', (p) => p.mask("<1@4 0@4>"))
 register('first2', (p) => p.mask("<1@2 0@6>"))
-register('lpfat', (min,max,c,p)=>p.lpf(at(min,max,c)))
-register('lpfAt', (min,max,c,p)=>p.lpf(at(min,max,c)))
-register('lpeat', (min,max,c,p)=>p.lpe(at(min,max,c)))
-register('lpeAt', (min,max,c,p)=>p.lpe(at(min,max,c)))
-register('hpfat', (min,max,c,p)=>p.hpf(at(min,max,c)))
-register('hpfAt', (min,max,c,p)=>p.hpf(at(min,max,c)))
-register('gainat', (min,max,c,p)=>p.gain(at(min,max,c)))
-register('gainAt', (min,max,c,p)=>p.gain(at(min,max,c)))
-register('velat', (min,max,c,p)=>p.vel(at(min,max,c)))
-register('velAt', (min,max,c,p)=>p.vel(at(min,max,c)))
-
 
 const UP_SQ = `<[C3:.4,C4]>`.slow(2).as("note:vel").s("square")
 .room(1/2).size(6)
@@ -212,7 +202,7 @@ C4:.4 C5:.7 F4:.4 [C5:.9 C4:.4]
   lpf(9000).lpe(2).lpq(1).hpf(400)
 )
 
-const SNARE = s("akaimpc60_sd:1,akaixr10_sd:7,d70_cp:0").struct(`<
+const SNARE = s("akaimpc60_sd:1,akaixr10_sd:7,d70_cp:0,pink").struct(`<
 ~ x ~ x
 ~ x ~ [x ~ x x]
 ~ x ~ x
@@ -221,13 +211,13 @@ const SNARE = s("akaimpc60_sd:1,akaixr10_sd:7,d70_cp:0").struct(`<
 .fast(4).gain(2/3).dec(1/2).sus(1/4).pan(2/3).coarse(3).crush(7)
 .room(1/2).size(3).hpf(400)
 
-const SNARE2 = s("akaimpc60_sd:1,akaimpc60_sd:1,akaixr10_sd:7,d70_cp:0").struct(`<
+const SNARE2 = s("akaimpc60_sd:1,akaixr10_sd:7,d70_cp:0").struct(`<
 ~ x ~ x
 ~ x ~ x
 ~ x ~ x
 ~ x ~ [x ~ x x]
->`).fast(4).gain(1).pan(2/3)
-.room(1/2).size(3).hpf(300)
+>`).fast(4).gain(4/5).pan(2/3).off(1/64, x=>x.s("pink").hpf(1000))
+.room(1/2).size(3).hpf(700)
 
 const SNUP = s("alesissr16_sd:0").struct(`<
 x x x [x x] x x x [x x]
@@ -520,25 +510,24 @@ const SQMEL = (melody) => melody.add(note(24))
 .off(0, x=>x.s("square").transpose(1/6).vel(3/4).pan(1))
 .color('oklch(.7 .2 210)')  
 const piano1 = cat(`<
-[A,C4] ~ ~ E4@0.5
-[E,G] ~ ~  C4
-G ~ ~ E4
-F ~ ~ G4
-~  ~  ~ E4@0.5
-F  ~  ~ F4
-G  ~  ~ B
-C  ~  ~ B@0.5
-
-A ~  ~ E4@0.5
-E ~   B  C4
-G ~   G4@1.5 E4@0.5
-F ~  F4 G4
-A ~  E4@1.5 A4@0.5
-F ~   C4 F4
-G ~  F4 C4
-G4 _ D5 C5
->`).fast(8).note()
-.pan(`.3 .8 1 .8`.fast(2))
+A3 ~ ~ E3
+C3 ~ ~ C3
+G3 ~ G3 E3
+F3 ~ ~ <G3 ~>
+A3 ~ ~ E3
+F3 ~ ~ F3
+G3 ~ G3 B3
+C3 ~ ~ <B3 ~>
+A3 ~ ~ E3
+C3 ~ ~ C3
+G3 ~ G3 E3
+F3 ~ ~ <G3 ~>
+A3 ~ ~ A3
+F3 ~ ~ F3
+C2 ~ F2 ~
+G2 ~ ~ C2
+>`).fast(8).note().add(note("12,24"))
+.pan(`.7 .8 .9 .8`.fast(2))
 
 const pianoEnd = cat(
 "A C  A@2 A@2 A E2",
@@ -582,82 +571,95 @@ $:arrange(
   //           INTRO_BASS.lpfAt(40,300,24).early(16),
   //           SWEEP_UP.early(8), SNUP)
   // ],
-  [8, stack(SWEEP_DOWN,
-            PAD.lpfAt(800,12000,16), 
-            BASS.lpfAt(120,400,16), CRASH, SQ)],
-  [8, stack(
-    RIDE, 
-    PAD.lpfAt(800,14400,16).early(8), 
-    BASS.lpfAt(100,400,16).early(8), SQ, 
-    SNARE.coarse("<1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.6 7 7.5 8 8.5>*2"), 
-    OH.lpfAt(8000,12000,8).pan(.2))],
-  [8, stack(
-    VIOLIN(violinchrd).lpfAt(700, 3200, 8),    
-    PAD.lpf(at(9000,4000,8)), 
-    BASS.lpf(400), SQ.lpf(at(8000,200,8)), 
-    SNARE.room(1/4).postgain(3/4).coarse(run8),
-    OH.lpf(at(8000,200,8)),
-    SWEEP_UP.early(4),
-    CLOCK4.gain(1.4),
-  )],
-  [4, stack(
-    VIOLIN(violinbreak).lpfAt(3200,1200,4).hpfAt(800,400,4).room("<0 .2 .7 1>").size(9),
-    PADBREAK.lpfAt(700,180,4), 
-    BASSBREAK.lpfAt(400,100,4), 
-    SWEEP_UP.early(12),
-    CLOCK4.early(4))],
-  [8, stack(KICK, RIDE, FATBASS(lineC).postgain(1/2).lpf(at(170,6400,16)),
-            SOFT_CR.postgain(2/3),
-            CLOCK4,
-            SNARE.coarse(5).postgain(2/3).delayBy(4).lpf(12800).hpf(3200)
-           )],
-  [8, stack(KICK, RIDE, HH, SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
-            FATBASS(lineC).postgain(1/3).lpf(at(170,6400,16)).early(8),
-            SYNTHLINE)],
-  [8, stack(KICK, RIDE, HH, SWEEP_UP.late(4),
-            SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
-            FATBASS(lineC).lpf(6400).postgain(1/3),
-            SYNTHLINE.lpf(12800),
-            INTRO_SQ.lpf(at(200,6000,8)))],
-  [8, stack(KICK, RIDE, OH, HH, SWEEP_UP.early(8),SNUP, CLOCK8.gainAt(1,1/4,8),
-            SNARE.coarse(run8).postgain(2/3).lpf(12800).hpf(6400),
-            FATBASS(lineC).lpf(6400).postgain(1/3),
-            SYNTHLINE.lpf(at(12800,400,8)),
-            INTRO_SQ.lpf(6000)
-  )],
-  [8, stack(SWEEP_DOWN.phaser(1/128).lpf(at(16000,1,4)).first4(), 
-            HARD_CR.first4(),
-            RIDE.lpf(at(8400,100,4)).first4(), 
-            OH.lpf(at(4800,400,4)).first4(), 
-            SYNTHLINE.lpf(at(800,10,4)).first2(),
-            PIZZ(submel0).lpf(at(12800,16000,8)), 
-            PIZZMEL(melody0).lpf(at(300,14400,8)).gain(at(1.25,1,8)),
-            FATFAT(line0).hpf(320).lpf(at(40,2400,8))
-            .postgain(1/7).delayBy(4),
-  )],
-  [8, stack(KICK.lpf(1000), SWEEP_UP.hpf(at(550,8000,8)).lpf(at(800,14000,8)).postgain(1/3),
-            FATFAT(line0).hpf(330).lpf(at(2400,3200,8)).postgain(1/8), 
-            HH.delayBy(4),
-            SNARE2.delayBy(4).coarse(4).crush(3).room(1/4).rel(1/4)
-            .postgain(1/2).lpf(8400).hpf(2400),
-            PIZZ(submel0).lpf(16000),
-            PIZZMEL(melody0).hpf(500).lpf(14400), 
-            SQMEL(melody0).hpf(550).lpf(at(200,12800,8)).gain(at(1/2,2/3,8)),
-  )],
-  [8, stack(SOFT_CR, KICK.lpf(2200), RIDE, SNUP.lpf(at(20000,400,8)).postgain(1.33).delayBy(4),
-            FATFAT(line1).hpf(330).lpf(3300).postgain(1/8),
-            HH, OHH, OH.lpf(9600).pan(1/9),
-            SNARE2.coarse(3).crush(3).postgain(1/2).lpf(12800).hpf(3200),
-            PIANO(piano1).lpf(at(110,880,8)).delayBy(4),            
-            PIZZ(submel1).lpf(1200).postgain(2.7), 
-            PIZZMEL(melody2).hpf(500).lpf(14400),
-            SQMEL(melody2).hpf(550).lpf(12800)
-  )],
+  // [8, stack(SWEEP_DOWN,
+  //           PAD.lpfAt(800,12000,16), 
+  //           BASS.lpfAt(120,400,16), CRASH, SQ)],
+  // [8, stack(
+  //   RIDE, 
+  //   PAD.lpfAt(800,14400,16).early(8), 
+  //   BASS.lpfAt(100,400,16).early(8), SQ, 
+  //   SNARE.coarse("<1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.6 7 7.5 8 8.5>*2"), 
+  //   OH.lpfAt(8000,12000,8).pan(.2))],
+  // [8, stack(
+  //   VIOLIN(violinchrd).lpfAt(700, 3200, 8),    
+  //   PAD.lpf(at(9000,4000,8)), 
+  //   BASS.lpf(400), SQ.lpf(at(8000,200,8)), 
+  //   SNARE.room(1/4).postgain(3/4).coarse(run8),
+  //   OH.lpf(at(8000,200,8)),
+  //   SWEEP_UP.early(4),
+  //   CLOCK4.gain(1.4),
+  // )],
+  // [4, stack(
+  //   VIOLIN(violinbreak).lpfAt(3200,1200,4).hpfAt(800,400,4).room("<0 .2 .7 1>").size(9),
+  //   PADBREAK.lpfAt(700,180,4), 
+  //   BASSBREAK.lpfAt(400,100,4), 
+  //   SWEEP_UP.early(12),
+  //   CLOCK4.early(4))],
+  // [8, stack(KICK, RIDE, FATBASS(lineC).postgain(1/2).lpf(at(170,6400,16)),
+  //           SOFT_CR.postgain(2/3),
+  //           CLOCK4,
+  //           SNARE.coarse(5).postgain(2/3).delayBy(4).lpf(12800).hpf(3200)
+  //          )],
+  // [8, stack(KICK, RIDE, HH, SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
+  //           FATBASS(lineC).postgain(1/3).lpf(at(170,6400,16)).early(8),
+  //           SYNTHLINE)],
+  // [8, stack(KICK, RIDE, HH, SWEEP_UP.late(4),
+  //           SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
+  //           FATBASS(lineC).lpf(6400).postgain(1/3),
+  //           SYNTHLINE.lpf(12800),
+  //           INTRO_SQ.lpf(at(200,6000,8)))],
+  // [8, stack(KICK, RIDE, OH, HH, SWEEP_UP.early(8),SNUP, CLOCK8.gainAt(1,1/4,8),
+  //           SNARE.coarse(run8).postgain(2/3).lpf(12800).hpf(6400),
+  //           FATBASS(lineC).lpf(6400).postgain(1/3),
+  //           SYNTHLINE.lpf(at(12800,400,8)),
+  //           INTRO_SQ.lpf(6000)
+  // )],
+  // [8, stack(
+  //           t(`<this pizzicato rhythm is inspired by Enyas classics>`),
+  //           PIZZ(submel0),//.lpf(at(12800,16000,8)), 
+  //           PIZZMEL(melody0),//.lpf(at(300,14400,8)).gain(at(1.25,1,8)),
+  //           FATFAT(line0).hpf(320).lpf(at(60,2400,8)).postgain(1/7).delayBy(4),
+  //           HARD_CR.first4(),
+  //           RIDE.lpf(at(8400,100,4)).first4(), 
+  //           OH.lpf(at(4800,400,4)).first4(), 
+  //           SYNTHLINE.lpf(at(800,10,4)).first2(),    
+  //           SWEEP_DOWN.phaser(1/128).lpf(at(16000,1,4)).first4(),
+  // )],
+  // [8, PIANO(piano1)],
+  // [8, stack(t(`<distort fatbass added to complement the bounciness of pizzicato>`),
+  //           KICK.lpf(1400), SWEEP_UP.hpf(at(550,8000,8)).lpf(at(800,14000,8)).postgain(1/3),
+  //           HH.delayBy(4),
+  //           SNARE2.delayBy(4).coarse(4).crush(3).room(1/4).rel(1/4).postgain(1/2).lpf(8400).hpf(2400),
+  //           PIZZ(submel0).lpf(16000),
+  //           FATFAT(line0).hpf(330).lpf(at(2400,3200,8)).postgain(1/8),             
+  //           PIZZMEL(melody0).hpf(500).lpf(14400), 
+  //           SQMEL(melody0).hpf(550).lpf(at(200,6400,8)).gain(at(1/2,2/3,8)),
+  // )],
+  // [8, stack(t(`<layer a 3x-square-lead to create extra richness>`),
+  //           SOFT_CR, KICK.lpf(2200), RIDE,
+  //           HH, OH.lpf(9600).pan(1/9),
+  //           SNARE2.coarse(3).crush(3).postgain(1/2).lpf(12800).hpf(3200),
+  //           PIZZ(submel1).lpf(1200).postgain(2.7),
+  //           FATFAT(line1).hpf(330).lpf(3300).postgain(1/8),            
+  //           PIZZMEL(melody2).hpf(500).lpf(14400),
+  //           SQMEL(melody2).hpf(550).lpf(at(6400,12800,8)),
+  // )],
+  // [8, stack(t(`<rave rave rave rave rave rave rave rave>`),
+  //           SOFT_CR, KICK.lpf(2200), RIDE, SNUP.lpf(at(20000,400,8)).postgain(1.33).delayBy(4),
+  //           HH, OHH, OH.lpf(9600).pan(1/9),
+  //           SNARE2.coarse(3).crush(3).postgain(1/2).lpf(12800).hpf(3200),
+  //           PIANO(piano1),            
+  //           PIZZ(submel1).lpf(1200).postgain(2.7),
+  //           FATFAT(line1).hpf(330).lpf(3300).postgain(1/8),            
+  //           PIZZMEL(melody1).hpf(500).lpf(14400),
+  //           SQMEL(melody1).hpf(550).lpf(12800)
+  // )],  
   [8, stack(RIDE.lpf(at(8400,100,4)).first4(), CLOCK4.lpf(6400).postgain(7/8),
-            SWEEP_DOWN.postgain(2/3), OH.lpf(at(9600,6400,8)).pan(1/9), 
-            FATFAT(line1).hpf(330).lpf(at(2400, 200, 8)).postgain(1/6), 
+            SWEEP_DOWN.postgain(2/3), OH.lpf(at(9600,6400,8)).pan(1/9),  
             SNARE2.coarse("<3 3.5 4 5 5@4>").crush(4).postgain(1/2).lpf(at(4800,400,8)).hpf(800),
+            PIANO(piano1),
             PIZZ(submel1).lpf(14400),
+            FATFAT(line1).hpf(330).lpf(at(2400, 200, 8)).postgain(1/6),            
             PIZZMEL(melody1).hpf(500).lpf(14400),
             SQMEL(melody1).lpe(1).hpf(700).lpf(at(9600,700,8))
   )],
@@ -676,7 +678,7 @@ $:arrange(
   root: 'C',
   exponential: false,
   mode:'flakygon',
-  thickness: 32,
+  thickness: 64,
   glow: 64,
   labels: 'numbers',
   textsize: 1.1,
@@ -685,5 +687,6 @@ $:arrange(
   dotalpha: 1/2,
   circle: 0,
   linejoin: 'miter',
-  lineoctavediv: .5,
+  lineoctavediv: 1,
+  margin: 120,
 })
