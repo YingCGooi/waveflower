@@ -39,7 +39,7 @@ const interlude = cat(
   "[A2, A3, C2]@3     [E2, E3, G3]",    "[F1, F2, A2, F3]@3 [G2, D3, B3]",
   "[C2, C, E4, G]@3   [E2, E3, G3, B3]","[A3, C3, F3]@3 [G1, G2, G3, B2]",
 )
-$PADS: just(interlude).vel(
+S$PADS: just(interlude).vel(
   "<1.2 1 .9 .9>"
 )
 .sus(4/3).rel(1/4).s("supersaw").unison(2).detune(1/77).spread(1)
@@ -57,12 +57,6 @@ const m2 = cat(
   "C4 G C4 G C4 G F G",  "C4 G C4 G C4 G C4 B",
   "C4 G C4 G C4 G B C4", "C4 E4 C4 G4 F4 E4 G4 C4",
 )
-const i1 = cat(
-  "G C4 G C4 G C4 B C4",  "G C4 G C4 G C4 D4 C4",
-  "G C4 G C4 G C4 B C4",  "G C4 G C4 G C4 F4 E4",
-  "G C4 G C4 G C4 B C4",  "G C4 G C4 G C4 D4 C4",
-  "G E4 G E4 G E4 F4 G4", "G4 C4 G4 C4 G4 F4 E4 C4",
-)
 const i2 = cat(
   "C4 G B C4 C4 [G C4] D4 C4", "C4 [F G] B C4 C4 [C4 D4] C4 B",
   "C4 G B C4 C4 [G C4] D4 C4", "C4 G B [C4 D4] E4 D4 C4 B",  
@@ -78,7 +72,7 @@ const iarp = cat(
 
 S$ARP: 
   just(iarp).s("tri").add(note("12")).pan(0)
-.off(1/128, x=>x.add(note("0")).pan(2/3).color('oklch(.7 .2 0)')._scope())
+.off(1/128, x=>x.add(note("0")).pan(2/3).color('oklch(.7 .2 0)')._scope(opt))
 .att(1/64).room(1/4)
 .lpfTri(3200,14400,32)  
 .postgain(1/2).diode(1)
@@ -105,32 +99,34 @@ const bi = `<
   A2@3 E2 F1@3 G1 C2@3 E2 F2@3 G1  
 >*4`
 
-$GLOSSING_FATBASS: just(bi).s("saw").hpf(240).pan(1/2).seg(16)
+S$GLOSSING_FATBASS: just(bi).s("saw").hpf(240).pan(1/2).seg(16)
   .lpfTri(700,3200,32).diode(0.8).compressor(-20).dur(1/24)
   .add(stack(note("0"), note("12.1").gain(0.2))).color('red')
-  .postgain(2/3).glide(0.1).o(5)//._scope(opt)
+  .postgain(2/3).glide(0.1).o(5)._scope(opt)
 
-$KICKS: s("[bd:2:.2,bd:5]*4").set.out(`<1 1 1 1>*4`).lpf(660).pg(2/3)
+S$KICKS: s("[bd:2:.2,bd:5]*4").set.out(`<1 1 1 1>*4`).lpf(660).pg(2/3)
   .fit().clip(1/5).hpf(60)
   .duck("5:7").duckatt(".3:.4").duckdepth(".9:.9")
   .mask("<1@7 0 1@7 0>").pg(5/8)
-$CLAPS: s("[cp,white]").struct(`<
-  ~ x ~ x
-  ~ x ~ x
-  ~ x ~ x
-  ~ x ~ [x ~ x x]
->*4`).lpfTri(1200,4000,32).mask("<1 1>/8").pan(2/3).pg(1/4)
-$OHH: s("[~ oh]*4").crush(7).vel(rand.range(0.77, 1))
+
+S$CLAPS: s("[cp,white]").struct(`<
+~ x ~ x ~ x ~ x
+~ x ~ x ~ x ~ [x ~ x x] 
+>*4`)
+.lpfTri(1200,4000,32).mask("<1 1>/8").pan(2/3).pg(1/4)
+
+S$OHH: s("[~ oh]*4").crush(7).vel(rand.range(0.77, 1))
   .pan(.8)
-  .hpf(3200).almostNever(ply(2)).clip(rand.seed(2).range(0.6, 1)).rib(28, 2).pg(2/3)
+  .hpf(3200).almostNever(ply(2)).clip(rand.seed(2).range(0.6, 1)).rib(28, 2).pg(1/2)
   .mask("<0 1 1 1>/8")
-$HH: s("oh").struct(`<
+
+S$HH: s("oh").struct(`<
 x [x x] x [x  x   ]
 x  x    x [x [x x]]
 >`).vel(`<
 1 [.8 1] 1 [1  .8    ]
 1  .8    1 [1 [.7 .8]]
->`).clip(1/5).pg(1.25)
+>`).clip(1/5).pg(1.1)
   .fast(8).crush(5).pan(.2).lpfTri(1400,3200,32).hpf(1200)
 
 $GLOSSING_HIGHSAW: s("sawtooth").set.out(`<
