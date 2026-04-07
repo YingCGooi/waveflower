@@ -5,14 +5,14 @@
 // | __| \| |_   _/_\ | \| |/ __| |  | __|  \/  | __| \| |_   _|
 // | _|| .` | | |/ _ \| .` | (_ | |__| _|| |\/| | _|| .` | | |(╲  __
 // |___|_|\_| |_/_/ \_\_|\_|\___|____|___|_|  |_|___|_|\_| |_|_╲|/_/
-//                                                           /_/|╲                                                              ╲)
+//                                                           /_/|╲ 
 // @fraggedBy Glossing                                           ╲)
 // @re-fraggedBy Waveflower Gooi
 await import('https://glossing.dev/scripts.js')
 await import('https://waveflower.org/pre.js')
-useWet({amount:2,letterSpacing:-1,commentColor:'#FFFFFF09',gutterColor:'#FFF9'})
+useWet({amount:1,letterSpacing:-1,commentColor:'#FFFFFF09',gutterColor:'#FFF9',brightness:.75})
 setcpm(120 / 4)
-ENV.scaleRadius = 1.25; ENV.lineWidthEnd = 3; ENV.lineWidthStart = 3; ENV.blurFactor = 1; ENV.hueOffsets = 45
+ENV.scaleRadius = 2; ENV.lineWidthEnd = 3; ENV.lineWidthStart = 3; ENV.blurFactor = 1; ENV.hueOffsets = 45
 const opt= {height:20,width:750,thickness:4,scale:1.5}
 
 $PADS_END: just(`<
@@ -26,33 +26,25 @@ $PADS_END: just(`<
 .sus(4/3).rel(2/3).att(1/3).color('blue')
 .lpf(2200).lfo({s:1/12,depthabs:4000,shape:0})
 .lpe(1).lpq(1/2).compressor(-12).pg(3/8)._scope()
-
-const c = cat(
-  "[C2, C, G]@3  [D2, D3, F3]",
-  "[A1, A2, E]@3 [G1, G2, G3]",
-  "[C2, C, E4, G]@3  [D2, F, D, A]",
-  "[A1, A2, E, C]@3 [G2, D3, B2, D3]",
-  "[C2, C, E]@3  [D2, D3, F4]",
-  "[A1, A2, C, E4]@3 [G2, D3, B3]",
-  "[C2, C, E4, G]@3  [D2, F, D, A]",
-  "[A1, A2, C, E]@3 [G1, G2, G, B2]",  
+  
+const chrd = cat(
+  "[C2, C, G]@3     [D2, D3, F3]",  "[A1, A2, E]@3     [G1, G2, G3]",
+  "[C2, C, E4, G]@3 [D2, F, D, A]", "[A1, A2, E, C]@3  [G2, D3, B2, D3]",
+  "[C2, C, E]@3     [D2, D3, F4]",  "[A1, A2, C, E4]@3 [G2, D3, B3]",
+  "[C2, C, E4, G]@3 [D2, F, D, A]", "[A1, A2, C, E]@3  [G1, G2, G, B2]",  
 )
-const i = cat(
-  "[A1, A2, E]@3 [E2, E3, B3]",
-  "[F1, F2, C]@3 [G1, G2, G3]",
-  "[A2, C, A, E4]@3  [E2, G2, E, G]",
-  "[F1, F2, A, C]@3 [G2, D3, B2, D3]",
-  "[A2, C, E]@3  [E2, E3, G4]",
-  "[F1, F2, A2, C]@3 [G2, D3, B3]",
-  "[A1, A2, C, E4]@3  [C1, E, G, E4]",
-  "[F1, A2, C, F]@3 [G1, G2, G, B2]",
+const interlude = cat(
+  "[A2, A3, E3]@3     [E2, E3, G3]",    "[F1, F2, C3, F3]@3 [G1, G2, D3]",
+  "[A2, A3, E3, E4]@3 [E2, G2, E3, G3]","[F2, A3, C3, F3]@3 [G2, G3, B3]",
+  "[A2, A3, C2]@3     [E2, E3, G3]",    "[F1, F2, A2, F3]@3 [G2, D3, B3]",
+  "[C2, C, E4, G]@3   [E2, E3, G3, B3]","[A3, C3, F3]@3 [G1, G2, G3, B2]",
 )
-S$PADS: just(i).vel(
+$PADS: just(interlude).vel(
   "<1.2 1 .9 .9>"
 )
 .sus(4/3).rel(1/4).s("supersaw").unison(2).detune(1/77).spread(1)
-.lpfTri(300,4800,32).lpe(1).lpq(0).compressor(-14).hpf(40).pg(1/3)
-.color('oklch(.6 .2 255)').o(7)._scope(opt)
+.lpfTri(400,6400,32).lpe(1).lpq(0).compressor(-14).hpf(40).pg(1/3)
+.color('oklch(.7 .2 255)').o(7)._scope(opt)
 const m1 = cat(
   "E C E C E C F C",   "E C E C E C D G2",
   "E C E C E C F C",   "E C E C E C G B2",
@@ -66,33 +58,62 @@ const m2 = cat(
   "C4 G C4 G C4 G B C4", "C4 E4 C4 G4 F4 E4 G4 C4",
 )
 const i1 = cat(
+  "G C4 G C4 G C4 B C4",  "G C4 G C4 G C4 D4 C4",
+  "G C4 G C4 G C4 B C4",  "G C4 G C4 G C4 F4 E4",
+  "G C4 G C4 G C4 B C4",  "G C4 G C4 G C4 D4 C4",
+  "G E4 G E4 G E4 F4 G4", "G4 C4 G4 C4 G4 F4 E4 C4",
+)
+const i2 = cat(
+  "C4 G B C4 C4 [G C4] D4 C4", "C4 [F G] B C4 C4 [C4 D4] C4 B",
+  "C4 G B C4 C4 [G C4] D4 C4", "C4 G B [C4 D4] E4 D4 C4 B",  
   "C4 G B C4 C4 [G C4] D4 C4", "C4 G B C4 C4 [C4 D4] C4 B",
-  "C4 G B C4 C4 [G C4] D4 C4", "C4 G B [C4 D4] E4 D4 C4 B",
-  "C4 G B C4 C4 [G C4] D4 C4", "C4 G B C4 C4 [C4 D4] C4 B",
-  "C4 G B C4 C4 [G C4] D4 C4", "C4 G B [C4 D4] E4 F4 E4 D4",  
+  "C4 G B C4 C4 [G C4] D4 C4", "C4 G B [C4 D4] E4 F4 E4 D4",
+)
+const iarp = cat(
+  "[A2 E3 C4]!3 [E2 E G]", "[F2 C3 F3]!3 [G2 B2 C]",
+  "[A2 E3 C4]!3 [E2 E G]", "[F2 C3 F3]!3 [G2 B2 D]",
+  "[A2 E3 C4]!3 [E2 E G]", "[F2 C3 F3]!3 [G2 B2 D]",
+  "[G2 C3 G3]!3 [E2 E C]", "[F2 C3 F3]!3 [G2 D G]",
 )
 
-S$SUPERSQUARE:stack(
-  just(i1).s("square").vel(2/3),
-  just(i1).s("square").vib(2).vibmod(1/12).pan(1).add(note(12)),
-  just(i1).s("square").vib(4).vibmod(1/4).pan(0).add(note(24)).vel(1/2),  
+S$ARP: 
+  just(iarp).s("tri").add(note("12")).pan(0)
+.off(1/128, x=>x.add(note("0")).pan(2/3).color('oklch(.7 .2 0)')._scope())
+.att(1/64).room(1/4)
+.lpfTri(3200,14400,32)  
+.postgain(1/2).diode(1)
+.color('oklch(.7 .2 200)')
+
+let notes = i2
+let shape = "square"
+$SUPERSQUARE:stack(
+  just(notes).s(shape).vel(2/3),
+  just(notes).s(shape).vib(2).vibmod(1/12).pan(1).add(note(12)),
+  just(notes).s(shape).vib(4).vibmod(1/4).pan(2/3).add(note(24)).vel(0),  
 ).att(1/32).color('oklch(.7 .2 160)')
   .room(1/4).size(7).delay(1/4)
   .decay(1).sustain(2).rel(1/8)
-  .lpfTri(3200,14400,16).pan("[.9 .4]*4").gain("[1 .8]*4").delayfb(0.6)
-  .postgain(5/8)._scope(opt)
-
-$GLOSSING_FATBASS: just(`<
+  .lpfTri(2400,14400,16).pan("[.9 .4]*4").gain("[1 .8]*4").delayfb(0.6)
+  .postgain(3/8)._scope(opt)
+const bm = `<
   G1@3 F1 A1@3 B1 C2@3 F1 A1@3 B1
   C2@3 D2 A1@3 B1 C2@3 D2 C2@3 B1                        
->*4`).s("saw").hpf(240).pan(1/2)
-  .lpfTri(700,1600,32).diode(0.8).compressor(-20)
+>*4`
+
+const bi = `<
+  A1@3 E1 F1@3 G1 A2@3 E1 F1@3 G1
+  A2@3 E2 F1@3 G1 C2@3 E2 F2@3 G1  
+>*4`
+
+$GLOSSING_FATBASS: just(bi).s("saw").hpf(240).pan(1/2).seg(16)
+  .lpfTri(700,3200,32).diode(0.8).compressor(-20).dur(1/24)
   .add(stack(note("0"), note("12.1").gain(0.2))).color('red')
-  .postgain(2/3).glide(0.2).o(5)._scope(opt)
+  .postgain(2/3).glide(0.1).o(5)//._scope(opt)
+
 $KICKS: s("[bd:2:.2,bd:5]*4").set.out(`<1 1 1 1>*4`).lpf(660).pg(2/3)
   .fit().clip(1/5).hpf(60)
   .duck("5:7").duckatt(".3:.4").duckdepth(".9:.9")
-  .mask("<1@7 0 1@8>").pg(5/8)
+  .mask("<1@7 0 1@7 0>").pg(5/8)
 $CLAPS: s("[cp,white]").struct(`<
   ~ x ~ x
   ~ x ~ x
