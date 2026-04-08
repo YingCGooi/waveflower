@@ -34,3 +34,8 @@ span.ͼ16 {
 .cm-content {
   filter: saturate(2) !important;
 }
+
+.cm-line::first-letter {
+  font-weight: 500;
+  font-style: italic;
+}
