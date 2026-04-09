@@ -82,6 +82,7 @@ window.wetEditor = function ({
   glow = 0,
   letterSpacing = 0,
   lineHeight = 1.55,
+  h1Indent = 0,
 } = {}) {
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
@@ -94,7 +95,7 @@ window.wetEditor = function ({
         String(hueShift) +
         'deg) saturate(' +
         amount +
-        ') brightness('+brightness+') drop-shadow(0 0 ' +
+        ') brightness('+bright+') drop-shadow(0 0 ' +
         glow +
         'px);}',
     );
@@ -108,6 +109,7 @@ window.wetEditor = function ({
         selectionBackground +
         ' !important}',
     );
+    n.append('#pre,h1.text-xl{margin-left:'+h1Indent+'px}')
   });
 };
 window.useWet = (opts) => window.wetEditor(opts);
