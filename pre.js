@@ -95,7 +95,7 @@ window.wetEditor = function ({
         String(hueShift) +
         'deg) saturate(' +
         amount +
-        ') brightness('+bright+') drop-shadow(0 0 ' +
+        ') brightness('+brightness+') drop-shadow(0 0 ' +
         glow +
         'px);}',
     );
