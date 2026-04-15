@@ -26,9 +26,9 @@ samples({
 }, 'http://localhost:5432/');
 
 setSoundfontUrl('http://localhost:5432')
-useWet({amount: 1.4, commentColor: '#FFFFFF07', gutterColor: '#FFFFFF04', commentStyle: 'normal', letterSpacing: -0.1, h1Indent: 30})
+useWet({amount: 1.4, commentColor: 'oklch(.7 .2 100)', gutterColor: '#FFF1', commentStyle: 'normal', letterSpacing: -0.1, h1Indent: 30})
 
-setcpm(128/4)
+setcpm(132/4)
 
 const t = (p) => dry(p.withValue(x=>0)).color('oklch(.8 .2 90)')
 const at = (min,max,c=16)=> min < max ? saw.rangex(min,max).slow(c) : saw.rev().rangex(max,min).slow(c)
@@ -65,7 +65,7 @@ C2:2 C2:2 C2:1.5 C2:2.5
 C2:2 C2:2 C2:1.5 C2:2.5
 >`.as("note:vel").fast(8)
 .s("sawtooth")
-.postgain(1.1).hpf(70)
+.postgain(1.4).hpf(70)
 
 const INTRO_PAD = `<
 C2:2 C2:2 C2:1.5 C2:2.5
@@ -104,7 +104,7 @@ const SWEEP_UP = s("pink,brown").seg(4)
 .lpf(at(100,16000,16)).lfo({s:1/16}).pan(0.1)
 .gain(1.6).att(1/32).rel(1)
 .superimpose(x=>x.late(1/16).pan(1))
-.gain(at(1,1.1,16))
+.gain(at(1.1,1.2,16))
 .hpf(at(100,8000,16))
 
 const BASS = `<
@@ -123,7 +123,7 @@ F2 F2 F2 F2
 >`.as("note:vel").fast(2).up("~ x ~ x ~ x ~ x".as("struct"))
 .s("sawtooth")
 .att(1/100).rel(1/32).ftype(0).hpf(97)
-.postgain(1.8).orbit(4).maroon(1)
+.postgain(1.75).orbit(4).maroon(1)
 
 const violinchrd = chord(`<
 C Em7 F2 _ Am G F2 _
@@ -143,7 +143,7 @@ G4@2 F4@2 C4 G4 C5@2
 const VIOLIN = (chrds) => stack(
   chrds.hpf(880).transpose("12").lpf(1400).s("gm_violin:6").vel(1).pan(.4),
   chrds.hpf(1200).transpose("0,12").lpf(3300).s("gm_violin:7:.3,gm_string_ensemble_1:4").vel(3/4).pan(1)
-).dec(1/4).sus(1).rel(1/3).gain(1/2).env({dec:1/4,sus:1/2,rel:1,sc:-1,rc:-1})
+).dec(1/4).sus(1).rel(1/3).gain(1/4).env({dec:1/4,sus:1/2,rel:1,sc:-1,rc:-1})
 .color('oklch(.77 .2 100)')
 
 const PAD = chord(`<
@@ -243,7 +243,7 @@ const OHH = s("akaixr10_oh").up(`<
 ~ x ~ x
 ~ x ~ x
 >`.as("struct:vel")).fast(8).pan(7/8)
-  .gain(1/3).att(1/32).sus(1).rel(1/4).hpf(6700)
+  .gain(1/5).att(1/32).sus(1).rel(1/4).hpf(6700)
 
 const OH = s("oh:6").up(`<
 x [x:.7 x] x [x  x:.7      ]
@@ -254,7 +254,7 @@ x  x:.8    x [x [x:.5 x:.7]]
   .sus(1/16)
   .hpf(7700)
   .rel(1/4).coarse(12).crush(8)
-  .fast(2).gain(1.8).maroon(.7)
+  .fast(2).gain(1.2).maroon(.7)
 
 const CRASH = s("alesissr16_cr")
 .struct(`<x _ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~>`).room(1).size(9).gain(1/2).pan(.7)
@@ -288,8 +288,8 @@ t s k s t s k s
 .set.mix(vel("1 0.75".fast(4)))
 .set.mix(lpf("12800 4800".fast(4)))
 .set.mix(rel("0.5 0.1".fast(4))).hpf(200)
-.color('white').postgain(4)
-.n("<0 .2 .4 .6 .8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6 6.2 6.4 6.6 6.8 7 7.2 7.4 7.6 7.8 8 8.2 8.4 8.6 8.8 9 9.2 9.4 9.6 9.8 10 10.2 10.4 10.6 10.8 11>".add(20).fast(4))
+.color('white')
+.n("<0 1 2 3 4 5 6 7 8 9 10 11>".add(20).fast(4))
 
 const CLOCK8 = s(`<
 t s k s t s k s
@@ -303,7 +303,7 @@ t s k s t s k s
 .set.mix(lpf("12800 6400".fast(4)))
 .set.mix(rel("0.5 0.1".fast(4)))
 .postgain(5).hpf(200)
-.n("<0 .2 .4 .6 .8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6 6.2 6.4 6.6 6.8 7 7.2 7.4 7.6 7.8 8 8.2 8.4 8.6 8.8 9 9.2 9.4 9.6 9.8 10 10.2 10.4 10.6 10.8 11>".add(20).fast(4))
+.n("<0 1 2 3 4 5 6 7 8 9 10 11>".add(20).fast(4))
 
 const HH = s("akailinn_hh").dec(1/12).up(`<
   x:.5 ~ x x:.7
@@ -549,275 +549,166 @@ const PIANO = (melody) => melody.add(note("0"))
   .s("piano:31:.5,gm_piano:8").rel(1/8)
   .hpf(500).vel(1).room(1/2).size(3)
 
-
-
-
-
-
-
-
-
-
-
 $:arrange(
-[24, stack(t(`<PHASE I: PREPARATION>`),//DNLIFT.first2(),
-          SWEEP_UP,
-          SOFT_CR.att(1/2).first4(),
-          DOWNLIFT.first4(),
-  
-          INTRO_SQ.lpfAt(100,6000,24),
-          INTRO_PAD.hpfAt(500,270,24).lpfAt(40,800,24),
-          INTRO_BASS.lpfAt(40,300,24),
-          CLOCK8,
-          OH,
-          SNUP,
-)],
-
-
-
-
-
-
-
-
-
-
-
-[16, stack(t(`<PHASE II: FIRST LIGHT>`),
-          SWEEP_DOWN, CRASH,
-           
-          PAD.lpfAt(800,12000,16),
-          SQ,           
-          BASS.lpfAt(120,400,16),
-          OH.lpfAt(8000,12000,8).pan(.2),            
-          SNARE.coarse("<1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.6 7 7.5 8 8.5>*2"),            
-)],
-
-
-
-
-
-
-
-
-
-  
-[8, stack(t("<I threw in some violin here to help with the break transition>"),
-  VIOLIN(violinchrd).lpfAt(700, 3200, 8),    
-  PAD.lpf(at(9000,4000,8)), 
-  BASS.lpf(400), SQ.lpf(at(8000,200,8)), 
-  SNARE.room(1/4).postgain(3/4).coarse(run8),
-  OH.lpf(at(8000,200,8)),
-  SWEEP_UP.early(4),
-  CLOCK4.gain(1.4),
-)],
-
-
-
-
-  
-  
-[4, stack(t("<lets have a break before the next phase>"),
-  VIOLIN(violinbreak).lpfAt(3200,1200,4).hpfAt(800,400,4).room("<0 .2 .7 1>").size(9),
-  PADBREAK.lpfAt(1000,180,4), 
-  BASSBREAK.lpfAt(400,200,4), 
-  SWEEP_UP.early(12),
-  CLOCK4.early(4),
-)],
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-  
-[32, stack(t(`<PHASE III: INTERLUDE TECHNO>`),
-          SOFT_CR.postgain(2/3),
-          KICK, RIDE,           
-          FATBASS(lineC).postgain(3/8).lpf(at(170,6400,32)),
-          SYNTHLINE.lpf(at(400,9600,32)),
-          HH,
-          SNARE.coarse(6).postgain(1).lpf(12800).hpf(3200),
-          INTRO_SQ.lpf(at(200,6400,32)),
-          OH.postgain(1/2),           
-          OHH.postgain(1/3),
- 
-          CLOCK8,
-          SWEEP_UP,
-          SNUP,
-)],
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-  
-[16, stack(
-          t(`<PHASE IV: ENYA ORCHESTRAL DANCE>`),
-          SWEEP_DOWN.phaser(1/128).lpf(at(16000,1,4)).first4(),  
-          HARD_CR.first4(),
-          RIDE.lpf(at(8400,100,4)).first4(), 
-          OH.lpf(at(4800,400,4)).first4(), 
-          SYNTHLINE.lpf(at(800,10,4)).first2(),
-
-          PIZZ(submel0).lpf(at(12800,17000,16)), 
-          PIZZMEL(melody0).lpf(at(300,14400,16)).gain(at(1.25,1,16)),
-          FATFAT(line0).hpf(320).lpf(at(120,3600,16)).postgain(1/7),
-
-          KICK.lpf(1400),
-          HH.delayBy(4),  
-          SNARE2.coarse(4).crush(3).room(1/4).rel(1/4).postgain(1/2).lpf(8400).hpf(2400),
-          SWEEP_UP.hpf(at(550,8000,16)).lpf(at(800,14000,16)).postgain(1/3),  
-)],
-
-
-
-
-
-  
-
-
-
-
-
-
-
-  
-
-
-
-
-
-  
-[16, stack(t(`<PHASE V: CELEBRATION RAVE - 
-add a 3x-square lead to enhance your RAVING experience>`),
-          PIZZ(submel1).lpf(1200).postgain(2.7),
-          FATFAT(line1).hpf(330).lpf(3300).postgain(1/8),            
-          PIZZMEL(melody2).hpf(500).lpf(14400),
-          SQMEL(melody2).hpf(550).lpfTri(300,18000,24),
-
-          PIANO(piano1),
-          SOFT_CR, KICK.lpf(2200), 
-          HH, OH.lpf(9600).pan(1/9),
-          SNARE2.coarse(3).crush(3).postgain(1).lpf(10000).hpf(2400),
-          OHH, RIDE,
-          SNUP.lpf(at(20000,900,8)).postgain(1.7),
-)],
-
-
-
-
-
-
-
-
-
-  
-[8, stack(t(`<PHASE VI: OUTRO>`),
-          RIDE.lpf(at(8400,100,4)).first4(), CLOCK4.lpf(6400).postgain(7/8),
-          PIANO(piano1),
-          PIZZ(submel1).lpf(14400),
-          FATFAT(line1).hpf(330).lpf(at(2400, 200, 8)).postgain(1/6),            
-          PIZZMEL(melody1).hpf(500).lpf(14400),
-          SQMEL(melody1).lpe(1).hpf(700).lpf(at(9600,700,8)),          
-          SWEEP_DOWN.postgain(2/3), OH.lpf(at(9600,4800,8)).pan(1/9),  
-          SNARE2.coarse("<3 3.5 4 5 5@4>").crush(4).postgain(2/3).lpf(at(4800,400,8)).hpf(800),
-)],
-
-
-
-
-  
-
-  
-[2, stack(t("<lets take a break>"),
-          PIANO(piano1).lpfAt(400,200,2),
-          SWEEP_DOWN.early(8).postgain(1/2), 
-          OH.lpf(at(6400,400,8)).pan(1/9).first2(),
-)],
-
-
-
-
-
-
-
-
-
-  
-  
-
-[16, stack(t(`<FINAL PHASE: INTO A NEW BEGINNING>`),
-          PIZZMEL(melodyEnd).hpf(400).lpf(at(16000,12800,8)),
-          PIZZ(submelEnd).lpf(12800),
-          OH.lpf(at(6400,2200,8)).pan(1/9).first4(),
-          SWEEP_DOWN.early(9).postgain(1/2),
-          SNARE2.coarse(5).crush(4).postgain(1/2).lpf(at(800,80,8)).hpf(800),
-
-          CLOCK8.lpf(at(12800, 6400, 8)).postgain(12/7)
-          .n("<0 0.375 0.75 1.125 1.5 1.875 2.25 2.625 3 3.375 3.75 4.125 4.5 4.875 5.25 5.625 6 6.375 6.75 7.125 7.5 7.875 8.25 8.625 9 9.375 9.75 10.125 10.5 10.875 11.25 11.625>"
-          .revv().add(12).fast(4)),           
-)],
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-[4, t(`<NOW LETS RAVE ONCE AGAIN SHALL WE>`)]
+  [2, stack(UPLIFT,
+            UP_SQ.att(4).lpe(-4).lpq(4).lpa(4).lpd(4).hpf(200).lpf(30).gain(7/8), 
+            SWEEP_UP.lpfAt(4000,9000,2).hpfAt(3000,4000,2).room(1).size(4).gainAt(1,1/2,2)
+            .att(1/2))
+  ],
+  [8, stack(DNLIFT.first2(),
+            SOFT_CR.att(1/2).first4(), 
+            DOWNLIFT.first4(),
+            INTRO_SQ.lpfAt(80,6000,24),
+            INTRO_PAD.hpfAt(500,270,24).lpfAt(40,800,24),
+            INTRO_BASS.lpfAt(40,300,24),
+            SWEEP_UP)
+  ],
+  [8, stack(CLOCK8,
+            OH.delayBy(4),
+            INTRO_SQ.lpfAt(80,6000,24).early(8),
+            INTRO_PAD.hpfAt(500,270,24).lpfAt(40,800,24).early(8),
+            INTRO_BASS.lpfAt(40,300,24).early(8),
+            SWEEP_UP)
+  ],
+  [8, stack(CLOCK8, OH,
+            INTRO_SQ.lpfAt(80,6000,24).early(16),
+            INTRO_PAD.hpfAt(500,270,24).lpfAt(40,800,24).early(16),
+            INTRO_BASS.lpfAt(40,300,24).early(16),
+            SWEEP_UP.early(8), SNUP)
+  ],
+  [8, stack(SWEEP_DOWN,
+            PAD.lpfAt(800,12000,16), 
+            BASS.lpfAt(120,400,16), CRASH, SQ)],
+  [8, stack(
+    RIDE, 
+    PAD.lpfAt(800,14400,16).early(8), 
+    BASS.lpfAt(100,400,16).early(8), SQ, 
+    SNARE.coarse("<1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.6 7 7.5 8 8.5>*2"), 
+    OH.lpfAt(8000,12000,8).pan(.2))],
+  [8, stack(
+    VIOLIN(violinchrd).lpfAt(700, 3200, 8),    
+    PAD.lpf(at(9000,4000,8)), 
+    BASS.lpf(400), SQ.lpf(at(8000,200,8)), 
+    SNARE.room(1/4).postgain(3/4).coarse(run8),
+    OH.lpf(at(8000,200,8)),
+    SWEEP_UP.early(4),
+    CLOCK4.gain(1.4),
+  )],
+  [4, stack(
+    VIOLIN(violinbreak).lpfAt(3200,1200,4).hpfAt(800,400,4).room("<0 .2 .7 1>").size(9),
+    PADBREAK.lpfAt(700,180,4), 
+    BASSBREAK.lpfAt(400,100,4), 
+    SWEEP_UP.early(12),
+    CLOCK4.early(4))],
+  [8, stack(KICK, RIDE, FATBASS(lineC).postgain(1/2).lpf(at(170,6400,16)),
+            SOFT_CR.postgain(2/3),
+            CLOCK4,
+            SNARE.coarse(5).postgain(2/3).delayBy(4).lpf(12800).hpf(3200)
+           )],
+  [8, stack(KICK, RIDE, HH, SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
+            FATBASS(lineC).postgain(1/3).lpf(at(170,6400,16)).early(8),
+            SYNTHLINE)],
+  [8, stack(KICK, RIDE, HH, SWEEP_UP.late(4),
+            SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
+            FATBASS(lineC).lpf(6400).postgain(1/3),
+            SYNTHLINE.lpf(12800),
+            INTRO_SQ.lpf(at(200,6000,8)))],
+  [8, stack(KICK, RIDE, OH, HH, SWEEP_UP.early(8),SNUP, CLOCK8.gainAt(1,1/4,8),
+            SNARE.coarse(run8).postgain(2/3).lpf(12800).hpf(6400),
+            FATBASS(lineC).lpf(6400).postgain(1/3),
+            SYNTHLINE.lpf(at(12800,400,8)),
+            INTRO_SQ.lpf(6000)
+  )],
+  [8, stack(
+            t(`<this pizzicato rhythm is inspired by Enyas classics>`),
+            PIZZ(submel0).lpf(at(12800,16000,8)), 
+            PIZZMEL(melody0).lpf(at(300,14400,8)).gain(at(1.25,1,8)),
+            FATFAT(line0).hpf(320).lpf(at(60,2400,8)).postgain(1/7).delayBy(4),
+            HARD_CR.first4(),
+            RIDE.lpf(at(8400,100,4)).first4(), 
+            OH.lpf(at(4800,400,4)).first4(), 
+            SYNTHLINE.lpf(at(800,10,4)).first2(),    
+            SWEEP_DOWN.phaser(1/128).lpf(at(16000,1,4)).first4(),
+  )],
+  [8, stack(t(`<distort fatbass added to complement the bounciness of pizzicato>`),
+            PIZZ(submel0).lpf(16000),
+            FATFAT(line0).hpf(330).lpf(at(2400,3200,8)).postgain(1/8),             
+            PIZZMEL(melody0).hpf(500).lpf(14400),            
+            KICK.lpf(1400), SWEEP_UP.hpf(at(550,8000,8)).lpf(at(800,14000,8)).postgain(1/3),
+            HH.delayBy(4),
+            SNARE2.delayBy(4).coarse(4).crush(3).room(1/4).rel(1/4).postgain(1/2).lpf(8400).hpf(2400),
+  )],
+  [8, stack(t(`<layer a 3x-square-lead to create extra richness>`),
+            PIZZ(submel1).lpf(1200).postgain(2.7),
+            FATFAT(line1).hpf(330).lpf(3300).postgain(1/8),            
+            PIZZMEL(melody2).hpf(500).lpf(14400),
+            SQMEL(melody2).hpf(550).lpf(at(300,12800,8)),            
+            SOFT_CR, KICK.lpf(2200), RIDE,
+            HH, OH.lpf(9600).pan(1/9),
+            SNARE2.coarse(3).crush(3).postgain(1/2).lpf(12800).hpf(3200),
+  )],
+  [8, stack(t(`<RAVE RAVE RAVE RAVE RAVE RAVE RAVE RAVE>`),          
+            PIZZ(submel1).lpf(1200).postgain(2.7),
+            FATFAT(line1).hpf(330).lpf(3300).postgain(1/8),            
+            PIZZMEL(melody1).hpf(500).lpf(14400),
+            SQMEL(melody1).hpf(550).lpf(12800),
+            PIANO(piano1),
+            SOFT_CR, KICK.lpf(2200), RIDE, SNUP.lpf(at(20000,400,8)).postgain(1.33).delayBy(4),
+            HH, OHH, OH.lpf(9600).pan(1/9),
+            SNARE2.coarse(3).crush(3).postgain(1/2).lpf(12800).hpf(3200),
+  )],  
+  [8, stack(RIDE.lpf(at(8400,100,4)).first4(), CLOCK4.lpf(6400).postgain(7/8),
+            PIANO(piano1),
+            PIZZ(submel1).lpf(14400),
+            FATFAT(line1).hpf(330).lpf(at(2400, 200, 8)).postgain(1/6),            
+            PIZZMEL(melody1).hpf(500).lpf(14400),
+            SQMEL(melody1).lpe(1).hpf(700).lpf(at(9600,700,8)),          
+            SWEEP_DOWN.postgain(2/3), OH.lpf(at(9600,6400,8)).pan(1/9),  
+            SNARE2.coarse("<3 3.5 4 5 5@4>").crush(4).postgain(1/2).lpf(at(4800,400,8)).hpf(800),
+  )],
+  [8, stack(
+            PIZZMEL(melodyEnd).hpf(400).lpf(at(16000,12800,8)),
+            PIZZ(submelEnd).lpf(12800),
+            OH.lpf(at(6400,2200,8)).pan(1/9).first4(),
+            SWEEP_DOWN.early(8).postgain(1/2),
+            SNARE2.coarse(5).crush(4).postgain(1/2).lpf(at(800,80,8)).hpf(800),
+  )],
+  [8, stack(
+            PIZZMEL(melodyEnd.early(8)).hpf(400).lpf(at(16000,12800,8)),
+            PIZZ(submelEnd.early(8)).lpf(12800),
+            CLOCK8.lpf(at(12800, 6400, 8)).postgain(12/7)
+            .n("<0 0.375 0.75 1.125 1.5 1.875 2.25 2.625 3 3.375 3.75 4.125 4.5 4.875 5.25 5.625 6 6.375 6.75 7.125 7.5 7.875 8.25 8.625 9 9.375 9.75 10.125 10.5 10.875 11.25 11.625>"
+            .revv().add(12).fast(4)),
+  )],  
+  [4, "~"]
 )
 
 
-
-
-
-  
-
-  
 .pitchwheel({
-  customlabels: ['I', 'I#', 'II', 'II#', 'III', 'VI', 'VI#', 'V', 'V#', 'VI', 'VI#', 'VII'],
+  customlabels: ['I', 'I#', 'II', 'II#', 
+    'III', 'VI', 'VI#', 'V', 
+    'V#', 'VI', 'VI#', 'VII'],
   root: 'C',
   exponential: false,
-  mode:'flakygon',
+  mode: 'flakygon',
   thickness: 64,
-  glow: 0,
+  glow: 64,
   labels: 'numbers',
   textsize: 1.1,
   edolabel: 3/4,
-  dotsize: 12,
+  dotsize: 18,
   dotalpha: 1/2,
-  circle: 0,
+  circle: 2,
+  distance: 1.1,
   linejoin: 'miter',
   lineoctavediv: 1,
-  margin: 100,
+  margin: 150,
 })
+
+
+
+
+
+
+
+
