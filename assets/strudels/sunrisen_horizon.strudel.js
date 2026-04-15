@@ -23,9 +23,9 @@ samples({
   short: 'cactus/perc/CACTUS_PERC_14_ONESHOT.mp3',
   uplifter: 'fl/uplifter1.wav',
   downlifter: 'fl/dnlifter1.wav'
-}, 'http://localhost:5432/');
+}, 'https://waveflower.org/samples/');
 
-setSoundfontUrl('http://localhost:5432')
+// setSoundfontUrl('http://localhost:5432')
 useWet({amount: 1.4, commentColor: 'oklch(.7 .2 100)', gutterColor: '#FFF1', commentStyle: 'normal', letterSpacing: -0.1, h1Indent: 30})
 
 setcpm(132/4)
@@ -704,11 +704,3 @@ $:arrange(
   lineoctavediv: 1,
   margin: 150,
 })
-
-
-
-
-
-
-
-
