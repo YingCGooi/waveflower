@@ -17,7 +17,7 @@
 //  / __  / /_/ / _  _// /_ ╱ ╱_/ /_/ / /|  / _╲|/_/
 // /_/ /_/\____/_/ |_/___ /_____\____/_/ |_/ /_/|╲
 //                                              ╲)
-
+await import('https://waveflower.org/pre.js')
 samples({
   tick: 'cactus/dyad/CACTUS_DYAD_ONESHOT.mp3',
   short: 'cactus/perc/CACTUS_PERC_14_ONESHOT.mp3',
