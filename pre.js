@@ -671,6 +671,10 @@ window.B = midiToFreq(47 + 12);
 // PITCHWHEEL ========================================================
 // IMPLEMENTATION ========================================================
 // BELOW ========================================================
+
+// PITCHWHEEL ========================================================
+// IMPLEMENTATION ========================================================
+// BELOW ========================================================
 const circlePos = (cx, cy, radius, angle) => {
   angle = angle * Math.PI * 2;
   const x = Math.sin(angle) * radius + cx;
@@ -682,23 +686,23 @@ const circlePos = (cx, cy, radius, angle) => {
 // including sharps and flats
 const centsTo12Note = {
   0: 'A',
-  77: 'A♯',
-  116: 'B♭',
+  77: 'A#',
+  116: 'Bb',
   194: 'B',
-  271: 'B♯',
+  271: 'B#',
   310: 'C',
-  387: 'C♯',
-  426: 'D♭',
+  387: 'C#',
+  426: 'Db',
   503: 'D',
-  581: 'D♯',
-  619: 'E♭',
+  581: 'D#',
+  619: 'Eb',
   697: 'E',
   813: 'F',
-  890: 'F♯',
-  929: 'G♭',
+  890: 'F#',
+  929: 'Gb',
   1006: 'G',
-  1084: 'G♯',
-  1123: 'A♭',
+  1084: 'G#',
+  1123: 'Ab',
 };
 
 // construct reversed {note: cents} object from above
@@ -774,12 +778,15 @@ const midiOffsetFromC = {
 
 // make these global variables so they can be easily referenced
 const midiNoteToFreq = {
+  Bb1: midiToFreq(34),
+  B1: midiToFreq(35),
   C2: midiToFreq(36),
   D2: midiToFreq(38),
   E2: midiToFreq(40),
   F2: midiToFreq(41),
   G2: midiToFreq(43),
   A2: midiToFreq(45),
+  Bb2: midiToFreq(34),  
   B2: midiToFreq(47),
   c: midiToFreq(36 + 12),
   d: midiToFreq(38 + 12),
@@ -819,33 +826,73 @@ const midiNoteToFreq = {
 };
 
 const freq2Note = {
+  [Math.round(midiToFreq(36-24))]: 'C',  
+  [Math.round(midiToFreq(37-24))]: 'C#',
+  [Math.round(midiToFreq(38-24))]: 'D',
+  [Math.round(midiToFreq(39-24))]: 'D#',
+  [Math.round(midiToFreq(40-24))]: 'E',
+  [Math.round(midiToFreq(41-24))]: 'F',
+  [Math.round(midiToFreq(42-24))]: 'F#',
+  [Math.round(midiToFreq(43-24))]: 'G',
+  [Math.round(midiToFreq(44-24))]: 'G#',
+  [Math.round(midiToFreq(45-24))]: 'A',
+  [Math.round(midiToFreq(46-24))]: 'A#',
+  [Math.round(midiToFreq(47-24))]: 'B', 
+  [Math.round(midiToFreq(36-12))]: 'C',  
+  [Math.round(midiToFreq(37-12))]: 'C#',
+  [Math.round(midiToFreq(38-12))]: 'D',
+  [Math.round(midiToFreq(39-12))]: 'D#',
+  [Math.round(midiToFreq(40-12))]: 'E',
+  [Math.round(midiToFreq(41-12))]: 'F',
+  [Math.round(midiToFreq(42-12))]: 'F#',
+  [Math.round(midiToFreq(43-12))]: 'G',
+  [Math.round(midiToFreq(44-12))]: 'G#',
+  [Math.round(midiToFreq(45-12))]: 'A',
+  [Math.round(midiToFreq(46-12))]: 'A#',
+  [Math.round(midiToFreq(47-12))]: 'B',
   [Math.round(midiToFreq(36))]: 'C',
+  [Math.round(midiToFreq(37))]: 'C#',
   [Math.round(midiToFreq(38))]: 'D',
+  [Math.round(midiToFreq(39))]: 'D#',
   [Math.round(midiToFreq(40))]: 'E',
   [Math.round(midiToFreq(41))]: 'F',
+  [Math.round(midiToFreq(42))]: 'F#',
   [Math.round(midiToFreq(43))]: 'G',
+  [Math.round(midiToFreq(44))]: 'G#',
   [Math.round(midiToFreq(45))]: 'A',
+  [Math.round(midiToFreq(46))]: 'A#',
   [Math.round(midiToFreq(47))]: 'B',
   [Math.round(midiToFreq(36 + 12))]: 'C',
+  [Math.round(midiToFreq(37 + 12))]: 'C#',
   [Math.round(midiToFreq(38 + 12))]: 'D',
+  [Math.round(midiToFreq(39 + 12))]: 'D#',
   [Math.round(midiToFreq(40 + 12))]: 'E',
   [Math.round(midiToFreq(41 + 12))]: 'F',
+  [Math.round(midiToFreq(42 + 12))]: 'F#',
   [Math.round(midiToFreq(43 + 12))]: 'G',
+  [Math.round(midiToFreq(44 + 12))]: 'G#',
   [Math.round(midiToFreq(45 + 12))]: 'A',
+  [Math.round(midiToFreq(46 + 12))]: 'A#',
   [Math.round(midiToFreq(47 + 12))]: 'B',
   [Math.round(midiToFreq(36 + 24))]: 'C',
+  [Math.round(midiToFreq(37 + 24))]: 'C#',
   [Math.round(midiToFreq(38 + 24))]: 'D',
+  [Math.round(midiToFreq(39 + 24))]: 'D#',
   [Math.round(midiToFreq(40 + 24))]: 'E',
   [Math.round(midiToFreq(41 + 24))]: 'F',
+  [Math.round(midiToFreq(42 + 24))]: 'F#',
   [Math.round(midiToFreq(43 + 24))]: 'G',
+  [Math.round(midiToFreq(44 + 24))]: 'G#',
   [Math.round(midiToFreq(45 + 24))]: 'A',
+  [Math.round(midiToFreq(46 + 24))]: 'A#',
   [Math.round(midiToFreq(47 + 24))]: 'B',
 };
 
 const findRootCents = (root = 'C', twelveTET = false) => {
   let rootFreq = root; // if root is a lettered string, lookup its freq
+
   if (Number(root) != root) {
-    rootFreq = midiNoteToFreq[root];
+    rootFreq = midiNoteToFreq[root];   
   }
   rootFreq = Math.round(rootFreq);
   const nt = freq2Note[rootFreq];
@@ -870,7 +917,7 @@ function centsToNote(cents = 0, root = 'C', twelveTET = false) {
   // round cents to nearest integer,
   // then seek 0, +1, seek -1
   // if not found, then seek 0, +2, -2... continue until found
-  for (let seek = 0; seek < 100; seek++) {
+  for (let seek = 0; seek <= 100; seek++) {
     if (lookup[cents]) {
       return lookup[cents];
     }
@@ -1041,8 +1088,11 @@ function pitchwheel({
     if (notelabel) {
       let [xn, yn] = circlePos(centerX, centerY, radius * notelabeldistance, angle);
       const cents = Math.round((i * 1200) / edo);
-      const nte = centsToNote(cents, root, edo === 12);
+      let nte = centsToNote(cents, root, edo === 12);
       ctx.globalAlpha = notelabel;
+      for (let s in noteSymbolMap) {
+        nte = nte.replaceAll(s, noteSymbolMap[s]);
+      }
       ctx.font = fontsize * 0.8 + 'px ' + font;
       fillText(ctx, nte, xn, yn, clearrect);
     }
@@ -1221,7 +1271,6 @@ function pitchwheel({
   }
   return;
 }
-
 /**
  * Renders a pitch circle to visualize frequencies within one octave
  * @name pitchwheel
