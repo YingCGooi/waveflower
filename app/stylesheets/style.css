@@ -4,6 +4,7 @@
 
 :root {
   --placeholder-color: oklch(0.8 0.1 90);
+  --canvas-translate: -50%;
 }
 
 body {
@@ -253,7 +254,7 @@ section#canvases {
   position: fixed;
   top: 0;
   left: 50%;
-  transform: translate(-33%, 0%);
+  transform: translate(var(--canvas-translate), 0%);
   background-color: rgba(0, 0, 0, 0);
 }
 
