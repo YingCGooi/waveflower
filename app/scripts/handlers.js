@@ -33,10 +33,6 @@ base.onchange = (e) => {
   if (ENV.baseFrequency > 110 && ENV.fftSize > 2048) {
     ENV.fftSize = ENV.fftSize / 2;
   }
-  if (ENV.baseFrequency <= 110 && ENV.fftSize < 4096) {
-    ENV.fftSize = ENV.fftSize * 2;
-    ENV.blurFactor = ENV.blurFactor / 2;
-  }
   let v = visualizer;
   v.resetCanvasElements();
   v.resize();

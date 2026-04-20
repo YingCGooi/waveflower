@@ -1,5 +1,5 @@
 var ENV = {
-  fftSize: 2048,
+  fftSize: 4096,
   colorSpace: 'display-p3',
   sampleRate: 48000,
   baseFrequency: 110.0,
