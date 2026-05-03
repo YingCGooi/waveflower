@@ -935,24 +935,13 @@ const freq2angle = (freq, root, equalDivisionOfAngle = true) => {
   if (equalDivisionOfAngle) {
     return 0.5 - (Math.log2(freq / root) % 1);
   } else {
-    let normalizer = 1;
-    if (freq < root) {
-      normalizer = 0.5;
-    } else if (freq > root * 2) {
-      normalizer = 2;
-    } else if (freq > root * 4) {
-      normalizer = 4;
-    } else if (freq > root * 8) {
-      normalizer = 8;
-    } else if (freq > root * 16) {
-      normalizer = 16;
-    } else if (freq > root * 32) {
-      normalizer = 32;
-    } else if (freq > root * 64) {
-      normalizer = 64;
+    while (freq < root) {
+      root /= 2
     }
-    freq = freq / normalizer;
-    return 0.5 - ((freq / root) % 1);
+    while (freq > root * 2) {
+      root *= 2
+    }
+    return 0.5 - (freq / root);
   }
 };
 
