@@ -1119,11 +1119,13 @@ function pitchwheel({
       return;
     }
     let noteName;
-    if (edo === 12 && autonote) {
+    // only autonote if root is not a freq
+    if (edo === 12 && autonote && typeof root === 'string') {
       try {
         noteName = getPlayableNoteValue(hap);
       } catch (err) {
-        return;
+        // warn instead of swallowing the error
+        console.warn(err)
       }
     }
     const angle = freq2angle(freq, root, !exponential);
