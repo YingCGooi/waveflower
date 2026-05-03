@@ -994,6 +994,7 @@ function pitchwheel({
   activedotrx = 1,
   clearrect = false,
   notelabel = false,
+  notelabels = false, // alias to notelabel
   notelabeldistance = 0.94,
   lineoctavediv = 0,
 } = {}) {
@@ -1001,6 +1002,7 @@ function pitchwheel({
   const centerlines = mode === 'flake' || mode === 'both' || mode === 'flakygon';
   const labelnumbers = label === 'numbers' || labels === 'numbers';
   const labelletters = label === 'letters' || labels === 'letters';
+  notelabel = notelabels || notelabel;
   edolabel = Number(edolabel);
   const w = ctx.canvas.width;
   if (dotsize || dotsize === 0) {
