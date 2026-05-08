@@ -1335,6 +1335,7 @@ register('lpeat', (min, max, c, p) => p.lpe(at(min, max, c)));
 register('lpeAt', (min, max, c, p) => p.lpe(at(min, max, c)));
 register('hpfat', (min, max, c, p) => p.hpf(at(min, max, c)));
 register('hpfAt', (min, max, c, p) => p.hpf(at(min, max, c)));
+register('bpfAt', (min, max, c, p) => p.bpf(at(min, max, c)));
 register('gainat', (min, max, c, p) => p.gain(at(min, max, c)));
 register('gainAt', (min, max, c, p) => p.gain(at(min, max, c)));
 register('velat', (min, max, c, p) => p.vel(at(min, max, c)));
@@ -1343,6 +1344,7 @@ register('velAt', (min, max, c, p) => p.vel(at(min, max, c)));
 const triAt = (min,max,c=16)=> min < max ? tri.rangex(min,max).slow(c) : tri.rev().rangex(max,min).slow(c)
 register('lpfTri', (min, max, c, p) => p.lpf(triAt(min, max, c)));
 register('hpfTri', (min, max, c, p) => p.hpf(triAt(min, max, c)));
+register('bpfTri', (min, max, c, p) => p.bpf(triAt(min, max, c)));
 register('gainTri', (min, max, c, p) => p.gain(triAt(min, max, c)));
 register('velTri', (min, max, c, p) => p.vel(triAt(min, max, c)));
 
