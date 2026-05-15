@@ -12,7 +12,11 @@ span.ͼt {
 }
 
 span.ͼ11 {
-  color: oklch(0.7 0.2 170);
+  color: oklch(0.7 0.2 160);
+}
+
+span.ͼz {
+  color: oklch(0.87 .2 100);
 }
 
 span.ͼ19 {
