@@ -3,8 +3,12 @@
   --selection: oklch(0.5 0.24 240 / 0.3) !important;
 }
 
+span.ͼ10 {
+  color: oklch(0.6 0.24 270);
+}
+
 span.ͼ14 {
-  color: oklch(0.75 0.23 240);
+  color: oklch(0.7 0.2 240);
 }
 
 span.ͼt {
