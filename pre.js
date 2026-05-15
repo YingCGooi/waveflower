@@ -58,7 +58,7 @@ window.removePrebakeCSS = function () {
  * @synonyms useWet
  * @tags prebake
  * @param {Number} saturation amount (default 1)
- * @param {Number} hue shift (default 0)
+ * @param {Number} hueShift (default 0)
  * @param {String} commentColor (default '#222')
  * @param {String} commentStyle (default 'italic')
  * @param {String} gutterColor (default '#444')
@@ -1347,6 +1347,12 @@ register('hpfTri', (min, max, c, p) => p.hpf(triAt(min, max, c)));
 register('bpfTri', (min, max, c, p) => p.bpf(triAt(min, max, c)));
 register('gainTri', (min, max, c, p) => p.gain(triAt(min, max, c)));
 register('velTri', (min, max, c, p) => p.vel(triAt(min, max, c)));
+
+register('cyan', p => p.color('oklch(.7 .2 240)'))
+register('teal', p => p.color('oklch(.7 .2 200)'))
+register('magenta', p => p.color('oklch(.7 .2 0)'))
+register('gold', p=>p.color('oklch(.7 .2 80)'))
+register('violet', p=>p.color('oklch(.4 .2 300)'))
 
 register('last4', (p) => p.mask('<0@4 1@4>'));
 register('first4', (p) => p.mask('<1@4 0@4>'));
