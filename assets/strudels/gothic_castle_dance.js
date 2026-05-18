@@ -150,19 +150,6 @@ const PIZZ = (p) => p.note().fast(3).add(note(2-12))
   .vel(.7).hpf(330).lpf(9600)
 ).gain(".6 .4 .3").pitchwheel(opts)
 
-const triplets = `<
-x ~ ~ 
-x <x ~> <~ [x x]>
-x ~ ~
-x <x ~> <~ x ~ [~ x]>
->`
-const fourOnTheFloor = `<
-x ~ x
-~ x ~
-x ~ x
-~ x <x [x x]>
->`
-
 const CHIMESDOWN = s("chimes2").slow(2)
 .postgain(1/2).room(2/3).size(7).hpf(770).lpf(16000)
 
@@ -176,12 +163,33 @@ const MAGIC = s("magic").postgain(1/4).slow(4)
 const TAKEOFF = s("takeoff").hpf(2400).lpf(9600).pan(0)
 .off(1/84, x=>x.hpf(3200).pan(1)).postgain(1/5)
 
-const KICK = s("mc303_bd:0").struct(triplets).fast(3).hpf(77)
-.off(0,x=>x.s("bossdr550_rd:1,ry30_rd:2:.3").vel(1/4).hpf(7700).lpf(6400))
+const triplets = `<
+x ~ ~ 
+x <x ~> <~ [x x]>
+x ~ ~
+x <x ~> <~ x ~ [~ x]>
+>`
+const fourOnTheFloor = `<
+x ~ x
+~ x ~
+x ~ x
+~ x <x [x x]>
+>`
+const KICK = s("mc303_bd:0").struct(triplets).fast(3).hpf(85)
+.off(0,x=>x.s("bossdr550_rd:1,ry30_rd:2:.3").vel(1).hpf(7700).lpf(6400))
 .dec(1/16)
 .sus(1/16)
-.postgain(2/5).pan(1/2).lpf(3200)
+.postgain(1/2).pan(1/2).lpf(3200)
 .duckorbit(4).duckdepth(2/3).duckatt(1/5)
+
+const OH = s("dr220_oh:0:.2,rolandd110_oh").lpf(14400).hpf(900).pan(2/3).struct(`<
+~ x ~
+~ ~ x
+~ x ~
+~ ~ x
+>`.fast(3)).diode("1:.2")
+.off(0,x=>x.bpf(9700).pan(1).vel(2/3))  
+.postgain(1/6)
 
 const CLAP = s("alesissr16_sd,alesissr16_sd:9").struct(`<
 ~ ~ x
@@ -189,7 +197,7 @@ const CLAP = s("alesissr16_sd,alesissr16_sd:9").struct(`<
 ~ ~ x
 ~ x <~ [x x]>
 >`.fast(3)).postgain(1/7)
-.off(0,x=>x.bpf(4800).room(2).vel(1/2))
+.off(0,x=>x.bpf(4800).room(2).vel(2/3))
 
 const TICK = s("tick").struct(`<
 x [x x] [x ~] 
@@ -207,15 +215,15 @@ const HH = s("hh:4,circuitstom_hh:0:.3").struct(`<
 x [x x] ~
 x ~ [x x]
 x [x x] ~
-x  x [x [x x]]
+x  x [~ [x x]]
 >`).vel(`<
 .3 [1 .5] [.7 .5]
 >`).pan(`<
 .4 [.3 .6] [.3 .6]
->`).fast(3).crush(7).coarse(2)
+>`).fast(3).crush(5).coarse(2)
 .dec(1/11).rel(0)
 .lpf(12800).hpf(6200)
-.diode("3:.1").postgain(1/9)
+.diode("3:.1").postgain(1/7)
 
 const chrd = `<Am@2 F2 C2  Am@2 F C2  Am@2 G2 C  <Am F2>@2 <Em7 G2> <F2 Am F2 C>>`.cyan()
 const b1 = `<
@@ -258,7 +266,7 @@ const impact = `<
 >`.as("note:vel").yellow()
 opts.margin = 600
 arrange(
-  [64, TAKEOFF],
+  [64, stack(KICK,CLAP,OH,HH)],
   // [32, stack(CHIMES, CHIMESUP,
   //   PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 <[0,1,2] [0,1,2,3]> [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").lpfAt(550,3200,32),
   //   BELLS(b1,330).lpfAt(330,1800,32),
