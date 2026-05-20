@@ -82,18 +82,18 @@ const BELLS = (p, lp=6400) => note(p).fast(3).add(note(14))
   .set.mix(pan(".1 .2 .3").vel(".7 .5 .4")).hpf(200).lpf(lp)
   .compressor("-20:10:10:.001:.03")
 )
-.room(1/7).size(7).roomlp(1440).roomfade(1/16).roomdim(440)
+.room(1/9).size(7).roomlp(1440).roomfade(1/16).roomdim(440)
 .rel(1/7)
 .postgain(1/6).pitchwheel(opts)
 
 const HARP = (p) => stack(p.fast(3).add(note(2))
   .s("gm_orchestral_harp:1").pan(0).vel(1).hpf(1800)
-  .off(0,x=>x.s("gm_synth_strings_2:1,gm_pizzicato_strings:1:.2")
+  .off(0,x=>x.s("gm_synth_strings_2:1")
     .hpf(1).bpf(990).sus(1/7).dec(1/16).vel(1).pan(1/2))
   .off(0,x=>x.s("gm_kalimba:6").add(note(12)).bpf(6400).vel(1/4))
-  .off(1/32,x=>x.s("gm_orchestral_harp:4").vel(2/3).pan(2/3))
-  .lpf(12800).lpe(2).bus(7).dry(0).pitchwheel(opts),
-  s("bus:7").room(3/4).compressor("-20:10:10:.001:.03").postgain(1/9),
+  .off(1/32,x=>x.s("gm_orchestral_harp:4").vel(3/4).pan(2/3))
+  .lpf(12800).lpe(2).bus(7).dry(0),
+  s("bus:7").room(3/4).compressor("-20:10:10:.001:.03").postgain(1/4),
 )
 
 const SQUARE = (melody) => stack(note(melody.fast(3)).add(note(2))
@@ -141,17 +141,17 @@ const FAT = (p, lfoDepth=6400) => p.note().add(note(2)).color('oklch(.8 .2 270)'
 
 const PIZZ = (p) => p.note().fast(3).add(note(2-12))
 .s("gm_pizzicato_strings").vel(1/3)
-.set.mix(pan(".3 .4 .5")).hpf(330).lpf(770)
+.set.mix(pan(".3 .4 .5")).hpf(240).lpf(770)
 .off(0, x=>x.add(note(12)).vel(1))
 .att(0).dec(1/3).sus(1/3)
 .off(1/84, x=>x.s("gm_pizzicato_strings:4")
   .add(note(12))
   .set.mix(pan(".7 .9 1"))
-  .vel(.7).hpf(330).lpf(9600)
-).gain(".6 .4 .3").pitchwheel(opts)
+  .vel(.7).hpf(290).lpf(9600)
+).gain(".5 .3 .2").pitchwheel(opts)
 
 const CHIMESDOWN = s("chimes2").slow(2)
-.postgain(1/2).room(2/3).size(7).hpf(770).lpf(16000)
+.postgain(1/4).room(2/3).size(7).hpf(770).lpf(16000)
 
 const CHIMESUP = s("chimes3").mask("<0@15 1 0@99>")
 .postgain(1/11).room(1).size(7).hpf(550).lpf(8400)
@@ -182,22 +182,23 @@ const KICK = s("mc303_bd:0").struct(triplets).fast(3).hpf(85)
 .postgain(1/2).pan(1/2).lpf(3200)
 .duckorbit(4).duckdepth(2/3).duckatt(1/5)
 
-const OH = s("dr220_oh:0:.2,rolandd110_oh").lpf(14400).hpf(900).pan(2/3).struct(`<
+const OH = s("dr220_oh:0:.2,rolandd110_oh").lpf(12000).hpf(900).pan(2/3).struct(`<
 ~ x ~
 ~ ~ x
 ~ x ~
 ~ ~ x
 >`.fast(3)).diode("1:.2")
 .off(0,x=>x.bpf(9700).pan(1).vel(2/3))  
-.postgain(1/6)
+.postgain(1/7)
 
 const CLAP = s("alesissr16_sd,alesissr16_sd:9").struct(`<
 ~ ~ x
 ~ x [~ x]
 ~ ~ x
 ~ x <~ [x x]>
->`.fast(3)).postgain(1/7)
-.off(0,x=>x.bpf(4800).room(2).vel(2/3))
+>`.fast(3)).postgain(1/10)
+.off(0,x=>x.bpf(1700).vel(1))  
+.off(0,x=>x.bpf(4800).room(2).vel(1/3))
 
 const TICK = s("tick").struct(`<
 x [x x] [x ~] 
@@ -258,6 +259,13 @@ A1@2 G1 [C1@2 G1]
 <A1 F1>@2 <E1 G1> <F1 [A1@2 B1] F1 C2>
 >`.violet()
 
+const offBass = `<
+[~ A1@2] [~ A1@2] [~ F1@2] [~ C1@2]
+[~ A1@2] [~ A1@2] [~ F1@2] [C1@2 B1]
+[~ A1@2] [~ A1@2] [~ G1@2] [C1@2 G1]
+<A1 F1>@2 <E1 G1> <F1 [A1@2 B1] F1 C2>
+>`.violet()
+
 const impact = `<
 ~ ~ A4      ~ ~ <C5 E4>      ~ ~ F4      ~ ~ C4
 ~ ~ A4      ~ ~ E5      ~ ~ F5      ~ ~ C5
@@ -266,17 +274,16 @@ const impact = `<
 >`.as("note:vel").yellow()
 opts.margin = 600
 arrange(
-  [64, stack(KICK,CLAP,OH,HH)],
   // [32, stack(CHIMES, CHIMESUP,
   //   PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 <[0,1,2] [0,1,2,3]> [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").lpfAt(550,3200,32),
   //   BELLS(b1,330).lpfAt(330,1800,32),
   //   GLOCK(b1).lpfAt(660,2400,32).mask("<0@16 1@16>"),
-  //   HARP(impact).lpfAt(1270,9600,48),
+  //   HARP(impact).lpfAt(1270,7200,48),
   // )],
   [64, stack(
-    CHIMESDOWN.mask("<0@32 1@8 0@99>").lpfAt(20000,4800,8).gainAt(1,1/20,8),
-    PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").lpfAt(2880,770,64),
-    PIZZ(plucklets).lpfAt(770, 14400, 64),
+    CHIMESDOWN.mask("<0@32 1@8 0@99>").lpfAt(20000,3200,16).gainAt(1,1/20,16),
+    PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").lpfAt(3100,770,64),
+    PIZZ(plucklets).lpfAt(770, 12800, 64),
     BELLS(b1,1210).lpfAt(1440,1220,64),
     LOW(bass).mask("<0@16 1@48>").lpfTri(1440,4400,64),
     GLOCK(m1).add(note(12)).hpf(770).lpfTri(1670,4800,64).mask("<1@32 0@32>"),
@@ -286,16 +293,15 @@ arrange(
     ORGAN(bass).mask("<0@32 1@32>"),
     TICK.mask("<0@32 1@32>"),
   )],
-  [32, stack(CHIMESDOWN.mask("<1 0@15>").lpfAt(20000,4800,8).gainAt(1,1/20,8), 
-    TAKEOFF.mask("<0@9 1 0@99>"),
+  [32, stack(CHIMESDOWN.mask("<1 0@15>").lpfAt(20000,3200,8).gainAt(1,1/20,8), 
+    TAKEOFF.mask("<0@12 1 0@99>"),
     PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").lpfAt(770,440,32),
     SQUARE(m1).lpfAt(440,9600,32).mask("<0@16 1@16>"),
     MELODY(m1).lpfAt(2800,2400,32),
-    PIZZ(plucklets).lpfAt(770, 14400, 32),             
-    HARP(impact).lpfAt(1270,440.,48),
+    PIZZ(plucklets).lpfAt(12800, 17000, 32), 
     LOW(bass).hpf(170).lpf(4400),
     BELLS(b1,1670).lpfAt(1220,1670,32),
-    KICK, TICK, HH.lpfAt(770,12800,32), CLAP.mask("<0@16 1@16>"),
+    KICK, TICK, HH.lpfAt(770,14400,32), CLAP.mask("<0@16 1@16>"),
   )],
   [32, stack(CHIMESUP.mask("<1 0@31>"),
     PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").lpfAt(440,880,32),             
@@ -307,7 +313,7 @@ arrange(
     GLOCK(b1).lpf(6400).mask("<1@16 0@48>"),
     LOW(bass).hpf(160).lpf(4400).mask("<0@16 1@48>"),             
     ORGAN(bass).lpfAt(4400,3300,64),
-    KICK, TICK, HH, CLAP,
+    KICK, TICK, HH, CLAP, OH.mask("<0@16 1@16>"),
   )],
   [8, stack(CHIMESUP.mask("<1 0@31>"),
     PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").early(56).lpfAt(880,2800,4),
