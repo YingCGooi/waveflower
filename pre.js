@@ -1348,11 +1348,13 @@ register('bpfTri', (min, max, c, p) => p.bpf(triAt(min, max, c)));
 register('gainTri', (min, max, c, p) => p.gain(triAt(min, max, c)));
 register('velTri', (min, max, c, p) => p.vel(triAt(min, max, c)));
 
-register('cyan', p => p.color('oklch(.7 .2 240)'))
+register('cyan', p => p.color('oklch(.5 .17 220)'))
 register('teal', p => p.color('oklch(.7 .2 200)'))
-register('magenta', p => p.color('oklch(.7 .2 0)'))
+register('magenta', p => p.color('oklch(.77 .1 0)'))
 register('gold', p=>p.color('oklch(.7 .2 80)'))
+register('transcyan',p=>p.color('oklch(.67 .2 240 / .1)'))
 register('violet', p=>p.color('oklch(.4 .2 300)'))
+register('yellow', p=>p.color('oklch(.9 .2 80)'))
 
 register('last4', (p) => p.mask('<0@4 1@4>'));
 register('first4', (p) => p.mask('<1@4 0@4>'));
