@@ -1067,7 +1067,7 @@ function pitchwheel({
   Array.from({ length: edo }, (_, i) => {
     const angle = freq2angle(root * Math.pow(2, i / edo), root, !exponential);
     const [x, y] = circlePos(centerX, centerY, radius, angle);
-    let [xl, yl] = circlePos(centerX, centerY, radius * distance, angle);
+    let [xl, yl] = circlePos(centerX, centerY, radius * distance , angle);
     if (edolabel) {
       ctx.globalAlpha = edolabel;
       ctx.font = fontsize * 0.85 + 'px ' + font;
@@ -1350,7 +1350,7 @@ register('velTri', (min, max, c, p) => p.vel(triAt(min, max, c)));
 
 register('cyan', p => p.color('oklch(.5 .17 220)'))
 register('teal', p => p.color('oklch(.7 .2 200)'))
-register('magenta', p => p.color('oklch(.77 .1 0)'))
+register('magenta', p => p.color('oklch(.7 .17 0)'))
 register('gold', p=>p.color('oklch(.7 .2 80)'))
 register('transcyan',p=>p.color('oklch(.67 .2 240 / .1)'))
 register('violet', p=>p.color('oklch(.4 .2 300)'))
