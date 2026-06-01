@@ -33,6 +33,7 @@
   --hot-pink: oklch(0.6 0.24 0);
   --hover-pink: oklch(0.8 0.2 0);
   --blue: oklch(0.7 0.2 260);
+  --green: oklch(.7 .2 140);
 }
 
 .default-color {
@@ -381,16 +382,18 @@ section.bullets p {
 }
 
 pre {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-family: monospace;
   margin-block: 0;
   background: #FFF2;
   border-radius: 10px;
   text-align: left;
-  padding-top: 1rem;
-  padding-bottom: .3rem;
+  padding: 1.25rem;
   margin-bottom: 1rem;
   line-height: 1rem;
+  letter-spacing: 0;
+  white-space: normal;
+  tab-size: 2;
 }
 
 strong {
@@ -462,6 +465,10 @@ audio {
 
 .pink {
   color: var(--pink);
+}
+
+.green {
+  color: var(--green);
 }
 
 .blue {
