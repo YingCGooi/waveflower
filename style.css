@@ -381,7 +381,16 @@ section.bullets p {
 }
 
 pre {
-  font-family: inherit;
+  font-size: 1.1rem;
+  font-family: monospace;
+  margin-block: 0;
+  background: #FFF2;
+  border-radius: 10px;
+  text-align: left;
+  padding-top: 1rem;
+  padding-bottom: .3rem;
+  margin-bottom: 1rem;
+  line-height: 1rem;
 }
 
 strong {
