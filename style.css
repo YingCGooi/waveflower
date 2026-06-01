@@ -118,7 +118,7 @@ h3,
 h4 {
   font-weight: 300;
   font-family: 'Google Sans Code', monospace;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.06em;
   font-size: 3rem;
   color: var(--accent);
   display: flex;
@@ -240,7 +240,7 @@ article:last-of-type div.divider {
 img#profile {
   display: block;
   mix-blend-mode: lighten;
-  width: 33%;
+  width: 40%;
   min-width: 200px;
   filter: hue-rotate(-2deg) saturate(84%) brightness(95%);
   border: 6px solid var(--accent);
