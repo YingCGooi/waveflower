@@ -13,7 +13,7 @@ samples({
   takeoff: 'TakeOff.wav',
   handpan: 'handpan_root.wav',
 }, 'https://waveflower.org/samples/');
-setcpm(77)
+setcpm(80)
 await import('https://waveflower.org/pre.js')
 const triAt = (min,max,c=16)=> min < max ? tri.rangex(min,max).slow(c) : tri.rev().rangex(max,min).slow(c)
 register('bpfTri', (min, max, c, p) => p.bpf(triAt(min, max, c)));
@@ -33,9 +33,9 @@ Pattern.prototype.sophie = function (squish = 0.1, splat = 0.1, speed = 4, clang
 
 const o = {height:20,scale:8}
 let opts = {
-  customlabels: ['○', ' ', '⚔', ' ', 
+  customlabels: ['ꕤ', ' ', '⚔', ' ', 
     '❤︎', '✧', ' ', '⚝', 
-    ' ', '✡', ' ', '☽'],
+    ' ', '❀', ' ', '☽'],
   root: 'D',
   exponential: true,
   mode: 'flakygon',
@@ -50,7 +50,7 @@ let opts = {
   distance: 1.15,
   linejoin: 'round',
   lineoctavediv: 3,
-  margin: 160,
+  margin: 30,
 }
 
 useWet({commentColor: '#444', glow:0, amount:2})
@@ -128,13 +128,13 @@ const LOW = (p) => p.note()
 .off(0,x=>x.bpf(1670).lpf(20000).vel(1/6))
 .off(0,x=>x.bpf(3300).lpf(20000).vel(1/8))
 .off(0,x=>x.bpf(6400).lpf(20000).vel(1/9))
-.postgain(8/9).orbit(5).pitchwheel(opts)
+.postgain(4/5).orbit(5).pitchwheel(opts)
 
 const ORGAN = (p) => p.note().add(note(2+12))
 .s("gm_drawbar_organ").pan(0)
 .off(1/64, x=>x.s("gm_drawbar_organ:4").pan(1).vel(2/3))
-.hpf(90)
-.postgain(2).orbit(4)
+.hpf(75)
+.postgain(3/2).orbit(4)
 
 const FAT = (p, lfoDepth=6400) => p.note().add(note(2)).color('oklch(.8 .2 270)')
 .off(0, x=>x.s("sawtooth").distort(2/3).distorttype("chebyshev").sub(note(12)).lpf(20000).bpf(5400).pan(0).vel(1/4))
@@ -155,9 +155,10 @@ const PIZZ = (p) => p.note().fast(3).add(note(2-12))
 //.s("vibraphone_soft:0:.3,vibraphone_bowed")
 const DING = (p) => stack(
   p.note().add(note(2-17)).rel(0).sus(1/2).dec(1/2)
+  .att(1/24)
   .s("handpan").lpf(4400).bus(14),
   s("bus:14").room(1/2).size(9).clip(4)
-  .hpf(220).postgain(1/5)
+  .hpf(110).postgain(1/11)
 ).violet()
 
 const CHIMESDOWN = s("chimes2").slow(2)
@@ -197,45 +198,63 @@ x ~ x
 x ~ x
 ~ x <x [x x]>
 >`
-const KICKPAT = (p)=> s("mc303_bd:0").struct(p).fast(3).hpf(89)
+const KICKS = (p)=> s("mc303_bd:0").struct(p).fast(3).hpf(87)
 .off(0,x=>x.s("bossdr550_rd:1").vel(2).hpf(7700).lpf(6400))
 .dec(1/16)
 .sus(1/16)
-.postgain(3/5).pan(1/2).lpf(3200)
+.postgain(3/4).pan(1/2).lpf(3200)
 .duckorbit("4:5").duckdepth("0.67:0.33").duckatt("0.25:0.2")
 
-const KICK = KICKPAT(triplets)
-const KICK4 = KICKPAT(fourOnTheFloor)
+const KICK = KICKS(triplets)
+const KICK4 = KICKS(fourOnTheFloor).color("maroon")
 const HH4 = s("hh:4,circuitstom_hh:0:.3").struct(`<
 x [x] x [x x]
 x [x x] x [x x]
 x [x] x [x [x x]]
 x [x x] x [x x]
 >`).fast(3).crush(5)
+.vel(`<.5 .7 .7>`.fast(3))
 .dec(1/11).rel(0)
 .lpf(12800).hpf(6200)
 .diode("3:.1").postgain(1/7)
 
 //dr220_oh:0:.2,rolandd110_oh:0:.2
-const TB = s("bossdr550_tb").hpf(770).pan(2/3).struct(`<
-~ ~ x
-~ ~ x
-~ x x
-~ <~ x> <x [x x]>
->`.fast(3)).diode("1:.2").room(1).size(4).pan("<.5 .6 .9>*3")
+const TBS = (p) => s("bossdr550_tb").hpf(770).pan(2/3).struct(p.fast(3))
+.diode("1:.2").room(1/2).size(4).pan("<.5 .6 .9>*3")
 .off(0,x=>x.s("rolandr8_tb").bpf(9700).pan(1).vel(2/3))
 .off(0,x=>x.bpf(2700).pan(1/2).vel(1))  
 .postgain(1/4)
 
+const TB = TBS(`<
+~ ~ x
+~ ~ x
+~ x x
+~ <~ x> <x [x x]>
+>`)
+const TB4 = TBS(`<
+~ x x
+~ x ~
+~ x x
+~ x <x [x x]>
+>`)
 
-const CLAP = s("alesissr16_sd,alesissr16_sd:9").struct(`<
+const CLAPS = (p, rm=2) => s("alesissr16_sd,alesissr16_sd:9").struct(p).postgain(1/10)
+.off(0,x=>x.bpf(1270).vel(2))  
+.off(0,x=>x.bpf(4800).room(rm).vel(1/3))
+
+const CLAP = CLAPS(`<
 ~ ~ x
 ~ x [~ x]
 ~ ~ x
 ~ x <~ [x x]>
->`.fast(3)).postgain(1/10)
-.off(0,x=>x.bpf(1270).vel(2))  
-.off(0,x=>x.bpf(4800).room(2).vel(1/3))
+>`.fast(3))
+  
+const CLAP4 = CLAPS(`<
+~ ~ x
+~ ~ x
+~ ~ x
+~ ~ <x [x x]>
+>`.fast(3),1)
 
 const TICK = s("tick").struct(`<
 x [x x] [x ~] 
@@ -272,11 +291,11 @@ F2@2   G2 Am  F2@2 Am G2  Dm@2 Em F2    Am@2 G C
 
 const ci = `
 <<[Em F G Am] [Am@2 G F]>@4  F@2 G7 Am  F@2 Am G  Dm@2 Em F
- F@2 G7 Am  F@2 Am7 G  Dm@2 Em F  Am@2 <Em G> <F C> >`.transyellow()
+ F@2 G7 Am  F@2 Am7 G  Dm@2 Em F  Am@2 <Em G> <F F F C> >`.transyellow()
 
 const ding = `<
 <[E F G [A@2 G]] [A@2 G F]>@4  F@2 G A  F@2 A [G@2 C] D@2 E F
-F@2 G A        F@2 A G  D@2 E [F@2 G] A@2 <E G> <F C> 
+F@2 G A        F@2 A G  D@2 E [F@2 G] A@2 <E G> F 
 >`.violet()
 
 const mi = `<
@@ -301,7 +320,7 @@ D A  D4 F A  D4  E  B G4 F C4 F4
 F C4 G4 A4 C4 F3   G D4 G4 A C4 E4
 F C4 G4 A4 C4 F3   A C4 E4 G C4 G4
 D A  D4 F A  D4    E  B G4 F C4 F4
-A E4 G4 A4 E4 C4  <[E B G4 F C4 F4] [G D4 G4 C3 G3 C4]>@6
+A E4 G4 A4 E4 C4  <[E B G4 F C4 F4] [G D4 G4 F3 C4 F4]>@6
 >`.teal()
 
 const m2 = `<
@@ -325,7 +344,7 @@ E@3 E C E F@3 E@3
 E@3 C@2 G F@3 E@2 C
 E@3 E C E D@3 E@3
 C@3 <E2 F2> <G2 G2 G2 G3> <C C C E> <B2 D>@3 C@3
->`.magenta()
+>`
 
 const p1 = `<
 A3 A4 A3 E3 A3 C4        F2 F3 F4 C2 E3 G3
@@ -343,10 +362,10 @@ F2 F3 G4 F3 A3 F4    G2 G3 G4 E3 A3 [C4 B3]
 F2 F3 G4 F3 A3 F4    A3 C4 G4 G  C4 D4
 D2 A3 D4 F3 A3 D4    E2 B3 E4 F2 F3 F4
 
-F2 C4 G4 F3 C4 F4   G2 G3 G4 A2 A3 A4
+F2 C4 G4 F3 C4 F4   G2 G3 G4 A2 A3 [A4 G3]
 F2 C4 G4 F3 C4 F4   A2 C4 G4 G3 C4 G4
-D2 A3 D4 F3 A3 D4   E2 B3 G4 F2 F3 F4
-A2 E4 G4 A4 E4 C4  <[E2 B3 G4 F2 C4 F4] [G2 D3 G3 C3 G4 C4]>@6
+D2 A3 D4 F3 A3 D4   E2 B3 G4 F2 F3 [F4 G3]
+A2 E4 G4 A4 E4 C4  <[E2 B3 G4 F2 C4 F4] [G2 D3 G3 F2 F3 F4]>@6
 >`.gold()
 
 const bass = `<
@@ -363,39 +382,16 @@ const impact = `<
 ~ ~ <A4 F4> ~ ~ <E5 A4> ~ ~ <B4 G4> ~ ~ <F4 A4 F5 C5>
 >`.as("note:vel").yellow()
 arrange(
-  [1/2, BELLS(b1,55).lpfAt(55,55,2)],
-  
-  [64, stack(
-    VIOLIN(mi).lpfAt(3200,4400,64),
-    SQUARE(mi).lpfAt(880,12800,64),
-    BELLS(bi, 990).lpfAt(880, 1960, 64).mask("<1@32 1@32>"),
-    PIANO(bi, 1, 1/4).lpfAt(1440, 6400, 64),
-    PAD(ci,"<[0,1,2]@2 [0,1,3] [0,1]>","<0@32 12@32>").lpfAt(1270,3300,64),
-    PIZZ(pi).lpfAt(770,14400,64).mask("<0@32 1@32>"),
-    DING(ding).lpfAt(770, 3300, 64),
-    KICK4.mask("<0@16 1@32 1@64>"), HH4.mask("<0@32 1@64>"),
-  )],
-  [64, stack(
-    VIOLIN(mi).lpfAt(3200,4400,64),
-    SQUARE(mi).lpfAt(880,12800,64),
-    BELLS(bi, 990).lpfAt(880, 1960, 64).mask("<1@32 1@32>"),
-    PIANO(bi, 1, 1/4).lpfAt(1440, 6400, 64),
-    PAD(ci,"<[0,1,2]@2 [0,1,3] [0,1]>","<0@32 12@32>").lpfAt(1270,3300,64),
-    PIZZ(pi).lpfAt(770,14400,64).mask("<0@32 1@32>"),
-    DING(ding).lpfAt(770, 3300, 64),
-    KICK4.mask("<0@16 1@32 1@64>"), HH4.mask("<0@32 1@64>"),
-  )],  
-  
-  [2, stack(
+  [1, stack(
     PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 <[0,1,2] [0,1,2,3]> [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").lpfAt(110,220,2),
     BELLS(b1,55).lpfAt(55,55,2),
   )],
-  [64, stack(CHIMES, CHIMESUP.mask("<0@15 1 0@16>"),
+  [32, stack(CHIMES, CHIMESUP.mask("<0@15 1@2 0@15>"),
     PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 <[0,1,2] [0,1,2,3]> [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>","<0@16 [0,12]@16>")
-    .lpfAt(330,2800,64),
-    BELLS(b1,330).lpfAt(330,1800,64),
-    PIANO(b1,1,1/3).lpfAt(220,3200,64).mask("<1@16 1@48>"),
-    HARP(impact).lpfAt(1270,12800,64),
+    .lpfAt(330,2800,32),
+    BELLS(b1,330).lpfAt(330,1800,32),
+    PIANO(b1,1,1/3).lpfAt(220,3200,32).mask("<1@16 1@48>"),
+    HARP(impact).lpfAt(1270,9600,32),
   )],
   [64, stack(
     CHIMESDOWN.mask("<0@32 1@8 0@99>").lpfAt(20000,3200,16).gainAt(1,1/20,16),
@@ -403,7 +399,7 @@ arrange(
     .lpfAt(3100,770,32).mask("<1@32 0@32>"),
     PIZZ(p1).lpfAt(770, 12800, 64),
     BELLS(b1,1210).lpfAt(1440,1220,64),
-    LOW(bass).mask("<0@32 1@32>").lpfTri(1440,4400,64),
+    LOW(bass).mask("<0@16 1@48>").lpfTri(1440,4400,64),
     PIANO(m1, 2, 0).add(note(12)).hpf(770).lpfTri(2440,3300,32).mask("<1@32 0@32>"),
     PIANO(b1, 0, 1/2).hpf(770).lpfTri(1670,2440,64).mask("<0@32 1@32>"),
     VIOLIN(m1).lpfAt(660,4400,64).mask("<1@32 1@32>"),
@@ -413,17 +409,16 @@ arrange(
   [64, stack(CHIMES, CHIMESDOWN.mask("<1@2 0@31 1@2 0@99>").lpfAt(20000,10,32).gainAt(1,1/20,32), 
     CHIMESUP.mask("<0@30 1 0 1 0@99>").lpfAt(20000,8400,64),
     WAVESUP.mask("<0@32 1@32>"),
-    // PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>","[0,12]").lpfAt(770,440,32),
     SQUARE(m1).lpfAt(770,12800,64).mask("<0@32 1@32>"),
     VIOLIN(m1).lpfAt(440,4400,64).mask("<1@32 1@32>"),
-    PIZZ(p1).lpfAt(9600, 17000, 64), 
+    PIZZ(p1).lpfAt(12800, 17000, 64), 
     LOW(bass).hpf(170).lpfAt(3300,6400,64),
     ORGAN(bass).lpfAt(4400,3300,64),
     BELLS(b1,1670).lpfAt(1670,1960,64),
     HARP(impact).lpfAt(8400,14400,64).mask("<0@32 1@32>"),
     KICK, TICK, HH.lpfAt(1260,20000,64), CLAP.mask("<0@16 1@48>"),
   )],
-  [64, stack(
+  [32, stack(
     WAVESDOWN.mask("<1@16 0@99>"),
     PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").lpfAt(440,2800,64),             
     SQUARE(m1).lpfAt(12800,4800,64),
@@ -446,7 +441,7 @@ arrange(
     PIANO(b1).lpfAt(4800,4000,8).early(56),
     TB, TICK, CLAP,
   )],
-  [8, stack(
+  [8, stack(CHIMESUP.mask("<0@6 1@2>"),
     PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").early(24).lpfAt(1900,1700,4),
     SQUARE(m1).lpfAt(550,440,8).early(24),
     VIOLIN(m1).lpfAt(2400,2200,8).early(24),
@@ -454,23 +449,70 @@ arrange(
     PIZZ(p1).lpfAt(2400,1670,8).early(24),
     BELLS(b1,1670).lpfAt(1440,990,8).early(24), 
     PIANO(b1).lpfAt(4000,3200,8).early(24),
-    TICK,
+    TICK.lpfAt(9600,1670,8),
   )],  
-  [4, stack(
-    PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").early(28).lpfAt(1700,1440,4),
-    PIANO(b1, 0, 1/5).lpfAt(3200,1670,4).early(60),
+
+  [64, stack(CHIMES.mask("<1@2 0@62>"), CHIMESDOWN.mask("<0@31 1@2 0@99>"),
+    VIOLIN(mi).lpfAt(1670,4400,64),
+    SQUARE(mi).lpfAt(880,12800,64),
+    BELLS(bi, 990).lpfTri(770, 1670, 64).mask("<1@32 1@32>"),
+    PIANO(bi, 1, 1/4).lpfAt(1440, 6400, 64),
+    PAD(ci,"<[0,1,2]@2 [0,1,3] [0,1]>","<0@32 12@32>").lpfAt(1270,3300,64),
+    PIZZ(pi).lpfAt(2880,14400,64).mask("<0@32 1@32>"),
+    DING(ding).lpfAt(110, 3300, 64).mask("<0@16 1@48>"),
+    KICK4.mask("<0@16 1@32 1@64>"), HH4.mask("<0@32 1@64>"),
   )],
-  [4, stack(
-    PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").early(60).lpfAt(1670,770,4),
-    PIANO(b1, 0, 1/5).lpfAt(1670,770,4).early(60),
+  [64, stack(CHIMESUP.mask("<1@2 0@99>"),
+    VIOLIN(mi).lpfTri(6400,12800,64),
+    SQUARE(mi).lpfAt(14400,3200,64),
+    BELLS(bi, 990).lpfAt(880, 1670, 64).mask("<0@16 1@48>"),
+    PIANO(bi, 3/2, 1/2).lpfAt(16000, 700, 64),
+    PAD(ci,"<[0,1,2]@2 [0,1,3] [0,1]>","<0@32 12@32>").lpfAt(6400,2200,64),
+    PIZZ(pi).lpfAt(16000,8400,64).mask("<1@48 0@16>"),
+    DING(ding).lpfAt(6400, 220, 64),
+    KICK4.mask("<1@48 0@16>"), CLAP.mask("<1@48 0@16>"), HH4, TB4.mask("<1@48 0@16>"),
   )],
-  [4, stack(
-    PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").early(60).lpfAt(770,440,4),
-    PIANO(b1, 0, 1/5).lpfAt(770,440,4).early(60),
+  [64, stack(
+    VIOLIN(mi).lpfAt(4800,880,64),    
+    PAD(ci,"<[0,1,2]@2 [0,1,3] [0,1]>","0").lpfAt(2200,770,32),
+    DING(ding).lpfAt(220, 125, 64),    
+    BELLS(bi, 990).lpfAt(1670, 660, 64),
   )],
-  [4, stack(
-    PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").early(60).lpfAt(440,220,4),
-    PIANO(b1, 0, 1/5).lpfAt(440,220,4).early(60),
-  )]
+
+
+  // [4, stack(
+  //   PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").early(28).lpfAt(1700,1440,4),
+  //   PIANO(b1, 0, 1/5).lpfAt(3200,1670,4).early(60),
+  // )],
+  // [4, stack(
+  //   PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").early(60).lpfAt(1670,770,4),
+  //   PIANO(b1, 0, 1/5).lpfAt(1670,770,4).early(60),
+  // )],
+  // [4, stack(
+  //   PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").early(60).lpfAt(770,440,4),
+  //   PIANO(b1, 0, 1/5).lpfAt(770,440,4).early(60),
+  // )],
+  // [4, stack(
+  //   PAD(chrd,"<[0,1,2]@4 [0,1,2]@2 [0,1,2,3] [0,1,2] [0,1,2]@4 [0,1,2]@3 [0,1]>").early(60).lpfAt(440,220,4),
+  //   PIANO(b1, 0, 1/5).lpfAt(440,220,4).early(60),
+  // )],
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -1,11 +1,11 @@
 // @title Sunrisen Horizon 2026
-// @details I wrote this song in March 2026 when I only had a month left at my job -
-//          This song signifies a new beginning, that feels like when you gaze out far into the horizon
-//          seeing the sun rise at first dawn, feeling the warmth of the new light
-//          it is about leaving the old behind, while bringing the best forward into a new future
-//          [tldr; I left my job and I never looked back]
+// @details I wrote this song in March 2026
+//          This song signifies a new beginning - the feeling of gazing out far into the horizon
+//          witnessing the sun rise for the first time in a long time,
+//          it is about leaving the old behind, venturing into the new and creating a bright new future
 // @by Waveflower Gooi
 // @license CC BY-NC-SA
+// @url music.waveflower.org
 
 //    _____ __  ___   ______  _________ _______   __
 //   / ___// / / / | / / __ \/  _/ ___// ____/ | / /
@@ -17,15 +17,16 @@
 //  / __  / /_/ / _  _// /_ ╱ ╱_/ /_/ / /|  / _╲|/_/
 // /_/ /_/\____/_/ |_/___ /_____\____/_/ |_/ /_/|╲
 //                                              ╲)
-
+await import('https://waveflower.org/pre.js')
 samples({
   tick: 'cactus/dyad/CACTUS_DYAD_ONESHOT.mp3',
   short: 'cactus/perc/CACTUS_PERC_14_ONESHOT.mp3',
   uplifter: 'fl/uplifter1.wav',
   downlifter: 'fl/dnlifter1.wav'
-}, 'http://localhost:5432/');
+}, 'https://waveflower.org/samples/');
 
-useWet({amount: 1.4, commentColor: '#FFFFFF07', gutterColor: '#FFFFFF04', commentStyle: 'normal', letterSpacing: -0.1, h1Indent: 30})
+// setSoundfontUrl('http://localhost:5432')
+useWet({amount: 1.4, commentColor: 'oklch(.7 .2 100)', gutterColor: '#FFF1', commentStyle: 'normal', letterSpacing: -0.1, h1Indent: 30})
 
 setcpm(132/4)
 
@@ -79,11 +80,11 @@ C2:2 C2:2 C:1.5 C2:2.5
 ).lpe(2)
 
 const SWEEP_DOWN = s("pink,brown").seg(6)
-.lpf(at(12000,100,8)).pan(0)
+.lpf(at(12000,100,16)).pan(0)
 .gain(1.6).att(1/4).rel(1)
 .superimpose(x=>x.late(1/32).pan(1))
 .gain(at(1,1.2,8))
-.hpf(at(8000,100,8)).color('#0000')
+.hpf(at(8000,100,16)).color('#0000')
 
 const DOWNLIFT = s("brown").seg(6)
 .lpf(at(9000,100,4)).pan(0)
@@ -103,7 +104,7 @@ const SWEEP_UP = s("pink,brown").seg(4)
 .lpf(at(100,16000,16)).lfo({s:1/16}).pan(0.1)
 .gain(1.6).att(1/32).rel(1)
 .superimpose(x=>x.late(1/16).pan(1))
-.gain(at(1,1.1,16))
+.gain(at(1.1,1.2,16))
 .hpf(at(100,8000,16))
 
 const BASS = `<
@@ -142,7 +143,7 @@ G4@2 F4@2 C4 G4 C5@2
 const VIOLIN = (chrds) => stack(
   chrds.hpf(880).transpose("12").lpf(1400).s("gm_violin:6").vel(1).pan(.4),
   chrds.hpf(1200).transpose("0,12").lpf(3300).s("gm_violin:7:.3,gm_string_ensemble_1:4").vel(3/4).pan(1)
-).dec(1/4).sus(1).rel(1/3).gain(1/4).env({dec:1/4,sus:1/2,rel:1,sc:-1,rc:-1})
+).dec(1/4).sus(1).rel(1/3).gain(1/3).env({dec:1/4,sus:1/2,rel:1,sc:-1,rc:-1})
 .color('oklch(.77 .2 100)')
 
 const PAD = chord(`<
@@ -232,7 +233,7 @@ x x x x x x x x
 [x x x x] [x x x [x x]] [x x x x] [x x x [x x]]
 [x x x [x x]] [x x _ [x x]] [x x x [x x]] [x x _ [x x]]
 >`).pan(3/4)
-.fast(4).gain(1/2).dec(1/8).sus(1/16).rel(1).att(0)
+.fast(4).gain(2/3).dec(1/8).sus(1/16).rel(1).att(0)
 .room(1/4).size(4)
 .hpf(400)
 
@@ -242,7 +243,7 @@ const OHH = s("akaixr10_oh").up(`<
 ~ x ~ x
 ~ x ~ x
 >`.as("struct:vel")).fast(8).pan(7/8)
-  .gain(1/3).att(1/32).sus(1).rel(1/4).hpf(6700)
+  .gain(1/5).att(1/32).sus(1).rel(1/4).hpf(6700)
 
 const OH = s("oh:6").up(`<
 x [x:.7 x] x [x  x:.7      ]
@@ -253,7 +254,7 @@ x  x:.8    x [x [x:.5 x:.7]]
   .sus(1/16)
   .hpf(7700)
   .rel(1/4).coarse(12).crush(8)
-  .fast(2).gain(1.8).maroon(.7)
+  .fast(2).gain(1.7).maroon(.7)
 
 const CRASH = s("alesissr16_cr")
 .struct(`<x _ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~>`).room(1).size(9).gain(1/2).pan(.7)
@@ -287,8 +288,8 @@ t s k s t s k s
 .set.mix(vel("1 0.75".fast(4)))
 .set.mix(lpf("12800 4800".fast(4)))
 .set.mix(rel("0.5 0.1".fast(4))).hpf(200)
-.color('white').postgain(4)
-.n("<0 .2 .4 .6 .8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6 6.2 6.4 6.6 6.8 7 7.2 7.4 7.6 7.8 8 8.2 8.4 8.6 8.8 9 9.2 9.4 9.6 9.8 10 10.2 10.4 10.6 10.8 11>".add(20).fast(4))
+.color('white')
+.n("<0 1 2 3 4 5 6 7 8 9 10 11>".add(20).fast(4))
 
 const CLOCK8 = s(`<
 t s k s t s k s
@@ -301,8 +302,8 @@ t s k s t s k s
 .set.mix(vel("1 .9".fast(4)))
 .set.mix(lpf("12800 6400".fast(4)))
 .set.mix(rel("0.5 0.1".fast(4)))
-.postgain(5).hpf(200)
-.n("<0 .2 .4 .6 .8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6 6.2 6.4 6.6 6.8 7 7.2 7.4 7.6 7.8 8 8.2 8.4 8.6 8.8 9 9.2 9.4 9.6 9.8 10 10.2 10.4 10.6 10.8 11>".add(20).fast(4))
+.postgain(4).hpf(200)
+.n("<0 1 2 3 4 5 6 7 8 9 10 11>".add(20).fast(4))
 
 const HH = s("akailinn_hh").dec(1/12).up(`<
   x:.5 ~ x x:.7
@@ -369,9 +370,9 @@ const line1 = `<
 const FATBASS = (p) => p.as("note:vel").fast(8)
 .s("sawtooth:0:1.1")
 .orbit(4).FX(
-  diode("3.33:0.33")
+  diode("3.33:0.33").vel(3/4)
 )
-.fm(2.7).hpf(100).color('oklch(.45 .24 0)')
+.fm(2.7).hpf(100).color('oklch(.5 .24 340)')
 ._scope({height:100,width:800,scale:2/3})
 const FATFAT = (p) => FATBASS(p).pan(1/4).dec(0.25).sus(0)
   .off(1/60, x=>x.add(note(12)).pan(1)).FX(diode(5).lpf(12800).lfo({s:1/16,depth:2.1}))
@@ -398,7 +399,7 @@ const RIDE = stack(
 const KICK = stack(
   s("bd:9*4").lpf(7200),
   s("compurhythm78_bd*4"),
-).struct(kickpat).gain(1).ftype(0).duck("4:5").duckatt("0.25:0").duckdepth("1:0.7")
+).struct(kickpat).gain(1.05).ftype(0).duck("4:5").duckatt("0.25:0").duckdepth("1:0.7")
 .color('oklch(.2 .2 340)')
 
 const melody0 = cat(
@@ -546,163 +547,178 @@ const pianoEnd = cat(
 
 const PIANO = (melody) => melody.add(note("0"))
   .s("piano:31:.5,gm_piano:8").rel(1/8)
-  .hpf(500).vel(1).room(1/2).size(3)
-
-
-
-
-
-
-
-
-
-
+  .hpf(470).vel(1.25).room(1/2).size(3)
 
 $:arrange(
-// [24, stack(t(`<PHASE I: PREPARATION>`),//DNLIFT.first2(),
-//           SWEEP_UP,
-//           SOFT_CR.att(1/2).first4(),
-//           DOWNLIFT.first4(),
-  
-//           INTRO_SQ.lpfAt(100,6000,24),
-//           // INTRO_PAD.hpfAt(500,270,24).lpfAt(40,800,24),
-//           // INTRO_BASS.lpfAt(40,300,24),
-//           // CLOCK8,
-//           // OH,
-//           // SNUP,
-// )],
-
-[16, stack(t(`<PHASE II: FIRST LIGHT>`),
-          SWEEP_DOWN, CRASH,
-           
-          PAD.lpfAt(800,12000,16),
-          SQ,           
-          BASS.lpfAt(120,400,16),
-          OH.lpfAt(8000,12000,8).pan(.2),            
-          SNARE.coarse("<1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.6 7 7.5 8 8.5>*2"),            
-)],
-[8, stack(t("<I threw in some violin here for fun also helps with the break>"),
-  VIOLIN(violinchrd).lpfAt(700, 3200, 8),    
-  PAD.lpf(at(9000,4000,8)), 
-  BASS.lpf(400), SQ.lpf(at(8000,200,8)), 
-  SNARE.room(1/4).postgain(3/4).coarse(run8),
-  OH.lpf(at(8000,200,8)),
-  SWEEP_UP.early(4),
-  CLOCK4.gain(1.4),
-)],
-[4, stack(t("<break break break break>"),
-  VIOLIN(violinbreak).lpfAt(3200,1200,4).hpfAt(800,400,4).room("<0 .2 .7 1>").size(9),
-  PADBREAK.lpfAt(700,180,4), 
-  BASSBREAK.lpfAt(400,100,4), 
-  SWEEP_UP.early(12),
-  CLOCK4.early(4))],
-  // [8, stack(t("<heres some really fat bass to start a techno loop>"),
-  //           KICK, RIDE,
-  //           FATBASS(lineC).postgain(3/8).lpf(at(170,6400,16)),
-  //           SOFT_CR.postgain(2/3),
-  //           CLOCK4,
-  //           SNARE.coarse(5).postgain(2/3).delayBy(4).lpf(12800).hpf(3200)
-  //          )],
-  // [8, stack(t(`<then throw in a synth lead on top of bass>`),
-  //           KICK, RIDE, HH, SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
-  //           FATBASS(lineC).postgain(1/3).lpf(at(170,6400,16)).early(8),
-  //           SYNTHLINE)],
-  // [8, stack(t(`<then throw in the square lead on top for dramatic effect>`),
-  //           // KICK, RIDE, HH, SWEEP_UP.late(4),
-  //           // SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
-  //           // FATBASS(lineC).lpf(6400).postgain(1/3),
-  //           // SYNTHLINE.lpf(12800),
-  //           INTRO_SQ.lpf(at(200,6000,8)))],
-  // [8, stack(t(`<buildup buildup buildup buildup>`),
-  //           KICK, RIDE, OH, HH, SWEEP_UP.early(8),SNUP, CLOCK8.gainAt(1,1/4,8),
-  //           SNARE.coarse(run8).postgain(2/3).lpf(12800).hpf(6400),
-  //           FATBASS(lineC).lpf(6400).postgain(1/3),
-  //           SYNTHLINE.lpf(at(12800,400,8)),
-  //           INTRO_SQ.lpf(6000)
-  // )],
-  // [8, stack(
-  //           t(`<this pizzicato rhythm is inspired by Enyas classics>`),
-  //           PIZZ(submel0),//.lpf(at(12800,16000,8)), 
-  //           PIZZMEL(melody0),//.lpf(at(300,14400,8)).gain(at(1.25,1,8)),
-  //           FATFAT(line0).hpf(320).lpf(at(60,2400,8)).postgain(1/7).delayBy(4),
-  //           // HARD_CR.first4(),
-  //           // RIDE.lpf(at(8400,100,4)).first4(), 
-  //           // OH.lpf(at(4800,400,4)).first4(), 
-  //           // SYNTHLINE.lpf(at(800,10,4)).first2(),    
-  //           // SWEEP_DOWN.phaser(1/128).lpf(at(16000,1,4)).first4(),
-  // )],
-  // [8, stack(t(`<fatbass added in complement to the bounciness of pizzicato>`),
-  //           PIZZ(submel0).lpf(16000),
-  //           FATFAT(line0).hpf(330).lpf(at(2400,3200,8)).postgain(1/8),             
-  //           PIZZMEL(melody0).hpf(500).lpf(14400),            
-  //           KICK.lpf(1400), SWEEP_UP.hpf(at(550,8000,8)).lpf(at(800,14000,8)).postgain(1/3),
-  //           // HH.delayBy(4),
-  //           // SNARE2.delayBy(4).coarse(4).crush(3).room(1/4).rel(1/4).postgain(1/2).lpf(8400).hpf(2400),
-  // )],
-  // [8, stack(t(`<layer a 3x-square-lead to create extra richness>`),
-  //           // PIZZ(submel1).lpf(1200).postgain(2.7),
-  //           // FATFAT(line1).hpf(330).lpf(3300).postgain(1/8),            
-  //           // PIZZMEL(melody2).hpf(500).lpf(14400),
-  //           SQMEL(melody2).hpf(550).lpf(at(300,12800,8)),            
-  //           SOFT_CR, KICK.lpf(2200), RIDE,
-  //           HH, OH.lpf(9600).pan(1/9),
-  //           SNARE2.coarse(3).crush(3).postgain(1/2).lpf(12800).hpf(3200),
-  // )],
-  // [8, stack(t(`<RAVE RAVE RAVE RAVE RAVE RAVE RAVE RAVE>`),          
-  //           PIZZ(submel1).lpf(1200).postgain(2.7),
-  //           FATFAT(line1).hpf(330).lpf(3300).postgain(1/8),            
-  //           PIZZMEL(melody1).hpf(500).lpf(14400),
-  //           SQMEL(melody1).hpf(550).lpf(12800),
-  //           PIANO(piano1),
-  //           SOFT_CR, KICK.lpf(2200), RIDE, SNUP.lpf(at(20000,400,8)).postgain(1.33).delayBy(4),
-  //           HH, OHH, OH.lpf(9600).pan(1/9),
-  //           SNARE2.coarse(3).crush(3).postgain(1/2).lpf(12800).hpf(3200),
-  // )],  
-  // [8, stack(t(`<downlift segment but I also added some piano for transitioning>`),
-  //           RIDE.lpf(at(8400,100,4)).first4(), CLOCK4.lpf(6400).postgain(7/8),
-  //           PIANO(piano1),
-  //           PIZZ(submel1).lpf(14400),
-  //           FATFAT(line1).hpf(330).lpf(at(2400, 200, 8)).postgain(1/6),            
-  //           PIZZMEL(melody1).hpf(500).lpf(14400),
-  //           SQMEL(melody1).lpe(1).hpf(700).lpf(at(9600,700,8)),          
-  //           SWEEP_DOWN.postgain(2/3), OH.lpf(at(9600,6400,8)).pan(1/9),  
-  //           SNARE2.coarse("<3 3.5 4 5 5@4>").crush(4).postgain(1/2).lpf(at(4800,400,8)).hpf(800),
-  // )],
-  [2, stack(t(`<break time>`),
-            PIANO(piano1).lpfAt(400,200,2),
-            SWEEP_DOWN.early(8).postgain(1/2), 
-            OH.lpf(at(6400,400,8)).pan(1/9).first2(),
+  [2, stack(UPLIFT,
+            UP_SQ.att(4).lpe(-4).lpq(4).lpa(4).lpd(4).hpf(200).lpf(30).gain(7/8), 
+            SWEEP_UP.lpfAt(4000,9000,2).hpfAt(3000,4000,2).room(1).size(4).gainAt(1,1/2,2)
+            .att(1/2))
+  ],
+  [8, stack(t(`<PHASE I: PREPARATION>`),
+            DNLIFT.first2(),
+            SOFT_CR.att(1/2).first4(), 
+            DOWNLIFT.first4(),
+            INTRO_SQ.lpfAt(80,6000,32),
+            INTRO_PAD.hpfAt(500,270,32).lpfAt(40,800,32),
+            INTRO_BASS.lpfAt(40,300,32),
+            SWEEP_UP)
+  ],
+  [8, stack(t(`<PHASE I: READY YOUR CLOCKS>`),
+            CLOCK8,
+            INTRO_SQ.lpfAt(80,6000,32).early(8),
+            INTRO_PAD.hpfAt(500,270,32).lpfAt(40,800,32).early(8),
+            INTRO_BASS.lpfAt(40,300,32).early(8),
+            SWEEP_UP)
+  ],
+  [16, stack(t(`<PHASE I: BUILD UP>`),
+            CLOCK8.mask("<1@8 0@8>"), OH,
+            INTRO_SQ.lpfAt(80,6000,32).early(16),
+            INTRO_PAD.hpfAt(500,270,32).lpfAt(40,800,32).early(16),
+            INTRO_BASS.lpfAt(40,300,32).early(16),
+            SWEEP_UP, SNUP.mask("<0@8 1@8>"))
+  ],
+  [8, stack(t(`<PHASE II: FIRST LIGHT>`),
+            SWEEP_DOWN.mask("<1@8 0@8>"),
+            PAD.lpfAt(800,14400,8), 
+            BASS.lpfAt(120,400,8), CRASH, SQ)],
+  [16, stack(t(`<PHASE II: LET US HAVE MORE LIGHT>`),
+    RIDE,
+    VIOLIN(violinchrd).lpfAt(440, 3200, 8),          
+    PAD.lpfAt(12000,14400,16), 
+    BASS.lpfAt(400,440,16), SQ, 
+    SNARE.coarse("<1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.6 7 7.5 8 8.5>*2"), 
+    OH.lpfAt(8000,12000,8).pan(.2))],
+  [8, stack(t(`<I threw in some violin here for fun also helps with the break>`),
+    VIOLIN(violinchrd).lpfAt(3200, 6400, 8),    
+    PAD.lpf(at(14400,4000,8)), 
+    BASS.lpf(400), SQ.lpf(at(12000,200,8)), 
+    SNARE.room(1/4).postgain(3/4).coarse(run8),
+    OH.lpf(at(8000,200,8)),
+    SWEEP_UP.early(4),
+    CLOCK4.gain(1.4),
   )],
-  [8, stack(t(`<end sequence is a simple pizzicato loop>`),
-            PIZZMEL(melodyEnd).hpf(400).lpf(at(16000,12800,8)),
+  [4, stack(t(`<BREAK: LETS HAVE A BREAK>`),
+    VIOLIN(violinbreak).lpfAt(6400,2400,4).hpfAt(800,400,4).room("<0 .2 .7 1>").size(9),
+    PADBREAK.lpfAt(700,180,4), 
+    BASSBREAK.lpfAt(400,100,4), 
+    SWEEP_UP.early(12),
+    CLOCK4.early(4))],
+  [8, stack(t(`<INTERLUDE: add a really fat bass for a juicy techno loop>`),
+            KICK, RIDE, FATBASS(lineC).postgain(1/2).lpf(at(120,4800,8)),
+            SOFT_CR.postgain(2/3),
+            CLOCK8.mask("<0@4 1@4 0@8>"),
+            SYNTHLINE.lpf(at(110, 3200, 8)),
+            SNARE.coarse(5).postgain(2/3).lpf(12800).hpf(3200).mask("<0@4 1@4>"),
+           )],
+  [8, stack(t(`<INTERLUDE: throw in a synth bass on top of bass>`),
+            KICK, RIDE, HH, SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
+            FATBASS(lineC).postgain(1/3).lpf(at(4800,6400,8)),
+            SYNTHLINE.lpf(at(3200,12800,8)))],
+  [8, stack(t(`<INTERLUDE: then throw in the square lead on top for dramatic effect>`),
+            KICK, RIDE, HH, SWEEP_UP.late(4),
+            SNARE.coarse(6).postgain(2/3).lpf(12800).hpf(3200),
+            FATBASS(lineC).lpf(6400).postgain(1/3),
+            SYNTHLINE.lpf(12800),
+            INTRO_SQ.lpf(at(200,6000,8)))],
+  [16, stack(t(`<BUILDUP: with all the fancy sweeps and percussions>`),
+            KICK, RIDE, OH, HH, SWEEP_UP, SNUP.mask("<0@8 1@8>"), 
+            CLOCK8.gainAt(1,1/4,8),
+            SNARE.coarse(run8).postgain(2/3).lpf(12800).hpf(6400),
+            FATBASS(lineC).lpf(6400).postgain(1/3),
+            SYNTHLINE.lpf(at(12800,400,8)),
+            INTRO_SQ.lpf(6000)
+  )],
+  [8, stack(
+            t(`<PHASE III: ENYA ORCHESTRAL DANCE>`),
+            PIZZ(submel0).lpf(at(12800,16000,8)), 
+            PIZZMEL(melody0).lpf(at(220,12800,8)).gain(at(1.25,1,8)),
+            FATFAT(line0).hpf(320).lpf(at(60,2400,8)).postgain(1/7).delayBy(4),
+            HARD_CR.first4(),
+            RIDE.lpf(at(8400,100,4)).first4(), 
+            OH.lpf(at(4800,400,4)).first4(), 
+            SYNTHLINE.lpf(at(800,10,4)).first2(),    
+            SWEEP_DOWN.phaser(1/128).lpf(at(16000,1,4)).first4(),
+  )],
+  [16, stack(t(`<ENYA ORCHESTRAL DANCE: ADD DISTRO BASS>`),
+            PIZZ(submel0).lpf(16000),
+            FATFAT(line0).hpf(330).lpf(at(2400,3200,16)).postgain(1/8),             
+            PIZZMEL(melody0).hpf(500).lpf(at(9600,12800,16)),            
+            KICK.lpf(1400), SWEEP_UP.hpf(at(440,7200,16)).lpf(at(770,11000,16)).postgain(1/3),
+            HH.mask("<0@8 1@8>"),
+            SNARE2.mask("<0@8 1@8>").coarse(4).crush(3).room(1/4).rel(1/4).postgain(1/2).lpf(8400).hpf(2400),
+  )],
+  [8, stack(t(`<DANCE: LAYER IN 3X-SQUARE LEAD>`),
+            PIZZ(submel1).lpf(1200).postgain(2.7),
+            FATFAT(line1).hpf(330).lpf(3300).postgain(1/8),            
+            PIZZMEL(melody2).hpf(500).lpf(14400),
+            PIANO(piano1).mask(`<0@8 1@8>`).lpf(at(440,6400,8)),
+            SQMEL(melody2).hpf(550).lpf(at(330,16000,8)),            
+            SOFT_CR, KICK.lpf(2200), RIDE,
+            HH, OH.lpf(9600).pan(1/9),
+            SNARE2.coarse(3).crush(3).postgain(1/2).lpf(12800).hpf(3200),
+  )],
+  [16, stack(t(`<RAVE: LETS ALL DANCE AND DANCE>`),          
+            PIZZ(submel1).lpf(1200).postgain(2.7),
+            FATFAT(line1).hpf(330).lpf(3300).postgain(1/8),            
+            PIZZMEL(melody1).hpf(500).lpf(14400),
+            SQMEL(melody1).hpf(440).lpf(12800),
+            PIANO(piano1),
+            SOFT_CR, KICK.lpf(2200), RIDE, 
+            SNUP.lpf(at(20000,600,16)).postgain(1.4).mask(`<0@8 1@8>`),
+            HH, OHH, OH.lpf(9600).pan(1/9),
+            SNARE2.coarse(3).crush(3).postgain(1/2).lpf(12800).hpf(3200),
+  )],  
+  [8, stack(t(`<PHASE IV: FALLING ACTION>`),
+            RIDE.lpf(at(8400,100,4)).first4(), CLOCK4.lpf(6400).postgain(7/8),
+            PIANO(piano1),
+            PIZZ(submel1).lpf(14400),
+            FATFAT(line1).hpf(330).lpf(at(2400, 200, 8)).postgain(1/6),            
+            PIZZMEL(melody1).hpf(500).lpf(14400),
+            SQMEL(melody1).lpe(1).hpf(700).lpf(at(9600,440,8)),          
+            SWEEP_DOWN.postgain(3/4), OH.lpf(at(9600,3200,8)).pan(1/9),  
+            SNARE2.coarse("<3 3.5 4 5 5@4>").crush(4).postgain(1/2).lpf(at(4800,400,8)).hpf(800),
+  )],
+  [16, stack(t(`<PHASE IV: OUTRO with PIZZICATO MELODY>`),
+            PIZZMEL(melodyEnd).hpf(400).lpf(at(16000,12800,16)),
             PIZZ(submelEnd).lpf(12800),
-            OH.lpf(at(6400,2200,8)).pan(1/9).first4(),
-            SWEEP_DOWN.early(9).postgain(1/2),
-            SNARE2.coarse(5).crush(4).postgain(1/2).lpf(at(800,80,8)).hpf(800),
+            PIANO(melodyEnd).add(note("<0 5 5 0>")).lpf(at(1670,880,16)).mask("<1@8 1@8>"),
+            OH.lpf(at(3600,1600,16)).pan(1/9).first4(),
+            SWEEP_DOWN.postgain(2/3),
+            SNARE2.coarse(5).crush(4).postgain(1/2).lpf(at(800,80,16)).hpf(800),
   )],
-  [8, stack(t(`<add a dramatic clock ticker at the end>`),
-            PIZZMEL(melodyEnd.early(8)).hpf(400).lpf(at(16000,12800,8)),
-            PIZZ(submelEnd.early(8)).lpf(12800),
-            CLOCK8.lpf(at(12800, 6400, 8)).postgain(12/7)
+  [8, stack(t(`<THANK YOU FOR LISTENING TO SUNRISEN HORIZON I HOPE YOU ENJOY>`),
+            PIZZMEL(melodyEnd).hpf(400).lpf(at(12800,6400,16)),
+            PIZZ(submelEnd).lpf(at(9600,3200,16)),
+            PIANO(melodyEnd).add(note("<0 5 5 0>")).lpf(at(880,220,16)).mask("<1@8 0@8>"),           
+            CLOCK8.lpf(at(16000, 3200, 16)).postgain(2)
             .n("<0 0.375 0.75 1.125 1.5 1.875 2.25 2.625 3 3.375 3.75 4.125 4.5 4.875 5.25 5.625 6 6.375 6.75 7.125 7.5 7.875 8.25 8.625 9 9.375 9.75 10.125 10.5 10.875 11.25 11.625>"
             .revv().add(12).fast(4)),
-  )],  
-  [4, "~"]
+  ).early(8)],  
+  [4, t(`<YOU CAN FIND ME 
+  ON INSTAGRAM @waveflowergooi
+  OR Discord at [waveflower.org]
+  OR email at [gooi@waveflower.org]
+  OR at [waveflower.bandcamp.com]
+  >`)]
 )
 .pitchwheel({
-  customlabels: ['I', 'I#', 'II', 'II#', 'III', 'VI', 'VI#', 'V', 'V#', 'VI', 'VI#', 'VII'],
+  customlabels: ['I', ' ', 'II', ' ', 
+    'III', 'VI', ' ', 'V', 
+    ' ', 'VI', ' ', 'VII'],
   root: 'C',
-  exponential: false,
-  mode:'flakygon',
-  thickness: 64,
+  exponential: true,
+  mode: 'flakygon',
+  thickness: 200,
   glow: 64,
   labels: 'numbers',
-  textsize: 1.1,
-  edolabel: 3/4,
+  textsize: 1.25,
+  edolabel: 1/2,
   dotsize: 12,
   dotalpha: 1/2,
-  circle: 0,
+  circle: 16,
+  distance: 1.1,
   linejoin: 'miter',
-  lineoctavediv: 1,
-  margin: 160,
+  lineoctavediv: 3,
+  margin: -1,
 })
