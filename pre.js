@@ -64,6 +64,7 @@ window.removePrebakeCSS = function () {
  * @param {String} gutterColor (default '#444')
  * @param {String} lineHighlightColor (default '#2222')
  * @param {String} selectionBackground (default '#FFFFFF07')
+ * @param {String} background color (default '#0017')
  * @param {Number} glow (default 0)
  * @param {Number} letterSpacing, in px (default 0)
  * @param {Number} lineHeight, in rem (default 1.55)
@@ -72,6 +73,7 @@ window.removePrebakeCSS = function () {
  */
 window.wetEditor = function ({
   amount = 1,
+  saturation = 0,
   brightness = 1,
   hueShift = 0,
   commentColor = '#222',
@@ -85,6 +87,9 @@ window.wetEditor = function ({
   lineHeight = 1.55,
   h1Indent = 0,
 } = {}) {
+  if (saturation) {
+    amount = saturation
+  }
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
