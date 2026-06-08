@@ -79,6 +79,7 @@ window.wetEditor = function ({
   gutterColor = '#444',
   lineHighlightColor = '#2222',
   selectionBackground = '#FFFFFF07',
+  background = '#0017',
   glow = 0,
   letterSpacing = 0,
   lineHeight = 1.55,
@@ -87,9 +88,9 @@ window.wetEditor = function ({
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
-    n.append('#pre,:root { --background: #0017 !important; --lineBackground: #0000 !important;} ');
+    n.append('#pre,:root { --background:'+background+' !important; --lineBackground: '+background+' !important;} ');
     n.append('#pre,canvas {filter:saturate(' + amount + ');}');
-    n.append('#pre,#code .cm-line>*{background: #0000;}');
+    n.append('#pre,#code .cm-line>*{background:'+background+';}');
     n.append(
       '#pre,.cm-line{filter:hue-rotate(' +
         String(hueShift) +
@@ -99,7 +100,7 @@ window.wetEditor = function ({
         glow +
         'px);}',
     );
-    n.append('#pre,#header,.bg-lineHighlight,.cm-gutter,.cm-lineNumbers,.cm-gutters{background: #0015;}');
+    n.append('#pre,#header,.bg-lineHighlight,.cm-gutter,.cm-lineNumbers,.cm-gutters{background:'+background+';}');
     n.append('#pre,.cm-line{letter-spacing:' + letterSpacing + 'px;line-height:' + lineHeight + 'rem;}');
     n.append('#pre,.ͼbi { font-style:' + commentStyle + '; color:' + commentColor + '!important }');
     n.append('#pre,.cm-gutters{ color: ' + gutterColor + ' !important}');
