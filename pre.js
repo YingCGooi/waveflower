@@ -93,9 +93,9 @@ window.wetEditor = function ({
   document.querySelectorAll('style').forEach((n) => {
     window.removePrebakeCSS();
     n.append('#pre,[type=range]{width:400px !important;accent-color:oklch(.7 .24 240);}');
-    n.append('#pre,:root { --background:'+background+' !important; --lineBackground: '+background+' !important;} ');
+    n.append('#pre,:root { --background:'+background+' !important; --lineBackground: #0000 !important;} ');
     n.append('#pre,canvas {filter:saturate(' + amount + ');}');
-    n.append('#pre,#code .cm-line>*{background:'+background+';}');
+    n.append('#pre,#code .cm-line>*{background:#0000;}');
     n.append(
       '#pre,.cm-line{filter:hue-rotate(' +
         String(hueShift) +
