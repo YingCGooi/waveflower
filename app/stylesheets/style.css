@@ -75,15 +75,14 @@ form#waveform {
   background-color: oklch(0.4 0 0 / 0.33);
   border-radius: 3px;
   text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 
   &:hover {
     border-color: oklch(0.7 0 0);
   }
-
-  display: flex;
-  justify-content: space-between;
-  align-items: anchor-center;
-  flex-wrap: wrap;
 }
 
 @media (max-width: 700px) {
